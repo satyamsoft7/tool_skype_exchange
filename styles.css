@@ -32,12 +32,32 @@
   
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', Consolas, monospace;
+
+  /* Extended Corporate Slate & Fluent Colors */
+  --slate-50: #F8FAFC;
+  --slate-100: #F1F5F9;
+  --slate-200: #E2E8F0;
+  --slate-300: #CBD5E1;
+  --slate-400: #94A3B8;
+  --slate-500: #64748B;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1E293B;
+  --slate-900: #0F172A;
+
+  --ms-blue-50: #EFF6FF;
+  --ms-blue-600: #2563EB;
+  --ms-blue-700: #1D4ED8;
   
   --sidebar-width: 240px;
   --shadow-subtle: 0 1px 3px 0 rgba(23, 32, 51, 0.05), 0 1px 2px 0 rgba(23, 32, 51, 0.03);
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
   --shadow-card: 0 4px 6px -1px rgba(23, 32, 51, 0.04), 0 2px 4px -1px rgba(23, 32, 51, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
   --radius: 8px;
   --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,7 +73,7 @@ body {
 }
 
 /* ==========================================================================
-   GLOBAL ENTERPRISE HEADER
+   GLOBAL ENTERPRISE HEADER (Robust cross-page consistency)
    ========================================================================== */
 .global-header {
   background: #0F172A;
@@ -67,27 +87,28 @@ body {
   top: 0;
   z-index: 100;
 }
-.header-left {
+.header-left, .header-brand {
   display: flex;
   align-items: center;
   gap: 16px;
 }
-.brand-link {
-  color: #FFFFFF;
+.brand-link, .brand-title {
+  color: #FFFFFF !important;
   font-size: 0.95rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
-  text-decoration: none;
+  text-decoration: none !important;
   letter-spacing: -0.01em;
 }
-.brand-link svg {
+.brand-link svg, .brand-title svg {
   width: 20px;
   height: 20px;
   color: #38BDF8;
+  flex-shrink: 0;
 }
-.tenant-pill {
+.tenant-pill, .tenant-badge {
   background: #1E293B;
   border: 1px solid #334155;
   color: #CBD5E1;
@@ -105,7 +126,7 @@ body {
   border-radius: 50%;
   background: #22C55E;
 }
-.header-right {
+.header-right, .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
