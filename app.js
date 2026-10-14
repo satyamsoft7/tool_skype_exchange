@@ -1874,7 +1874,8 @@ function handleMfaVerify(e) {
 }
 
 function completeLogin(email) {
-  AppState.currentUser = { email: email, role: 'Tenant Administrator' };
+  const isBackendAdmin = (email.toLowerCase() === 'satya@skypeexchange4u.com');
+  AppState.currentUser = { email: email, role: isBackendAdmin ? 'Super Administrator' : 'Tenant Administrator' };
   AppState.mfaActive = true;
   closeAuthModal();
 
@@ -1883,6 +1884,12 @@ function completeLogin(email) {
   document.getElementById('userEmailDisplay').textContent = email;
   document.getElementById('dropdownUserEmail').textContent = email;
   document.getElementById('mfaTopStatus').style.display = 'flex';
+
+  // Strictly restrict internal Admin Console link to backend management administrator
+  const adminConsoleLink = document.getElementById('adminConsoleDropdownLink');
+  if (adminConsoleLink) {
+    adminConsoleLink.style.display = isBackendAdmin ? 'flex' : 'none';
+  }
 
   showToast(`✓ Authenticated as ${email} &bull; 🔒 MFA Verified`);
 }
@@ -1967,4 +1974,9 @@ window.addEventListener('DOMContentLoaded', () => {
   renderExclusions();
   updateConfirmedTotals();
   generateRemediationScript();
+
+  // If visitor arrived via header Sign In link (?action=signin), open authentication modal
+  if (window.location && window.location.search && window.location.search.includes('action=signin')) {
+    openAuthModal('signin');
+  }
 });

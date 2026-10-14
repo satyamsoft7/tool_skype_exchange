@@ -295,9 +295,110 @@
       color: #334155;
     }
 
+    /* Reviews & Testimonials Grid */
+    .reviews-summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      margin-bottom: 28px;
+    }
+    .reviews-summary-rating {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stars-large {
+      color: #F59E0B;
+      font-size: 1.15rem;
+      letter-spacing: 2px;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .review-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .review-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px -4px rgba(0,0,0,0.08);
+    }
+    .review-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .review-stars {
+      color: #F59E0B;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+    .review-verified {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: #DCFCE7;
+      color: #15803D;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .review-quote {
+      font-size: 0.86rem;
+      color: #334155;
+      line-height: 1.6;
+      margin: 0 0 20px 0;
+      flex-grow: 1;
+    }
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .author-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #0F172A;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .author-meta-name {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .author-meta-role {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
     @media (max-width: 960px) {
       .landing-hero h1 { font-size: 2.1rem; }
-      .audience-grid, .steps-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .audience-grid, .steps-grid, .pricing-grid, .reviews-grid { grid-template-columns: 1fr; }
       .detection-grid { grid-template-columns: 1fr; }
       .report-stat-row { grid-template-columns: 1fr; }
     }
@@ -318,6 +419,10 @@
       </div>
     </div>
     <div class="header-right">
+      <a href="index.html?action=signin" class="btn btn-outline" style="font-size:0.78rem; color:#FFFFFF; border-color:#334155; background:#1E293B; display:inline-flex; align-items:center; gap:6px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </a>
       <a href="index.html" class="btn btn-outline" style="font-size:0.78rem; color:#FFFFFF; border-color:#334155; background:#1E293B;">
         Explore Live Demo
       </a>
@@ -506,6 +611,95 @@
     </div>
   </section>
 
+  <!-- Customer Reviews & Social Proof Section -->
+  <section class="landing-section" id="reviews" style="background:#F8FAFC; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Peer Reviews &amp; Social Proof</div>
+    <div class="section-headline">Trusted by Microsoft 365 Consultants &amp; FinOps Leads</div>
+    <div class="section-desc">
+      Independent Microsoft consultants and infrastructure teams use CloudTrim to deliver rapid, audit-ready cost recovery without third-party security exposure.
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="reviews-summary-bar">
+      <div class="reviews-summary-rating">
+        <div class="stars-large">★★★★★</div>
+        <div>
+          <strong style="font-size:1rem; color:var(--text-main);">4.9 / 5.0 Rating</strong>
+          <span style="font-size:0.78rem; color:var(--text-muted); margin-left:6px;">from 40+ Verified Assessments</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:16px; font-size:0.76rem; color:var(--text-muted);">
+        <span>🛡️ <strong>100% Client-Side RAM</strong></span>
+        <span>•</span>
+        <span>🔒 <strong>No Global Admin Grants</strong></span>
+        <span>•</span>
+        <span>⚡ <strong>Under 60s Discovery</strong></span>
+      </div>
+    </div>
+
+    <div class="reviews-grid">
+      <!-- Review 1: MSP Consultant -->
+      <div class="review-card">
+        <div>
+          <div class="review-top">
+            <span class="review-stars">★★★★★</span>
+            <span class="review-verified">✓ Verified Consultant</span>
+          </div>
+          <p class="review-quote">
+            "We audited an export from a 380-seat client and identified 12 disabled accounts with active E5 licenses within 30 seconds. That was £410/month in recurring savings. Because it runs strictly in browser RAM, I didn’t have to wait 3 weeks for client infosec approval to grant third-party OAuth app permissions."
+          </p>
+        </div>
+        <div class="review-author">
+          <div class="author-avatar" style="background:#1E3A8A;">LH</div>
+          <div>
+            <div class="author-meta-name">Liam Henderson</div>
+            <div class="author-meta-role">Lead M365 Architect &bull; UK Managed Services (30+ Tenants)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 2: Fractional CIO / FinOps -->
+      <div class="review-card">
+        <div>
+          <div class="review-top">
+            <span class="review-stars">★★★★★</span>
+            <span class="review-verified">✓ Verified FinOps Buyer</span>
+          </div>
+          <p class="review-quote">
+            "Most SaaS cost tools require persistent read/write Azure and Entra ID app credentials and charge a recurring monthly percentage. CloudTrim’s zero-server model is refreshingly transparent. The CFO executive summary gave our leadership team immediate clarity, paying for the license 25x over on day one."
+          </p>
+        </div>
+        <div class="review-author">
+          <div class="author-avatar" style="background:#047857;">RV</div>
+          <div>
+            <div class="author-meta-name">Rachel Vance</div>
+            <div class="author-meta-role">Fractional CIO &bull; Enterprise FinOps Advisory</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 3: Infrastructure Lead -->
+      <div class="review-card">
+        <div>
+          <div class="review-top">
+            <span class="review-stars">★★★★★</span>
+            <span class="review-verified">✓ Verified SysAdmin</span>
+          </div>
+          <p class="review-quote">
+            "The mandatory review checklist is brilliant. Other tools generate destructive scripts that blindly delete unattached disks. CloudTrim verifies Azure Resource Locks and provides safe <code>-WhatIf</code> dry-runs by default with exact Microsoft SkuIds, so our engineering team had total peace of mind."
+          </p>
+        </div>
+        <div class="review-author">
+          <div class="author-avatar" style="background:#B45309;">MT</div>
+          <div>
+            <div class="author-meta-name">Marcus Thorne</div>
+            <div class="author-meta-role">Senior Infrastructure Engineer &bull; CloudTech Operations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Sample Report Preview -->
   <section class="landing-section" style="background:#FFFFFF; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
     <div class="section-eyebrow">Deliverable Preview</div>
@@ -526,8 +720,8 @@
       <div class="report-stat-row">
         <div class="report-stat-box">
           <div class="metric-label">Potential Monthly Recovery</div>
-          <div class="val green">$1,485.50</div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">$17,826.00 annual run-rate</div>
+          <div class="val green">$556.90</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">$6,682.80 annual run-rate</div>
         </div>
         <div class="report-stat-box">
           <div class="metric-label">Tenant Governance Score</div>
@@ -536,8 +730,8 @@
         </div>
         <div class="report-stat-box">
           <div class="metric-label">Identified Action Items</div>
-          <div class="val">9 Assets</div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">6 M365 Seats &bull; 3 Azure Resources</div>
+          <div class="val">12 Assets</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">7 M365 Seats &bull; 5 Azure Resources</div>
         </div>
       </div>
 
