@@ -6,42 +6,26 @@
  * ==============================================================================
  */
 
-// Global State Store
-const AppState = {
+// Sample Contoso Reference Dataset (Reconciled 1:1 with visible findings)
+const SAMPLE_CONTOSO_DATA = {
   currentTenant: 'contoso.onmicrosoft.com',
   assessmentDate: 'October 14, 2026',
-  isSampleData: true,
-  isDataLoaded: true,
-  currency: 'USD',
-  inrExchangeRate: 83.25,
-  isDryRun: true,
-  activeSidebar: 'overview',
-  activeSupportingTab: 'm365',
-  currentUser: null,
-  mfaActive: false,
-
-  // Baseline Financials (USD)
   baseline: {
-    monthlyWasteUSD: 1485.50,
-    annualWasteUSD: 17826.00,
+    monthlyWasteUSD: 556.90,
+    annualWasteUSD: 6682.80,
     governanceScore: 74,
-    m365SeatCount: 9,
-    m365WasteUSD: 495.50,
-    azureAssetCount: 11,
-    azureWasteUSD: 990.00
+    m365SeatCount: 7,
+    m365WasteUSD: 171.00,
+    azureAssetCount: 5,
+    azureWasteUSD: 385.90
   },
-
-  // Active Exclusions List
-  exclusions: [],
-
-  // 1. Findings to Review: Sorted by Potential Savings (Descending)
   decisionFindings: [
     {
       id: "find-1",
       finding: "Unattached disk candidate",
-      resourceLabel: "2 Premium SSD Managed Disks (512GB & 1TB)",
-      estimatedSavingUSD: 153.60,
-      evidence: "Source: Azure Resource Graph (October 14, 2026). ManagedBy is NULL, 0 attached VMs for 62 days.",
+      resourceLabel: "3 Managed Disks (disk-webprod-backup-os, disk-testdb-data01, disk-analytics-worker)",
+      estimatedSavingUSD: 235.52,
+      evidence: "Source: Azure Resource Graph (October 14, 2026). ManagedBy is NULL, 0 attached VMs for 38-90 days.",
       confidence: "Needs review",
       confidenceClass: "badge-confidence-amber",
       nextAction: "Inspect resource",
@@ -69,7 +53,7 @@ const AppState = {
     {
       id: "find-3",
       finding: "Disabled user with license",
-      resourceLabel: "3 Entra ID Offboarded Users (2x E5, 1x E3)",
+      resourceLabel: "3 Entra ID Offboarded Users (rahul.sharma, priya.verma, neha.gupta)",
       estimatedSavingUSD: 99.00,
       evidence: "Source: Microsoft Entra ID. Account status is Disabled (AccountEnabled -eq $false). Assigned SKUs unrevoked.",
       confidence: "Needs review",
@@ -85,8 +69,8 @@ const AppState = {
       id: "find-4",
       finding: "Inactive user with premium license",
       resourceLabel: "amit.kumar@contoso.com (Office 365 E5)",
-      estimatedSavingUSD: 30.00,
-      evidence: "Source: Microsoft Graph signInActivity. Zero authenticated sessions in 130 days. Candidate for E1 downgrade.",
+      estimatedSavingUSD: 38.00,
+      evidence: "Source: Microsoft Graph signInActivity. Zero authenticated sessions in 130 days. Candidate for license revocation/downgrade.",
       confidence: "Needs review",
       confidenceClass: "badge-confidence-amber",
       nextAction: "Confirm retention needs",
@@ -99,9 +83,9 @@ const AppState = {
     {
       id: "find-5",
       finding: "Over-licensed shared mailbox",
-      resourceLabel: "2 Shared Mailboxes (invoices@ & support-team@)",
-      estimatedSavingUSD: 26.00,
-      evidence: "Source: Exchange Online. Mailbox size 14.2GB & 4.8GB (<50GB). Requires check: litigation hold & Purview policies.",
+      resourceLabel: "3 Shared Mailboxes (invoices@, support-team@, operations@)",
+      estimatedSavingUSD: 34.00,
+      evidence: "Source: Exchange Online. Mailbox size <50GB. Redundant paid standalone plans assigned ($22 + $4 + $8).",
       confidence: "Needs review",
       confidenceClass: "badge-confidence-amber",
       nextAction: "Review mailbox holds",
@@ -127,78 +111,71 @@ const AppState = {
       category: "Azure Infrastructure"
     }
   ],
-
-  // Mandatory Review Checklist for Script Unlock
   candidateReviews: [
-    {
-      id: "rev-1",
-      name: "rahul.sharma@contoso.com",
-      type: "Entra ID Disabled Account",
-      costUSD: 38.00,
-      safetyCheck: "Verified disabled in Entra ID >45 days. No business mailbox forwarding active.",
-      reviewed: false
-    },
-    {
-      id: "rev-2",
-      name: "priya.verma@contoso.com",
-      type: "Entra ID Disabled Account",
-      costUSD: 23.00,
-      safetyCheck: "Confirmed offboarded staff. Active M365 E3 license unassigned.",
-      reviewed: false
-    },
-    {
-      id: "rev-3",
-      name: "neha.gupta@contoso.com",
-      type: "Entra ID Disabled Account",
-      costUSD: 38.00,
-      safetyCheck: "Former contractor identity disabled. Office 365 E5 license revocable.",
-      reviewed: false
-    },
-    {
-      id: "rev-4",
-      name: "invoices@contoso.com",
-      type: "Shared Mailbox (14.2 GB)",
-      costUSD: 22.00,
-      safetyCheck: "Size <50GB. Confirmed NO Litigation Hold, In-Place Hold, or Purview retention policy active.",
-      reviewed: false
-    },
-    {
-      id: "rev-5",
-      name: "support-team@contoso.com",
-      type: "Shared Mailbox (4.8 GB)",
-      costUSD: 4.00,
-      safetyCheck: "Size <50GB. Confirmed NO Litigation Hold or Auto-Expanding Archive active.",
-      reviewed: false
-    },
-    {
-      id: "rev-6",
-      name: "disk-webprod-backup-os",
-      type: "Azure Managed Disk (Premium SSD)",
-      costUSD: 76.80,
-      safetyCheck: "ManagedBy is NULL (Unattached 62d). Confirmed no ReadOnly or CanNotDelete resource lock.",
-      reviewed: false
-    }
+    { id: "rev-1", name: "rahul.sharma@contoso.com", type: "Entra ID Disabled Account", costUSD: 38.00, safetyCheck: "Verified disabled in Entra ID >45 days. Active Office 365 E5 license revocable.", reviewed: false },
+    { id: "rev-2", name: "priya.verma@contoso.com", type: "Entra ID Disabled Account", costUSD: 23.00, safetyCheck: "Confirmed offboarded staff. Active Microsoft 365 E3 license unassigned.", reviewed: false },
+    { id: "rev-3", name: "neha.gupta@contoso.com", type: "Entra ID Disabled Account", costUSD: 38.00, safetyCheck: "Former contractor identity disabled. Microsoft 365 E5 license revocable.", reviewed: false },
+    { id: "rev-4", name: "invoices@contoso.com", type: "Shared Mailbox (14.2 GB)", costUSD: 22.00, safetyCheck: "Size <50GB. Confirmed NO Litigation Hold or Purview retention policy active.", reviewed: false },
+    { id: "rev-5", name: "support-team@contoso.com", type: "Shared Mailbox (4.8 GB)", costUSD: 4.00, safetyCheck: "Size <50GB. Redundant Exchange Online P1 standalone license.", reviewed: false },
+    { id: "rev-6", name: "operations@contoso.com", type: "Shared Mailbox (2.1 GB)", costUSD: 8.00, safetyCheck: "Size <50GB. Redundant Exchange Online P2 standalone license.", reviewed: false },
+    { id: "rev-7", name: "amit.kumar@contoso.com", type: "Inactive User Account", costUSD: 38.00, safetyCheck: "Zero logins in 130 days. Candidate for Office 365 E5 license revocation.", reviewed: false },
+    { id: "rev-8", name: "disk-webprod-backup-os", type: "Azure Managed Disk (Premium SSD 512GB)", costUSD: 76.80, safetyCheck: "ManagedBy is NULL (Unattached 62d). Confirmed no ReadOnly or CanNotDelete lock.", reviewed: false },
+    { id: "rev-9", name: "disk-testdb-data01", type: "Azure Managed Disk (Standard SSD 1TB)", costUSD: 76.80, safetyCheck: "ManagedBy is NULL (Unattached 38d). Confirmed no resource lock.", reviewed: false },
+    { id: "rev-10", name: "disk-analytics-worker", type: "Azure Managed Disk (Standard HDD 2TB)", costUSD: 81.92, safetyCheck: "ManagedBy is NULL (Unattached 90d). Confirmed no resource lock.", reviewed: false },
+    { id: "rev-11", name: "asp-legacy-api-dev", type: "App Service Plan (P1v2)", costUSD: 146.00, safetyCheck: "Hosting 0 web apps or containers in rg-apps-legacy for 45 days.", reviewed: false },
+    { id: "rev-12", name: "pip-gateway-old-test", type: "Public IP Address (Static)", costUSD: 4.38, safetyCheck: "Unassociated static IPv4 address in rg-network-core.", reviewed: false }
   ],
-
-  // M365 Records with Real Microsoft SkuIds
   m365Records: [
-    { upn: "rahul.sharma@contoso.com", state: "Disabled", sku: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", holdCheck: "Disabled in Entra ID (Safe)", costUSD: 38.00, severity: "critical", needsVerification: false },
-    { upn: "priya.verma@contoso.com", state: "Disabled", sku: "SPE_E3", skuId: "05e01617-00a6-4261-a773-5a61447866b2", holdCheck: "Offboarded identity (Safe)", costUSD: 23.00, severity: "critical", needsVerification: false },
-    { upn: "neha.gupta@contoso.com", state: "Disabled", sku: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", holdCheck: "Former contractor (Safe)", costUSD: 38.00, severity: "critical", needsVerification: false },
-    { upn: "invoices@contoso.com", state: "Shared Mailbox", sku: "SPB (Business Premium)", skuId: "cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d", holdCheck: "Requires hold verification", costUSD: 22.00, severity: "shared", needsVerification: true },
-    { upn: "support-team@contoso.com", state: "Shared Mailbox", sku: "EXCHANGESTANDARD", skuId: "4b5d0382-76be-4b95-821a-493405786616", holdCheck: "Requires hold verification", costUSD: 4.00, severity: "shared", needsVerification: true },
-    { upn: "amit.kumar@contoso.com", state: "Inactive (130d)", sku: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", holdCheck: "Zero logins in 130d", costUSD: 38.00, severity: "inactive", needsVerification: false },
-    { upn: "operations@contoso.com", state: "Shared Mailbox", sku: "EXCHANGEENTERPRISE", skuId: "19e2a5dc-d259-48e6-b9b9-630ea7d40dd5", holdCheck: "Requires hold verification", costUSD: 8.00, severity: "shared", needsVerification: true }
+    { category: "M365", upn: "rahul.sharma@contoso.com", state: "Disabled", sku: "Office 365 E5", skuPartNumber: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", governanceFinding: "Account disabled 45d in Entra ID; active license billing", holdCheck: "Disabled in Entra ID (Safe)", costUSD: 38.00, severity: "critical", needsVerification: false },
+    { category: "M365", upn: "priya.verma@contoso.com", state: "Disabled", sku: "Microsoft 365 E3", skuPartNumber: "SPE_E3", skuId: "05e01617-00a6-4261-a773-5a61447866b2", governanceFinding: "Offboarded staff; license unrevoked", holdCheck: "Offboarded identity (Safe)", costUSD: 23.00, severity: "critical", needsVerification: false },
+    { category: "M365", upn: "invoices@contoso.com", state: "Shared Mailbox", sku: "Business Premium", skuPartNumber: "SPB", skuId: "cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d", governanceFinding: "Mailbox size 14GB (Free under 50GB; license unneeded)", holdCheck: "Requires hold verification", costUSD: 22.00, severity: "shared", needsVerification: true },
+    { category: "M365", upn: "support-team@contoso.com", state: "Shared Mailbox", sku: "Exchange Online P1", skuPartNumber: "EXCHANGESTANDARD", skuId: "4b5d0382-76be-4b95-821a-493405786616", governanceFinding: "Shared mailbox holding redundant standalone plan", holdCheck: "Requires hold verification", costUSD: 4.00, severity: "shared", needsVerification: true },
+    { category: "M365", upn: "amit.kumar@contoso.com", state: "Inactive (130d)", sku: "Office 365 E5", skuPartNumber: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", governanceFinding: "Zero authenticated sessions in 130d; downgrade candidate", holdCheck: "Zero logins in 130d", costUSD: 38.00, severity: "inactive", needsVerification: false },
+    { category: "M365", upn: "neha.gupta@contoso.com", state: "Disabled", sku: "Microsoft 365 E5", skuPartNumber: "ENTERPRISEPREMIUM", skuId: "c5928f49-12ba-48f7-8140-f6f3477d9c93", governanceFinding: "Former contractor; assigned E5 license unrevoked", holdCheck: "Former contractor (Safe)", costUSD: 38.00, severity: "critical", needsVerification: false },
+    { category: "M365", upn: "operations@contoso.com", state: "Shared Mailbox", sku: "Exchange Online P2", skuPartNumber: "EXCHANGEENTERPRISE", skuId: "19e2a5dc-d259-48e6-b9b9-630ea7d40dd5", governanceFinding: "Unlicensed shared entitlement recommended", holdCheck: "Requires hold verification", costUSD: 8.00, severity: "shared", needsVerification: true }
   ],
-
-  // Azure Records
   azureRecords: [
-    { name: "disk-webprod-backup-os", id: "/subscriptions/sub-8921/resourceGroups/rg-ecommerce-prod/providers/Microsoft.Compute/disks/disk-webprod-backup-os", type: "Managed Disk (Premium SSD 512GB)", rg: "rg-ecommerce-prod", condition: "Unattached (62 days)", costUSD: 76.80, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" },
-    { name: "disk-testdb-data01", id: "/subscriptions/sub-8921/resourceGroups/rg-qa-environments/providers/Microsoft.Compute/disks/disk-testdb-data01", type: "Managed Disk (Standard SSD 1TB)", rg: "rg-qa-environments", condition: "Unattached (38 days)", costUSD: 76.80, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" },
-    { name: "asp-legacy-api-dev", id: "/subscriptions/sub-8921/resourceGroups/rg-apps-legacy/providers/Microsoft.Web/serverfarms/asp-legacy-api-dev", type: "App Service Plan (P1v2)", rg: "rg-apps-legacy", condition: "0 Apps Deployed", costUSD: 146.00, needsVerification: false, verifNote: "Hosted web apps count = 0" },
-    { name: "disk-analytics-worker", id: "/subscriptions/sub-8921/resourceGroups/rg-analytics-temp/providers/Microsoft.Compute/disks/disk-analytics-worker", type: "Managed Disk (Standard HDD 2TB)", rg: "rg-analytics-temp", condition: "Unattached (90 days)", costUSD: 81.92, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" },
-    { name: "pip-gateway-old-test", id: "/subscriptions/sub-8921/resourceGroups/rg-network-core/providers/Microsoft.Network/publicIPAddresses/pip-gateway-old-test", type: "Public IP Address (Static)", rg: "rg-network-core", condition: "Unassociated", costUSD: 4.38, needsVerification: false, verifNote: "ipConfigurations is NULL" }
+    { category: "Azure", name: "disk-webprod-backup-os", id: "/subscriptions/sub-8921/resourceGroups/rg-ecommerce-prod/providers/Microsoft.Compute/disks/disk-webprod-backup-os", type: "Managed Disk (Premium SSD 512GB)", rg: "rg-ecommerce-prod", condition: "Unattached (62 days)", costUSD: 76.80, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" },
+    { category: "Azure", name: "disk-testdb-data01", id: "/subscriptions/sub-8921/resourceGroups/rg-qa-environments/providers/Microsoft.Compute/disks/disk-testdb-data01", type: "Managed Disk (Standard SSD 1TB)", rg: "rg-qa-environments", condition: "Unattached (38 days)", costUSD: 76.80, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" },
+    { category: "Azure", name: "pip-gateway-old-test", id: "/subscriptions/sub-8921/resourceGroups/rg-network-core/providers/Microsoft.Network/publicIPAddresses/pip-gateway-old-test", type: "Public IP Address (Static)", rg: "rg-network-core", condition: "Unassociated", costUSD: 4.38, needsVerification: false, verifNote: "ipConfigurations is NULL" },
+    { category: "Azure", name: "asp-legacy-api-dev", id: "/subscriptions/sub-8921/resourceGroups/rg-apps-legacy/providers/Microsoft.Web/serverfarms/asp-legacy-api-dev", type: "App Service Plan (P1v2)", rg: "rg-apps-legacy", condition: "0 Apps Deployed", costUSD: 146.00, needsVerification: false, verifNote: "Hosted web apps count = 0" },
+    { category: "Azure", name: "disk-analytics-worker", id: "/subscriptions/sub-8921/resourceGroups/rg-analytics-temp/providers/Microsoft.Compute/disks/disk-analytics-worker", type: "Managed Disk (Standard HDD 2TB)", rg: "rg-analytics-temp", condition: "Unattached (90 days)", costUSD: 81.92, needsVerification: false, verifNote: "ManagedBy is confirmed NULL" }
   ]
+};
+
+// Global State Store
+const AppState = {
+  currentTenant: SAMPLE_CONTOSO_DATA.currentTenant,
+  assessmentDate: SAMPLE_CONTOSO_DATA.assessmentDate,
+  isSampleData: true,
+  isDataLoaded: true,
+  currency: 'USD',
+  inrExchangeRate: 83.25,
+  isDryRun: true,
+  activeSidebar: 'overview',
+  activeSupportingTab: 'm365',
+  currentUser: null,
+  mfaActive: false,
+  m365Filter: 'all',
+  m365SearchTerm: '',
+
+  // Baseline Financials (USD) Reconciled 1:1 with visible findings
+  baseline: JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.baseline)),
+
+  // Active Exclusions List
+  exclusions: [],
+
+  // Findings to Review: Sorted by Potential Savings (Descending)
+  decisionFindings: JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.decisionFindings)),
+
+  // Mandatory Review Checklist for Script Unlock (12 candidate resources)
+  candidateReviews: JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.candidateReviews)),
+
+  // M365 Records with Real Microsoft SkuIds (7 findings totaling $171.00)
+  m365Records: JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.m365Records)),
+
+  // Azure Records (5 findings totaling $385.90)
+  azureRecords: JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.azureRecords))
 };
 
 // Chart instances
@@ -275,6 +252,18 @@ function loadSampleDataMode() {
   Telemetry.track("demo_viewed", { source: "sample_dataset" });
   AppState.isSampleData = true;
   AppState.isDataLoaded = true;
+  AppState.currentTenant = SAMPLE_CONTOSO_DATA.currentTenant;
+  AppState.assessmentDate = SAMPLE_CONTOSO_DATA.assessmentDate;
+  AppState.baseline = JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.baseline));
+  AppState.decisionFindings = JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.decisionFindings));
+  AppState.candidateReviews = JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.candidateReviews));
+  AppState.m365Records = JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.m365Records));
+  AppState.azureRecords = JSON.parse(JSON.stringify(SAMPLE_CONTOSO_DATA.azureRecords));
+  AppState.exclusions = [];
+  AppState.m365Filter = 'all';
+  AppState.m365SearchTerm = '';
+
+  hideCsvValidationAlert();
 
   // Show Persistent Demo Banner
   const banner = document.getElementById('persistentDemoBanner');
@@ -288,6 +277,8 @@ function loadSampleDataMode() {
   document.getElementById('dataModeNotice').textContent = 'Illustrative Sample Scenario';
   document.getElementById('dataModeNotice').style.color = 'var(--attention-amber)';
   document.getElementById('sideDemoBadge').textContent = 'Demo mode';
+  document.getElementById('sideDemoBadge').style.background = '#FEF3C7';
+  document.getElementById('sideDemoBadge').style.color = '#92400E';
   document.getElementById('datasetTypeBadge').textContent = 'Sample Demo Mode';
   document.getElementById('datasetTypeBadge').style.background = '#FEF3C7';
   document.getElementById('datasetTypeBadge').style.color = '#92400E';
@@ -296,18 +287,109 @@ function loadSampleDataMode() {
 
   toggleUploadPanel(false);
   toggleCsvGuide(false);
+  resetM365Filters();
   renderDecisionFindings();
   renderSupportingTables();
   renderReviewChecklist();
   renderExclusions();
   updateConfirmedTotals();
+  updateCharts();
   generateRemediationScript();
   showToast('Loaded demo dataset for contoso.onmicrosoft.com');
 }
 
 // ==============================================================================
-// 2. CSV PREPARATION, ROBUST PARSER & FINOPS ANALYSIS ENGINE
+// 2. CSV PREPARATION, VALIDATION, ROBUST PARSER & FINOPS ANALYSIS ENGINE
 // ==============================================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function showCsvValidationAlert(title, message, filename, headers = []) {
+  const alertBox = document.getElementById('csvValidationAlert');
+  if (!alertBox) return;
+
+  const headerStr = headers.length > 0 ? `<div class="alert-req-cols"><strong>Detected Headers in ${escapeHtml(filename)}:</strong> ${headers.map(h => escapeHtml(h)).join(', ')}</div>` : '';
+
+  alertBox.innerHTML = `
+    <h4>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      ${escapeHtml(title)}
+    </h4>
+    <p>${escapeHtml(message)}</p>
+    ${headerStr}
+    <div style="font-size:0.78rem; line-height:1.6; margin-bottom:10px;">
+      <strong>Actionable Schema Requirements:</strong>
+      <ul style="padding-left:18px; margin-top:4px;">
+        <li><strong>Microsoft 365 ActiveUsers.csv:</strong> Must contain <code>User principal name</code> (or <code>UserPrincipalName</code>), <code>Block credential</code> (or <code>AccountEnabled</code>), and <code>Licenses</code> (or <code>AssignedLicenses</code>).</li>
+        <li><strong>Azure Resources / Cost CSV:</strong> Must contain <code>ResourceId</code> (or <code>ResourceName</code>), <code>ResourceType</code>, <code>ResourceGroup</code>, and <code>PreTaxCostUSD</code>.</li>
+      </ul>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <a href="sample-m365-activeusers.csv" download="sample-m365-activeusers.csv" class="btn btn-outline" style="font-size:0.72rem; padding:4px 10px; background:white;">⬇ Download Supported M365 Sample</a>
+      <a href="sample-azure-resources.csv" download="sample-azure-resources.csv" class="btn btn-outline" style="font-size:0.72rem; padding:4px 10px; background:white;">⬇ Download Supported Azure Sample</a>
+      <button class="btn btn-outline" style="font-size:0.72rem; padding:4px 10px; background:white;" onclick="hideCsvValidationAlert()">Dismiss Alert</button>
+    </div>
+  `;
+  alertBox.style.display = 'block';
+  toggleUploadPanel(true);
+}
+
+function hideCsvValidationAlert() {
+  const alertBox = document.getElementById('csvValidationAlert');
+  if (alertBox) {
+    alertBox.style.display = 'none';
+    alertBox.innerHTML = '';
+  }
+}
+
+function getRowVal(row, possibleKeys) {
+  const normalizedKeys = Object.keys(row).map(k => ({
+    raw: k,
+    clean: k.toLowerCase().replace(/[^a-z0-9]/g, '')
+  }));
+  for (const target of possibleKeys) {
+    const cleanTarget = target.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const found = normalizedKeys.find(k => k.clean === cleanTarget || k.clean.includes(cleanTarget));
+    if (found && row[found.raw] !== undefined && row[found.raw] !== '') {
+      return String(row[found.raw]).trim();
+    }
+  }
+  return '';
+}
+
+function detectCsvType(headers) {
+  if (!headers || headers.length === 0) return null;
+  const norm = headers.map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  const m365Matches = norm.filter(h =>
+    h.includes('userprincipalname') || h === 'upn' || h.includes('blockcredential') ||
+    h.includes('accountenabled') || h.includes('assignedlicenses') || h === 'licenses' || h.includes('signin')
+  );
+  const azureMatches = norm.filter(h =>
+    h.includes('resourceid') || h.includes('resourcename') || h.includes('resourcegroup') ||
+    h.includes('pretaxcost') || h.includes('diskstate') || h.includes('managedby')
+  );
+
+  const hasUpn = norm.some(h => h.includes('userprincipalname') || h === 'upn');
+  const hasLicOrBlock = norm.some(h => h.includes('licenses') || h.includes('blockcredential') || h.includes('accountenabled'));
+  if (hasUpn || (m365Matches.length >= 2 && norm.some(h => h.includes('lic') || h.includes('user')))) {
+    return 'm365';
+  }
+
+  const hasResourceId = norm.some(h => h.includes('resourceid') || (h.includes('resource') && h.includes('name')));
+  if (hasResourceId || azureMatches.length >= 2) {
+    return 'azure';
+  }
+
+  return null;
+}
+
 const SKU_CATALOG = {
   'c5928f49-12ba-48f7-8140-f6f3477d9c93': { name: 'Office 365 E5', sku: 'ENTERPRISEPREMIUM', costUSD: 38.00, skuId: 'c5928f49-12ba-48f7-8140-f6f3477d9c93' },
   '05e01617-00a6-4261-a773-5a61447866b2': { name: 'Microsoft 365 E3', sku: 'SPE_E3', costUSD: 23.00, skuId: '05e01617-00a6-4261-a773-5a61447866b2' },
@@ -316,6 +398,48 @@ const SKU_CATALOG = {
   '19e2a5dc-d259-48e6-b9b9-630ea7d40dd5': { name: 'Exchange Online P2', sku: 'EXCHANGEENTERPRISE', costUSD: 8.00, skuId: '19e2a5dc-d259-48e6-b9b9-630ea7d40dd5' },
   'f243dec6-ba3b-4871-bc1e-8d5914e74321': { name: 'Office 365 E1', sku: 'STANDARDPACK', costUSD: 10.00, skuId: 'f243dec6-ba3b-4871-bc1e-8d5914e74321' }
 };
+
+function resolveSkuInfo(rawLicense) {
+  if (!rawLicense) return { name: 'Unassigned', sku: 'NONE', costUSD: 0, skuId: 'none' };
+  const raw = String(rawLicense).trim();
+  const lower = raw.toLowerCase();
+
+  if (SKU_CATALOG[raw]) return SKU_CATALOG[raw];
+
+  // Match friendly names
+  if (lower.includes('office 365 e5') || lower.includes('enterprise premium') || lower.includes('enterprisepremium')) {
+    return SKU_CATALOG['c5928f49-12ba-48f7-8140-f6f3477d9c93'];
+  }
+  if (lower.includes('microsoft 365 e5') || lower.includes('m365 e5')) {
+    return { name: 'Microsoft 365 E5', sku: 'ENTERPRISEPREMIUM', costUSD: 38.00, skuId: 'c5928f49-12ba-48f7-8140-f6f3477d9c93' };
+  }
+  if (lower.includes('office 365 e3') || lower.includes('enterprise pack') || lower.includes('enterprisepack')) {
+    return { name: 'Office 365 E3', sku: 'ENTERPRISEPACK', costUSD: 23.00, skuId: '6fd2c87f-b296-42f0-b197-1e91e994b900' };
+  }
+  if (lower.includes('microsoft 365 e3') || lower.includes('m365 e3') || lower.includes('spe_e3')) {
+    return SKU_CATALOG['05e01617-00a6-4261-a773-5a61447866b2'];
+  }
+  if (lower.includes('business premium') || lower.includes('spb')) {
+    return SKU_CATALOG['cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d'];
+  }
+  if (lower.includes('exchange online p1') || lower.includes('exchangestandard')) {
+    return SKU_CATALOG['4b5d0382-76be-4b95-821a-493405786616'];
+  }
+  if (lower.includes('exchange online p2') || lower.includes('exchangeenterprise')) {
+    return SKU_CATALOG['19e2a5dc-d259-48e6-b9b9-630ea7d40dd5'];
+  }
+  if (lower.includes('e1') || lower.includes('standardpack')) {
+    return SKU_CATALOG['f243dec6-ba3b-4871-bc1e-8d5914e74321'];
+  }
+
+  // Fallback
+  return {
+    name: raw,
+    sku: raw.toUpperCase().replace(/[^A-Z0-9_]/g, '_').slice(0, 20),
+    skuId: raw.length > 25 ? raw : 'c5928f49-12ba-48f7-8140-f6f3477d9c93',
+    costUSD: 23.00
+  };
+}
 
 function parseCSVText(text) {
   if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
@@ -380,37 +504,50 @@ function analyzeM365Dataset(rows) {
   const inactiveUpns = [];
 
   rows.forEach((r, idx) => {
-    const upn = r.UserPrincipalName || r.UPN || r.DisplayName || `user-${idx}@tenant.com`;
-    const isEnabled = String(r.AccountEnabled).toLowerCase() === 'true';
-    const hasLicenses = r.AssignedLicenses && r.AssignedLicenses !== '0' && r.AssignedLicenses !== '';
-    const isDisabledLicensed = String(r.IsDisabledLicensed).toLowerCase() === 'true' || (!isEnabled && hasLicenses);
-    const isShared = String(r.MailboxType).toLowerCase().includes('shared') || upn.toLowerCase().includes('shared') || (r.DisplayName && r.DisplayName.toLowerCase().includes('shared'));
+    const upn = getRowVal(r, ['UserPrincipalName', 'User principal name', 'UPN', 'EmailAddress', 'DisplayName', 'Display name']) || `user-${idx + 1}@tenant.com`;
+    const blockCred = getRowVal(r, ['Block credential', 'BlockCredential']);
+    const acctEnabled = getRowVal(r, ['AccountEnabled', 'Account enabled']);
+    const isDisabledLicensedVal = getRowVal(r, ['IsDisabledLicensed']);
+    const userStatus = getRowVal(r, ['User status', 'Status', 'SignInStatus']);
+    const rawLicenses = getRowVal(r, ['Licenses', 'AssignedLicenses', 'Assigned SKUs', 'License']);
+    const mailboxType = getRowVal(r, ['MailboxType', 'Mailbox Type', 'RecipientTypeDetails']);
+    const lastSignIn = getRowVal(r, ['LastSignInDateTime', 'Last sign-in', 'LastSuccessfulSignInDateTime']);
+    const mailboxSize = getRowVal(r, ['MailboxSizeGB', 'TotalItemSizeGB']);
 
-    const rawSku = r.AssignedLicenses || '';
-    let skuInfo = SKU_CATALOG[rawSku];
-    if (!skuInfo) {
-      const foundKey = Object.keys(SKU_CATALOG).find(k => rawSku.includes(k));
-      skuInfo = foundKey ? SKU_CATALOG[foundKey] : {
-        name: rawSku.includes('-') ? 'Assigned Plan' : (rawSku || 'Enterprise License'),
-        sku: rawSku || 'ENTERPRISE',
-        skuId: rawSku.length > 20 ? rawSku : 'c5928f49-12ba-48f7-8140-f6f3477d9c93',
-        costUSD: !isNaN(parseFloat(rawSku)) ? parseFloat(rawSku) * 25 : 23.00
-      };
+    let isDisabled = false;
+    if (blockCred.toLowerCase() === 'true') {
+      isDisabled = true;
+    } else if (acctEnabled.toLowerCase() === 'false') {
+      isDisabled = true;
+    } else if (isDisabledLicensedVal.toLowerCase() === 'true') {
+      isDisabled = true;
+    } else if (userStatus.toLowerCase().includes('disabled') || userStatus.toLowerCase().includes('blocked')) {
+      isDisabled = true;
     }
 
-    const lastSignIn = r.LastSignInDateTime || '';
-    const isInactive = lastSignIn.includes('Never') || (lastSignIn && new Date(lastSignIn) < new Date(Date.now() - 90 * 86400000));
+    const hasLicenses = Boolean(rawLicenses && rawLicenses !== '0' && rawLicenses.toLowerCase() !== 'none' && rawLicenses.toLowerCase() !== 'unassigned');
+    const skuInfo = resolveSkuInfo(rawLicenses);
 
-    if (isDisabledLicensed) {
+    const isShared = mailboxType.toLowerCase().includes('shared') ||
+                     upn.toLowerCase().includes('shared') ||
+                     getRowVal(r, ['DisplayName', 'Display name']).toLowerCase().includes('shared');
+
+    const isInactive = !isDisabled && !isShared && hasLicenses &&
+      (lastSignIn.toLowerCase().includes('never') || (lastSignIn && new Date(lastSignIn) < new Date(Date.now() - 90 * 86400000)));
+
+    if (isDisabled && hasLicenses) {
       disabledUsersCount++;
       disabledUsersCost += skuInfo.costUSD;
       disabledUpns.push(upn);
 
       m365Records.push({
+        category: "M365",
         upn: upn,
         state: "Disabled",
-        sku: skuInfo.sku,
+        sku: skuInfo.name,
+        skuPartNumber: skuInfo.sku,
         skuId: skuInfo.skuId,
+        governanceFinding: `Account disabled in Entra ID; active license billing (${skuInfo.name})`,
         holdCheck: "Disabled in Entra ID (Safe)",
         costUSD: skuInfo.costUSD,
         severity: "critical",
@@ -418,7 +555,7 @@ function analyzeM365Dataset(rows) {
       });
 
       candidateReviews.push({
-        id: `rev-m365-${idx}`,
+        id: `rev-m365-dis-${idx}`,
         name: upn,
         type: "Entra ID Disabled Account",
         costUSD: skuInfo.costUSD,
@@ -431,10 +568,13 @@ function analyzeM365Dataset(rows) {
       sharedUpns.push(upn);
 
       m365Records.push({
+        category: "M365",
         upn: upn,
         state: "Shared Mailbox",
-        sku: skuInfo.sku,
+        sku: skuInfo.name,
+        skuPartNumber: skuInfo.sku,
         skuId: skuInfo.skuId,
+        governanceFinding: `Mailbox size ${mailboxSize || '<50GB'} (Free under 50GB; license unneeded)`,
         holdCheck: "Requires hold verification",
         costUSD: skuInfo.costUSD,
         severity: "shared",
@@ -444,25 +584,37 @@ function analyzeM365Dataset(rows) {
       candidateReviews.push({
         id: `rev-m365-sm-${idx}`,
         name: upn,
-        type: `Shared Mailbox (${r.MailboxSizeGB || '<50'} GB)`,
+        type: `Shared Mailbox (${mailboxSize || '<50'} GB)`,
         costUSD: skuInfo.costUSD,
-        safetyCheck: "Size <50GB. Confirmed NO Litigation Hold or Auto-Expanding Archive before de-licensing.",
+        safetyCheck: "Size <50GB. Confirmed NO Litigation Hold or Purview retention policy before de-licensing.",
         reviewed: false
       });
-    } else if (isInactive && skuInfo.costUSD >= 30) {
+    } else if (isInactive && skuInfo.costUSD >= 20) {
       inactiveCount++;
-      inactiveCost += 30.00;
+      inactiveCost += skuInfo.costUSD;
       inactiveUpns.push(upn);
 
       m365Records.push({
+        category: "M365",
         upn: upn,
-        state: "Inactive (>90d)",
-        sku: skuInfo.sku,
+        state: "Inactive (90d+)",
+        sku: skuInfo.name,
+        skuPartNumber: skuInfo.sku,
         skuId: skuInfo.skuId,
+        governanceFinding: `Zero authenticated sessions in 90+ days; candidate for E1 downgrade`,
         holdCheck: `Last login: ${lastSignIn ? lastSignIn.slice(0, 10) : 'Never'}`,
         costUSD: skuInfo.costUSD,
         severity: "inactive",
         needsVerification: false
+      });
+
+      candidateReviews.push({
+        id: `rev-m365-inact-${idx}`,
+        name: upn,
+        type: "Inactive User Account",
+        costUSD: skuInfo.costUSD,
+        safetyCheck: `Last active: ${lastSignIn || 'Never'}. Downgrade from ${skuInfo.name} to optimize license spend.`,
+        reviewed: false
       });
     }
   });
@@ -471,7 +623,7 @@ function analyzeM365Dataset(rows) {
     findings.push({
       id: "find-m365-disabled",
       finding: "Disabled user with license",
-      resourceLabel: `${disabledUsersCount} Entra ID Offboarded Users (${disabledUpns.slice(0, 2).join(', ')}${disabledUsersCount > 2 ? '...' : ''})`,
+      resourceLabel: `${disabledUsersCount} Entra ID Offboarded User${disabledUsersCount > 1 ? 's' : ''} (${disabledUpns.slice(0, 2).join(', ')}${disabledUsersCount > 2 ? '...' : ''})`,
       estimatedSavingUSD: disabledUsersCost,
       evidence: "Source: Microsoft Entra ID. Account status is Disabled (AccountEnabled -eq $false). Assigned SKUs unrevoked.",
       confidence: "Needs review",
@@ -489,7 +641,7 @@ function analyzeM365Dataset(rows) {
     findings.push({
       id: "find-m365-shared",
       finding: "Over-licensed shared mailbox",
-      resourceLabel: `${sharedCount} Shared Mailboxes (${sharedUpns.slice(0, 2).join(', ')}${sharedCount > 2 ? '...' : ''})`,
+      resourceLabel: `${sharedCount} Shared Mailbox${sharedCount > 1 ? 'es' : ''} (${sharedUpns.slice(0, 2).join(', ')}${sharedCount > 2 ? '...' : ''})`,
       estimatedSavingUSD: sharedCost,
       evidence: "Source: Exchange Online. Mailbox size <50GB. Standalone paid licenses assigned. Requires hold & Purview check.",
       confidence: "Needs review",
@@ -507,7 +659,7 @@ function analyzeM365Dataset(rows) {
     findings.push({
       id: "find-m365-inactive",
       finding: "Inactive user with premium license",
-      resourceLabel: `${inactiveCount} Inactive Users (${inactiveUpns.slice(0, 2).join(', ')})`,
+      resourceLabel: `${inactiveCount} Inactive User${inactiveCount > 1 ? 's' : ''} (${inactiveUpns.slice(0, 2).join(', ')})`,
       estimatedSavingUSD: inactiveCost,
       evidence: "Source: Microsoft Graph signInActivity. Zero authenticated sessions in 90+ days. Candidate for E1 downgrade.",
       confidence: "Needs review",
@@ -521,7 +673,8 @@ function analyzeM365Dataset(rows) {
     });
   }
 
-  return { m365Records, findings, candidateReviews, totalWasteUSD: disabledUsersCost + sharedCost + inactiveCost, totalUsers: rows.length };
+  const totalWasteUSD = disabledUsersCost + sharedCost + inactiveCost;
+  return { m365Records, findings, candidateReviews, totalWasteUSD, totalUsers: rows.length };
 }
 
 function analyzeAzureDataset(rows) {
@@ -542,18 +695,18 @@ function analyzeAzureDataset(rows) {
   const idleIPNames = [];
 
   rows.forEach((r, idx) => {
-    const name = r.ResourceName || r.Name || `azure-asset-${idx}`;
-    const id = r.ResourceId || r.Id || name;
-    const type = r.ResourceType || r.Type || '';
-    const rg = r.ResourceGroup || r.ResourceGroupName || 'default-rg';
-    const costUSD = parseFloat(r.PreTaxCostUSD || r.EstimatedCostUSD || '0') || 0;
-    const diskState = (r.DiskState || r.Status || '').toLowerCase();
-    const managedBy = r.ManagedBy || '';
-    const lockStatus = r.LockStatus || 'None';
+    const name = getRowVal(r, ['ResourceName', 'Resource Name', 'Name', 'resourceId', 'id']) || `azure-asset-${idx}`;
+    const id = getRowVal(r, ['ResourceId', 'Resource ID', 'Id']) || name;
+    const type = getRowVal(r, ['ResourceType', 'Resource Type', 'Type']);
+    const rg = getRowVal(r, ['ResourceGroup', 'Resource Group', 'resourceGroupName']) || 'default-rg';
+    const costUSD = parseFloat(getRowVal(r, ['PreTaxCostUSD', 'Cost', 'PreTaxCost', 'EstimatedCostUSD'])) || 0;
+    const diskState = getRowVal(r, ['DiskState', 'Disk State', 'Status']).toLowerCase();
+    const managedBy = getRowVal(r, ['ManagedBy', 'Managed by']);
+    const lockStatus = getRowVal(r, ['LockStatus', 'Lock Status']) || 'None';
 
-    const isDisk = type.toLowerCase().includes('disk');
-    const isPlan = type.toLowerCase().includes('serverfarm') || type.toLowerCase().includes('plan');
-    const isIP = type.toLowerCase().includes('publicip') || type.toLowerCase().includes('network/public');
+    const isDisk = type.toLowerCase().includes('disk') || name.toLowerCase().startsWith('disk-');
+    const isPlan = type.toLowerCase().includes('serverfarm') || type.toLowerCase().includes('plan') || name.toLowerCase().startsWith('asp-');
+    const isIP = type.toLowerCase().includes('publicip') || type.toLowerCase().includes('network/public') || name.toLowerCase().startsWith('pip-');
 
     if (isDisk && (diskState.includes('unattached') || (!managedBy && diskState !== 'attached'))) {
       unattachedDisksCount++;
@@ -561,11 +714,12 @@ function analyzeAzureDataset(rows) {
       unattachedDiskNames.push(name);
 
       azureRecords.push({
+        category: "Azure",
         name: name,
         id: id,
-        type: `Managed Disk (${rg})`,
+        type: type || `Managed Disk (${rg})`,
         rg: rg,
-        condition: "Unattached",
+        condition: diskState.includes('unattached') ? "Unattached" : "Unattached (No VM attached)",
         costUSD: costUSD,
         needsVerification: lockStatus !== 'None',
         verifNote: lockStatus !== 'None' ? `Resource lock: ${lockStatus}` : "ManagedBy is confirmed NULL"
@@ -579,15 +733,16 @@ function analyzeAzureDataset(rows) {
         safetyCheck: `ManagedBy is NULL. Confirm no ReadOnly lock in ${rg} before deallocation.`,
         reviewed: false
       });
-    } else if (isPlan && (managedBy.includes('0') || diskState.includes('0') || r.DiskState === '0 Apps')) {
+    } else if (isPlan && (managedBy.includes('0') || diskState.includes('0') || diskState === '0 apps' || diskState.includes('empty'))) {
       emptyPlansCount++;
       emptyPlansCost += costUSD;
       emptyPlanNames.push(name);
 
       azureRecords.push({
+        category: "Azure",
         name: name,
         id: id,
-        type: `App Service Plan (${rg})`,
+        type: type || `App Service Plan (${rg})`,
         rg: rg,
         condition: "0 Apps Deployed",
         costUSD: costUSD,
@@ -609,9 +764,10 @@ function analyzeAzureDataset(rows) {
       idleIPNames.push(name);
 
       azureRecords.push({
+        category: "Azure",
         name: name,
         id: id,
-        type: `Public IP Address (${rg})`,
+        type: type || `Public IP Address (${rg})`,
         rg: rg,
         condition: "Unassociated",
         costUSD: costUSD || 4.38,
@@ -634,7 +790,7 @@ function analyzeAzureDataset(rows) {
     findings.push({
       id: "find-az-disks",
       finding: "Unattached disk candidate",
-      resourceLabel: `${unattachedDisksCount} Managed Disks (${unattachedDiskNames.slice(0, 2).join(', ')}${unattachedDisksCount > 2 ? '...' : ''})`,
+      resourceLabel: `${unattachedDisksCount} Managed Disk${unattachedDisksCount > 1 ? 's' : ''} (${unattachedDiskNames.slice(0, 2).join(', ')}${unattachedDisksCount > 2 ? '...' : ''})`,
       estimatedSavingUSD: unattachedDisksCost,
       evidence: "Source: Azure Resource Graph. ManagedBy is NULL, 0 attached VMs.",
       confidence: "Needs review",
@@ -694,95 +850,147 @@ function toggleCsvGuide(show) {
 }
 
 function processUploadedFile(file) {
+  if (!file) return;
+
   const reader = new FileReader();
   reader.onload = function(e) {
     const text = e.target.result;
     const parsed = parseCSVText(text);
 
     if (!parsed || parsed.rows.length === 0) {
-      showToast('Error: The uploaded file is empty or lacks data rows.');
+      showCsvValidationAlert(
+        'Empty or Malformed File',
+        `The file "${file.name}" could not be parsed or contains zero data rows. Please ensure the CSV contains a valid header row and at least one data record.`,
+        file.name,
+        parsed ? parsed.headers : []
+      );
+      showToast(`Error: "${file.name}" has no data rows. Sample findings preserved.`);
       return;
     }
 
     const headers = parsed.headers;
-    const isM365 = headers.some(h => /UserPrincipalName|User Principal Name|IsDisabledLicensed/i.test(h));
-    const isAzure = headers.some(h => /ResourceId|ResourceName|ResourceGroup|DiskState|PreTaxCostUSD|SubscriptionName/i.test(h));
+    const csvType = detectCsvType(headers);
 
-    if (!isM365 && !isAzure) {
-      showToast('Invalid CSV format: Missing recognized M365 or Azure headers.');
+    if (!csvType) {
+      showCsvValidationAlert(
+        'Unsupported CSV Schema',
+        `The file "${file.name}" does not contain recognizable Microsoft 365 or Azure columns. CloudTrim requires official schema columns to safely evaluate licensing waste and orphaned infrastructure.`,
+        file.name,
+        headers
+      );
+      showToast(`Error: Unsupported CSV schema in "${file.name}". Sample findings preserved.`);
       return;
     }
 
-    // Switch State to Customer Real Data
+    // Schema Validated: Clear any previous validation alert
+    hideCsvValidationAlert();
+
+    // Switch State to Customer Real Data (Isolating customer results from demo)
     AppState.isSampleData = false;
     AppState.isDataLoaded = true;
+    AppState.exclusions = [];
 
-    // Detect tenant domain from rows or filename
+    // Detect tenant domain from UPN or filename
     let detectedTenant = file.name.replace('.csv', '');
-    if (isM365) {
-      const upnRow = parsed.rows.find(r => r.UserPrincipalName && r.UserPrincipalName.includes('@'));
+    if (csvType === 'm365') {
+      const upnRow = parsed.rows.find(r => {
+        const upnVal = getRowVal(r, ['UserPrincipalName', 'User principal name', 'UPN', 'EmailAddress']);
+        return upnVal && upnVal.includes('@');
+      });
       if (upnRow) {
-        detectedTenant = upnRow.UserPrincipalName.split('@')[1];
+        const fullUpn = getRowVal(upnRow, ['UserPrincipalName', 'User principal name', 'UPN', 'EmailAddress']);
+        detectedTenant = fullUpn.split('@')[1];
       }
     }
     AppState.currentTenant = detectedTenant;
 
-    // Process datasets
+    // Process datasets with STRICT DEMO ISOLATION:
+    // If customer imports M365, clear Contoso Azure records.
+    // If customer imports Azure, clear Contoso M365 records.
     let newFindings = [];
     let newReviews = [];
 
-    if (isM365) {
+    if (csvType === 'm365') {
       const m365Analysis = analyzeM365Dataset(parsed.rows);
       AppState.m365Records = m365Analysis.m365Records;
       AppState.baseline.m365SeatCount = m365Analysis.totalUsers;
       AppState.baseline.m365WasteUSD = m365Analysis.totalWasteUSD;
-      newFindings = newFindings.concat(m365Analysis.findings);
-      newReviews = newReviews.concat(m365Analysis.candidateReviews);
-      
-      const existingAzure = AppState.decisionFindings.filter(f => f.category === 'Azure Infrastructure');
-      newFindings = newFindings.concat(existingAzure);
-    }
 
-    if (isAzure) {
+      // DEMO ISOLATION: Clear sample Azure records
+      AppState.azureRecords = [];
+      AppState.baseline.azureAssetCount = 0;
+      AppState.baseline.azureWasteUSD = 0.00;
+
+      newFindings = m365Analysis.findings;
+      newReviews = m365Analysis.candidateReviews;
+    } else if (csvType === 'azure') {
       const azureAnalysis = analyzeAzureDataset(parsed.rows);
       AppState.azureRecords = azureAnalysis.azureRecords;
       AppState.baseline.azureAssetCount = azureAnalysis.totalAssets;
       AppState.baseline.azureWasteUSD = azureAnalysis.totalWasteUSD;
-      newFindings = newFindings.concat(azureAnalysis.findings);
-      newReviews = newReviews.concat(azureAnalysis.candidateReviews);
 
-      const existingM365 = AppState.decisionFindings.filter(f => f.category === 'M365 Licenses');
-      newFindings = existingM365.concat(newFindings);
+      // DEMO ISOLATION: Clear sample M365 records
+      AppState.m365Records = [];
+      AppState.baseline.m365SeatCount = 0;
+      AppState.baseline.m365WasteUSD = 0.00;
+
+      newFindings = azureAnalysis.findings;
+      newReviews = azureAnalysis.candidateReviews;
     }
 
     AppState.decisionFindings = newFindings;
     AppState.candidateReviews = newReviews;
 
-    // Recompute Financial Baselines
+    // Recompute Financial Baselines Reconciled with Analysis
     AppState.baseline.monthlyWasteUSD = AppState.baseline.m365WasteUSD + AppState.baseline.azureWasteUSD;
     AppState.baseline.annualWasteUSD = AppState.baseline.monthlyWasteUSD * 12;
     AppState.baseline.governanceScore = Math.max(45, Math.min(95, Math.round(100 - (AppState.baseline.monthlyWasteUSD / (AppState.baseline.monthlyWasteUSD + 3500)) * 55)));
 
+    // Update Banner & Workspace Indicators
     const banner = document.getElementById('persistentDemoBanner');
     if (banner) banner.style.display = 'none';
 
-    document.getElementById('tenantDot').style.background = '#22C55E';
-    document.getElementById('tenantDisplay').textContent = `${AppState.currentTenant}`;
-    document.getElementById('sampleDataBadge').style.display = 'none';
-    document.getElementById('tenantContextName').textContent = file.name;
-    document.getElementById('dataModeNotice').textContent = 'Verified Customer Dataset';
-    document.getElementById('dataModeNotice').style.color = 'var(--savings-green)';
-    document.getElementById('sideDemoBadge').textContent = 'Customer data';
-    document.getElementById('sideDemoBadge').style.background = '#DCFCE7';
-    document.getElementById('sideDemoBadge').style.color = '#15803D';
-    document.getElementById('datasetTypeBadge').textContent = 'Customer Data Active';
-    document.getElementById('datasetTypeBadge').style.background = '#DCFCE7';
-    document.getElementById('datasetTypeBadge').style.color = '#15803D';
-    document.getElementById('datasetTypeBadge').style.borderColor = '#BBF7D0';
-    document.getElementById('activeFileSummary').textContent = `${file.name} (${parsed.rows.length} rows parsed in local RAM)`;
+    const tenantDot = document.getElementById('tenantDot');
+    if (tenantDot) tenantDot.style.background = '#22C55E';
+
+    const tenantDisplay = document.getElementById('tenantDisplay');
+    if (tenantDisplay) tenantDisplay.textContent = AppState.currentTenant;
+
+    const sampleDataBadge = document.getElementById('sampleDataBadge');
+    if (sampleDataBadge) sampleDataBadge.style.display = 'none';
+
+    const tenantContextName = document.getElementById('tenantContextName');
+    if (tenantContextName) tenantContextName.textContent = file.name;
+
+    const dataModeNotice = document.getElementById('dataModeNotice');
+    if (dataModeNotice) {
+      dataModeNotice.textContent = 'Verified Customer Dataset';
+      dataModeNotice.style.color = 'var(--savings-green)';
+    }
+
+    const sideDemoBadge = document.getElementById('sideDemoBadge');
+    if (sideDemoBadge) {
+      sideDemoBadge.textContent = 'Customer data';
+      sideDemoBadge.style.background = '#DCFCE7';
+      sideDemoBadge.style.color = '#15803D';
+    }
+
+    const datasetTypeBadge = document.getElementById('datasetTypeBadge');
+    if (datasetTypeBadge) {
+      datasetTypeBadge.textContent = 'Customer Data Active';
+      datasetTypeBadge.style.background = '#DCFCE7';
+      datasetTypeBadge.style.color = '#15803D';
+      datasetTypeBadge.style.borderColor = '#BBF7D0';
+    }
+
+    const activeFileSummary = document.getElementById('activeFileSummary');
+    if (activeFileSummary) {
+      activeFileSummary.textContent = `${file.name} (${parsed.rows.length} rows parsed in local RAM)`;
+    }
 
     toggleUploadPanel(false);
     toggleCsvGuide(false);
+    resetM365Filters();
     updateCharts();
     renderDecisionFindings();
     renderSupportingTables();
@@ -791,7 +999,7 @@ function processUploadedFile(file) {
     updateConfirmedTotals();
     generateRemediationScript();
 
-    Telemetry.track('csv_imported', { filename: file.name, rowCount: parsed.rows.length, isM365, isAzure });
+    Telemetry.track('csv_imported', { filename: file.name, rowCount: parsed.rows.length, csvType });
     showToast(`✓ Ingested ${file.name} (${parsed.rows.length} rows) — Zero bytes sent to cloud`);
   };
   reader.readAsText(file);
@@ -956,8 +1164,10 @@ function updateConfirmedTotals() {
   const totalFindings = AppState.decisionFindings.length;
 
   // Update lead cards
-  document.getElementById('leadMonthlySavings').textContent = formatMoney(totalMonthlyUSD);
-  document.getElementById('leadAnnualSavings').textContent = `${formatMoney(totalAnnualUSD)} potential annual savings`;
+  const leadMonthlyEl = document.getElementById('leadMonthlySavings');
+  const leadAnnualEl = document.getElementById('leadAnnualSavings');
+  if (leadMonthlyEl) leadMonthlyEl.textContent = formatMoney(totalMonthlyUSD);
+  if (leadAnnualEl) leadAnnualEl.textContent = `${formatMoney(totalAnnualUSD)} potential annual savings`;
 
   // Update M365 and Azure Opportunity cards
   const m365Waste = activeFindings.filter(f => f.category === 'M365 Licenses').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
@@ -972,6 +1182,16 @@ function updateConfirmedTotals() {
   const azureAssetsEl = document.getElementById('cardAzureAssetVal');
   if (azureWasteEl) azureWasteEl.textContent = `${formatMoney(azureWaste)}/mo idle capacity`;
   if (azureAssetsEl) azureAssetsEl.textContent = `${AppState.baseline.azureAssetCount} Assets`;
+
+  // Update Navigation & Sub-tab Badges
+  const badgeM365 = document.getElementById('badgeM365Count');
+  if (badgeM365) badgeM365.textContent = AppState.baseline.m365SeatCount;
+  const badgeAzure = document.getElementById('badgeAzureCount');
+  if (badgeAzure) badgeAzure.textContent = AppState.baseline.azureAssetCount;
+  const subtabBadgeM365 = document.getElementById('subtabBadgeM365');
+  if (subtabBadgeM365) subtabBadgeM365.textContent = AppState.m365Records.length;
+  const subtabBadgeAzure = document.getElementById('subtabBadgeAzure');
+  if (subtabBadgeAzure) subtabBadgeAzure.textContent = AppState.azureRecords.length;
 
   // Update Section 4 Preview
   const confMonthlyEl = document.getElementById('confirmedMonthlySavings');
@@ -1307,48 +1527,145 @@ function switchSupportingTab(tabKey) {
   document.getElementById('tab-pane-automation').style.display = (tabKey === 'automation') ? 'block' : 'none';
 }
 
+function filterM365Category(category) {
+  AppState.m365Filter = category;
+  document.querySelectorAll('.filter-pills-group .filter-pill').forEach(btn => btn.classList.remove('active'));
+  const pillMap = {
+    'all': 'pillM365All',
+    'disabled': 'pillM365Disabled',
+    'shared': 'pillM365Shared',
+    'inactive': 'pillM365Inactive'
+  };
+  const activePill = document.getElementById(pillMap[category] || 'pillM365All');
+  if (activePill) activePill.classList.add('active');
+  renderSupportingTables();
+}
+
+function handleM365Search(term) {
+  AppState.m365SearchTerm = (term || '').trim().toLowerCase();
+  const clearBtn = document.getElementById('m365SearchClear');
+  if (clearBtn) {
+    clearBtn.style.display = AppState.m365SearchTerm ? 'block' : 'none';
+  }
+  renderSupportingTables();
+}
+
+function resetM365Filters() {
+  AppState.m365Filter = 'all';
+  AppState.m365SearchTerm = '';
+  const searchInput = document.getElementById('m365SearchInput');
+  if (searchInput) searchInput.value = '';
+  const clearBtn = document.getElementById('m365SearchClear');
+  if (clearBtn) clearBtn.style.display = 'none';
+
+  document.querySelectorAll('.filter-pills-group .filter-pill').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('pillM365All')?.classList.add('active');
+  renderSupportingTables();
+}
+
 function renderSupportingTables() {
   const tbodyM365 = document.getElementById('tbodyM365Supporting');
   if (tbodyM365) {
     tbodyM365.innerHTML = '';
-    AppState.m365Records.forEach(r => {
-      const badgeClass = r.severity === 'critical' ? 'badge-danger' : (r.severity === 'shared' ? 'badge-warning' : 'badge-neutral');
-      const verifBadge = r.needsVerification 
-        ? `<span class="badge-verification">Needs verification</span><span class="verification-subtext">Check Litigation Hold &amp; Purview policy</span>` 
-        : `<span style="font-size:0.75rem; color:#15803D;">✓ Account offboarded</span>`;
 
+    // Apply active category and search filter
+    const filteredM365 = AppState.m365Records.filter(r => {
+      // 1. Category filter
+      if (AppState.m365Filter === 'disabled' && r.state.toLowerCase() !== 'disabled') {
+        return false;
+      }
+      if (AppState.m365Filter === 'shared' && !r.state.toLowerCase().includes('shared')) {
+        return false;
+      }
+      if (AppState.m365Filter === 'inactive' && !r.state.toLowerCase().includes('inactive')) {
+        return false;
+      }
+
+      // 2. Search query filter
+      if (AppState.m365SearchTerm) {
+        const upn = (r.upn || '').toLowerCase();
+        const state = (r.state || '').toLowerCase();
+        const sku = (r.sku || r.skuPartNumber || '').toLowerCase();
+        const finding = (r.governanceFinding || r.holdCheck || '').toLowerCase();
+        const term = AppState.m365SearchTerm;
+        return upn.includes(term) || state.includes(term) || sku.includes(term) || finding.includes(term);
+      }
+
+      return true;
+    });
+
+    if (filteredM365.length === 0) {
       const tr = document.createElement('tr');
+      const isSearchActive = Boolean(AppState.m365SearchTerm);
+      const isFilterActive = AppState.m365Filter !== 'all';
+      let emptyTitle = 'No matching M365 records found';
+      let emptyMsg = 'No identities in the analyzed dataset matched your criteria.';
+
+      if (isSearchActive) {
+        emptyTitle = `No matches found for &quot;${escapeHtml(AppState.m365SearchTerm)}&quot;`;
+        emptyMsg = 'Check your search query or reset filters to display all analyzed accounts.';
+      } else if (isFilterActive) {
+        const catName = AppState.m365Filter === 'disabled' ? 'disabled user' : (AppState.m365Filter === 'shared' ? 'shared mailbox' : 'inactive account');
+        emptyTitle = `No ${catName} findings`;
+        emptyMsg = `Zero ${catName} waste findings were detected in this dataset.`;
+      }
+
       tr.innerHTML = `
-        <td><strong>${r.upn}</strong></td>
-        <td><span class="badge ${badgeClass}">${r.state}</span></td>
-        <td><code>${r.sku}</code></td>
-        <td><code style="font-size:0.75rem; color:#475569;">${r.skuId}</code></td>
-        <td>${verifBadge}</td>
-        <td style="color:var(--danger-600); font-weight:700;">${formatMoney(r.costUSD)} / mo</td>
+        <td colspan="5" style="text-align:center; padding:36px 16px; color:var(--text-muted);">
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main); margin-bottom:6px;">${emptyTitle}</div>
+          <p style="font-size:0.8rem; margin-bottom:12px;">${emptyMsg}</p>
+          <button class="btn btn-outline" style="font-size:0.75rem; padding:4px 12px; background:white;" onclick="resetM365Filters()">
+            Reset All Filters
+          </button>
+        </td>
       `;
       tbodyM365.appendChild(tr);
-    });
+    } else {
+      filteredM365.forEach(r => {
+        const badgeClass = r.severity === 'critical' ? 'badge-danger' : (r.severity === 'shared' ? 'badge-warning' : 'badge-neutral');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(r.upn)}</strong></td>
+          <td><span class="badge ${badgeClass}">${escapeHtml(r.state)}</span></td>
+          <td>${escapeHtml(r.sku || r.skuPartNumber)}</td>
+          <td style="font-size:0.8rem; color:#334155;">${escapeHtml(r.governanceFinding || r.holdCheck)}</td>
+          <td style="color:var(--danger-600); font-weight:700;">${formatMoney(r.costUSD)} / mo</td>
+        `;
+        tbodyM365.appendChild(tr);
+      });
+    }
   }
 
   const tbodyAzure = document.getElementById('tbodyAzureSupporting');
   if (tbodyAzure) {
     tbodyAzure.innerHTML = '';
-    AppState.azureRecords.forEach(r => {
-      const verifBadge = r.needsVerification 
-        ? `<span class="badge-verification">Needs verification</span><span class="verification-subtext">${r.verifNote}</span>` 
-        : `<span style="font-size:0.75rem; color:#15803D;">✓ ${r.verifNote}</span>`;
-
+    if (AppState.azureRecords.length === 0) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><strong>${r.name}</strong><br><code style="font-size:0.7rem; color:#64748B;">${r.id}</code></td>
-        <td>${r.type}</td>
-        <td><code>${r.rg}</code></td>
-        <td><span class="badge badge-danger">${r.condition}</span></td>
-        <td>${verifBadge}</td>
-        <td style="color:var(--danger-600); font-weight:700;">${formatMoney(r.costUSD)} / mo</td>
+        <td colspan="6" style="text-align:center; padding:36px 16px; color:var(--text-muted);">
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main); margin-bottom:4px;">No Azure Resource Findings</div>
+          <p style="font-size:0.8rem;">No unattached disks, empty plans, or unassociated public IPs present in current analysis.</p>
+        </td>
       `;
       tbodyAzure.appendChild(tr);
-    });
+    } else {
+      AppState.azureRecords.forEach(r => {
+        const verifBadge = r.needsVerification 
+          ? `<span class="badge-verification">Needs verification</span><span class="verification-subtext">${escapeHtml(r.verifNote)}</span>` 
+          : `<span style="font-size:0.75rem; color:#15803D;">✓ ${escapeHtml(r.verifNote)}</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(r.name)}</strong><br><code style="font-size:0.7rem; color:#64748B;">${escapeHtml(r.id)}</code></td>
+          <td>${escapeHtml(r.type)}</td>
+          <td><code>${escapeHtml(r.rg)}</code></td>
+          <td><span class="badge badge-danger">${escapeHtml(r.condition)}</span></td>
+          <td>${verifBadge}</td>
+          <td style="color:var(--danger-600); font-weight:700;">${formatMoney(r.costUSD)} / mo</td>
+        `;
+        tbodyAzure.appendChild(tr);
+      });
+    }
   }
 }
 
@@ -1397,7 +1714,7 @@ function initCharts() {
         ],
         datasets: [{
           label: 'Potential Monthly Savings ($)',
-          data: [153.60, 146.00, 99.00, 30.00, 26.00, 4.38],
+          data: [235.52, 146.00, 99.00, 38.00, 34.00, 4.38],
           backgroundColor: '#2563EB',
           borderRadius: 4,
           barThickness: 18
@@ -1436,7 +1753,7 @@ function initCharts() {
       data: {
         labels: ['Productive Spend', 'Potential Savings (Fair Score)'],
         datasets: [{
-          data: [5024.50, 1485.50],
+          data: [5024.50, 556.90],
           // Amber #D97706 replaces green for the "Fair" 74/100 score to avoid mixed signals
           backgroundColor: ['#172033', '#D97706'],
           borderWidth: 0
@@ -1599,17 +1916,36 @@ function copyCode(elementId) {
 }
 
 function exportAuditCSV() {
-  const activeFindings = AppState.decisionFindings.filter(f => !f.excluded && !f.dismissed);
-  const csvContent = "data:text/csv;charset=utf-8,Finding,EstimatedMonthlySavingsUSD,Evidence,Confidence,Status\n" +
-    activeFindings.map(a => `"${a.finding} - ${a.resourceLabel}",${a.estimatedSavingUSD},"${a.evidence}","${a.confidence}","${a.reviewed ? 'Reviewed' : 'Pending'}"`).join("\n");
-  const encodedUri = encodeURI(csvContent);
+  const rows = [];
+  rows.push("Category,Identifier,Status_Condition,Classification,Monthly_Impact_USD");
+
+  // M365 Records
+  AppState.m365Records.forEach(r => {
+    const ident = r.upn;
+    const cond = r.state;
+    const cls = r.sku || r.skuPartNumber;
+    rows.push(`M365,"${ident}","${cond}","${cls}",${r.costUSD}`);
+  });
+
+  // Azure Records
+  AppState.azureRecords.forEach(a => {
+    const ident = a.name;
+    const cond = a.condition;
+    const cls = a.type;
+    rows.push(`Azure,"${ident}","${cond}","${cls}",${a.costUSD}`);
+  });
+
+  const csvContent = rows.join("\n") + "\n";
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `CloudTrim_Findings_${AppState.currentTenant}_${new Date().toISOString().slice(0,10)}.csv`);
+  link.setAttribute("href", url);
+  link.setAttribute("download", "exported-results.csv");
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  showToast('✓ Exported prioritized findings to local CSV');
+  URL.revokeObjectURL(url);
+  showToast(`✓ Exported ${AppState.m365Records.length + AppState.azureRecords.length} findings to exported-results.csv`);
 }
 
 function showToast(msg) {

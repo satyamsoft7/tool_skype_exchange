@@ -182,14 +182,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               <span>M365 Licenses</span>
             </div>
-            <span class="sidebar-item-badge" id="badgeM365Count">9</span>
+            <span class="sidebar-item-badge" id="badgeM365Count">7</span>
           </li>
           <li class="sidebar-item" id="side-azure" onclick="selectSidebar('azure')">
             <div class="sidebar-item-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
               <span>Azure Resources</span>
             </div>
-            <span class="sidebar-item-badge" id="badgeAzureCount">11</span>
+            <span class="sidebar-item-badge" id="badgeAzureCount">5</span>
           </li>
           <li class="sidebar-item" id="side-remediation" onclick="selectSidebar('remediation')">
             <div class="sidebar-item-left">
@@ -289,9 +289,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Executive PDF
           </button>
-          <button class="btn btn-outline" onclick="exportAuditCSV()">
+            <button class="btn btn-outline" onclick="exportAuditCSV()" title="Download reconciled findings CSV">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export CSV
+            Export Raw CSV
           </button>
         </div>
       </div>
@@ -337,6 +337,9 @@
 
       <!-- Upload Panel: Collapses cleanly after import -->
       <div class="upload-panel-card">
+        <!-- Validation Error Alert Container (Visible when unsupported schema uploaded) -->
+        <div id="csvValidationAlert" class="csv-validation-alert" style="display:none; margin:16px 20px 0;"></div>
+
         <!-- Expanded Large Drop Zone (Hidden after file is loaded) -->
         <div class="upload-expanded" id="uploadExpanded" style="display:none;">
           <div class="drop-zone-large" id="largeDropZone" onclick="document.getElementById('csvFileInput').click()">
@@ -375,8 +378,8 @@
         <!-- Card 1: Lead Metric (Potential Savings) -->
         <div class="metric-card lead-card">
           <div class="metric-label">Potential Monthly Savings</div>
-          <div class="metric-main-value green" id="leadMonthlySavings">$1,485.50</div>
-          <div class="metric-sub-value" id="leadAnnualSavings">$17,826.00 potential annual savings</div>
+          <div class="metric-main-value green" id="leadMonthlySavings">$556.90</div>
+          <div class="metric-sub-value" id="leadAnnualSavings">$6,682.80 potential annual savings</div>
         </div>
 
         <!-- Card 2: Governance Score (Visual Polish: Amber Fair score, no misleading green ring) -->
@@ -392,15 +395,15 @@
         <!-- Card 3: M365 Opportunities -->
         <div class="metric-card">
           <div class="metric-label">M365 Opportunities</div>
-          <div class="metric-main-value" id="cardM365SeatVal">9 Seats</div>
-          <div class="metric-sub-value" id="cardM365Waste">$495.50/mo potential recovery</div>
+          <div class="metric-main-value" id="cardM365SeatVal">7 Seats</div>
+          <div class="metric-sub-value" id="cardM365Waste">$171.00/mo potential recovery</div>
         </div>
 
         <!-- Card 4: Azure Opportunities -->
         <div class="metric-card">
           <div class="metric-label">Azure Opportunities</div>
-          <div class="metric-main-value" id="cardAzureAssetVal">11 Assets</div>
-          <div class="metric-sub-value" id="cardAzureWaste">$990.00/mo idle capacity</div>
+          <div class="metric-main-value" id="cardAzureAssetVal">5 Assets</div>
+          <div class="metric-sub-value" id="cardAzureWaste">$385.90/mo idle capacity</div>
         </div>
       </div>
 
@@ -563,14 +566,14 @@
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:16px;">
           <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
             <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirmed Potential Monthly Recovery</div>
-            <div style="font-size:1.45rem; font-weight:800; color:var(--savings-green); margin-top:4px;" id="confirmedMonthlySavings">$1,485.50</div>
-            <span style="font-size:0.74rem; color:var(--text-muted);" id="confirmedAnnualSavings">$17,826.00 / year projected</span>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--savings-green); margin-top:4px;" id="confirmedMonthlySavings">$556.90</div>
+            <span style="font-size:0.74rem; color:var(--text-muted);" id="confirmedAnnualSavings">$6,682.80 / year projected</span>
           </div>
 
           <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
             <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Decisions Status</div>
-            <div style="font-size:1.45rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="reviewedItemsRatio">0 / 6 Reviewed</div>
-            <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">6 items awaiting admin confirmation</span>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="reviewedItemsRatio">0 / 12 Reviewed</div>
+            <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">12 items awaiting admin confirmation</span>
           </div>
 
           <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
@@ -600,7 +603,7 @@
         <div class="chart-panel-card">
           <div class="chart-heading-group">
             <div class="chart-title">Efficiency Ratio</div>
-            <span style="font-size:0.75rem; color:#B45309; font-weight:700;">22.8% Potential Savings (Fair Score)</span>
+            <span style="font-size:0.75rem; color:#B45309; font-weight:700;">9.9% Potential Savings (Fair Score)</span>
           </div>
           <div class="chart-container-box">
             <canvas id="chartEfficiencyRatio"></canvas>
@@ -622,11 +625,11 @@
           <div class="tabs-navigation-strip">
             <button class="sub-tab-btn active" id="subtab-m365" onclick="switchSupportingTab('m365')">
               M365 Licenses
-              <span class="sub-tab-badge">9</span>
+              <span class="sub-tab-badge" id="subtabBadgeM365">7</span>
             </button>
             <button class="sub-tab-btn" id="subtab-azure" onclick="switchSupportingTab('azure')">
               Azure Resources
-              <span class="sub-tab-badge">11</span>
+              <span class="sub-tab-badge" id="subtabBadgeAzure">5</span>
             </button>
             <button class="sub-tab-btn" id="subtab-remediation" onclick="switchSupportingTab('remediation')">
               PowerShell Remediation
@@ -638,15 +641,26 @@
 
           <!-- Tab Pane 1: M365 Table -->
           <div id="tab-pane-m365">
+            <div class="table-filter-bar">
+              <div class="filter-pills-group">
+                <button class="filter-pill active" id="pillM365All" onclick="filterM365Category('all')">All M365 Items</button>
+                <button class="filter-pill" id="pillM365Disabled" onclick="filterM365Category('disabled')">Disabled Accounts</button>
+                <button class="filter-pill" id="pillM365Shared" onclick="filterM365Category('shared')">Shared Mailboxes</button>
+                <button class="filter-pill" id="pillM365Inactive" onclick="filterM365Category('inactive')">Inactive (90d+)</button>
+              </div>
+              <div class="table-search-wrap">
+                <input type="text" id="m365SearchInput" class="table-search-input" placeholder="Filter user principal, SKU..." oninput="handleM365Search(this.value)">
+                <button class="table-search-clear" id="m365SearchClear" onclick="resetM365Filters()" style="display:none;" title="Clear search">&times;</button>
+              </div>
+            </div>
             <table>
               <thead>
                 <tr>
                   <th>User Principal Name</th>
                   <th>Account State</th>
-                  <th>Assigned SKU (SkuPartNumber)</th>
-                  <th>Exact SkuId GUID</th>
-                  <th>Verification &amp; Hold State</th>
-                  <th>Monthly Impact</th>
+                  <th>Assigned Plan / SKU</th>
+                  <th>Governance Finding</th>
+                  <th>Financial Impact</th>
                 </tr>
               </thead>
               <tbody id="tbodyM365Supporting"></tbody>
