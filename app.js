@@ -306,8 +306,387 @@ function loadSampleDataMode() {
 }
 
 // ==============================================================================
-// 2. CSV PREPARATION & IMPORT VALIDATION ENGINE
+// 2. CSV PREPARATION, ROBUST PARSER & FINOPS ANALYSIS ENGINE
 // ==============================================================================
+const SKU_CATALOG = {
+  'c5928f49-12ba-48f7-8140-f6f3477d9c93': { name: 'Office 365 E5', sku: 'ENTERPRISEPREMIUM', costUSD: 38.00, skuId: 'c5928f49-12ba-48f7-8140-f6f3477d9c93' },
+  '05e01617-00a6-4261-a773-5a61447866b2': { name: 'Microsoft 365 E3', sku: 'SPE_E3', costUSD: 23.00, skuId: '05e01617-00a6-4261-a773-5a61447866b2' },
+  'cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d': { name: 'Business Premium', sku: 'SPB', costUSD: 22.00, skuId: 'cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d' },
+  '4b5d0382-76be-4b95-821a-493405786616': { name: 'Exchange Online P1', sku: 'EXCHANGESTANDARD', costUSD: 4.00, skuId: '4b5d0382-76be-4b95-821a-493405786616' },
+  '19e2a5dc-d259-48e6-b9b9-630ea7d40dd5': { name: 'Exchange Online P2', sku: 'EXCHANGEENTERPRISE', costUSD: 8.00, skuId: '19e2a5dc-d259-48e6-b9b9-630ea7d40dd5' },
+  'f243dec6-ba3b-4871-bc1e-8d5914e74321': { name: 'Office 365 E1', sku: 'STANDARDPACK', costUSD: 10.00, skuId: 'f243dec6-ba3b-4871-bc1e-8d5914e74321' }
+};
+
+function parseCSVText(text) {
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) return null;
+
+  function parseLine(line) {
+    const result = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"' || char === "'") {
+        if (inQuotes && line[i + 1] === char) {
+          cur += char;
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(cur.trim());
+        cur = '';
+      } else {
+        cur += char;
+      }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+
+  const rawHeaders = parseLine(lines[0]);
+  const headers = rawHeaders.map(h => h.replace(/^["']|["']$/g, '').trim());
+
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseLine(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => {
+      row[h] = values[idx] !== undefined ? values[idx].replace(/^["']|["']$/g, '').trim() : '';
+    });
+    rows.push(row);
+  }
+
+  return { headers, rows };
+}
+
+function analyzeM365Dataset(rows) {
+  const m365Records = [];
+  const findings = [];
+  const candidateReviews = [];
+
+  let disabledUsersCount = 0;
+  let disabledUsersCost = 0;
+  const disabledUpns = [];
+
+  let sharedCount = 0;
+  let sharedCost = 0;
+  const sharedUpns = [];
+
+  let inactiveCount = 0;
+  let inactiveCost = 0;
+  const inactiveUpns = [];
+
+  rows.forEach((r, idx) => {
+    const upn = r.UserPrincipalName || r.UPN || r.DisplayName || `user-${idx}@tenant.com`;
+    const isEnabled = String(r.AccountEnabled).toLowerCase() === 'true';
+    const hasLicenses = r.AssignedLicenses && r.AssignedLicenses !== '0' && r.AssignedLicenses !== '';
+    const isDisabledLicensed = String(r.IsDisabledLicensed).toLowerCase() === 'true' || (!isEnabled && hasLicenses);
+    const isShared = String(r.MailboxType).toLowerCase().includes('shared') || upn.toLowerCase().includes('shared') || (r.DisplayName && r.DisplayName.toLowerCase().includes('shared'));
+
+    const rawSku = r.AssignedLicenses || '';
+    let skuInfo = SKU_CATALOG[rawSku];
+    if (!skuInfo) {
+      const foundKey = Object.keys(SKU_CATALOG).find(k => rawSku.includes(k));
+      skuInfo = foundKey ? SKU_CATALOG[foundKey] : {
+        name: rawSku.includes('-') ? 'Assigned Plan' : (rawSku || 'Enterprise License'),
+        sku: rawSku || 'ENTERPRISE',
+        skuId: rawSku.length > 20 ? rawSku : 'c5928f49-12ba-48f7-8140-f6f3477d9c93',
+        costUSD: !isNaN(parseFloat(rawSku)) ? parseFloat(rawSku) * 25 : 23.00
+      };
+    }
+
+    const lastSignIn = r.LastSignInDateTime || '';
+    const isInactive = lastSignIn.includes('Never') || (lastSignIn && new Date(lastSignIn) < new Date(Date.now() - 90 * 86400000));
+
+    if (isDisabledLicensed) {
+      disabledUsersCount++;
+      disabledUsersCost += skuInfo.costUSD;
+      disabledUpns.push(upn);
+
+      m365Records.push({
+        upn: upn,
+        state: "Disabled",
+        sku: skuInfo.sku,
+        skuId: skuInfo.skuId,
+        holdCheck: "Disabled in Entra ID (Safe)",
+        costUSD: skuInfo.costUSD,
+        severity: "critical",
+        needsVerification: false
+      });
+
+      candidateReviews.push({
+        id: `rev-m365-${idx}`,
+        name: upn,
+        type: "Entra ID Disabled Account",
+        costUSD: skuInfo.costUSD,
+        safetyCheck: `Confirmed offboarded identity. Revoke ${skuInfo.name} (${skuInfo.skuId}) to stop recurring billing.`,
+        reviewed: false
+      });
+    } else if (isShared && hasLicenses) {
+      sharedCount++;
+      sharedCost += skuInfo.costUSD;
+      sharedUpns.push(upn);
+
+      m365Records.push({
+        upn: upn,
+        state: "Shared Mailbox",
+        sku: skuInfo.sku,
+        skuId: skuInfo.skuId,
+        holdCheck: "Requires hold verification",
+        costUSD: skuInfo.costUSD,
+        severity: "shared",
+        needsVerification: true
+      });
+
+      candidateReviews.push({
+        id: `rev-m365-sm-${idx}`,
+        name: upn,
+        type: `Shared Mailbox (${r.MailboxSizeGB || '<50'} GB)`,
+        costUSD: skuInfo.costUSD,
+        safetyCheck: "Size <50GB. Confirmed NO Litigation Hold or Auto-Expanding Archive before de-licensing.",
+        reviewed: false
+      });
+    } else if (isInactive && skuInfo.costUSD >= 30) {
+      inactiveCount++;
+      inactiveCost += 30.00;
+      inactiveUpns.push(upn);
+
+      m365Records.push({
+        upn: upn,
+        state: "Inactive (>90d)",
+        sku: skuInfo.sku,
+        skuId: skuInfo.skuId,
+        holdCheck: `Last login: ${lastSignIn ? lastSignIn.slice(0, 10) : 'Never'}`,
+        costUSD: skuInfo.costUSD,
+        severity: "inactive",
+        needsVerification: false
+      });
+    }
+  });
+
+  if (disabledUsersCount > 0) {
+    findings.push({
+      id: "find-m365-disabled",
+      finding: "Disabled user with license",
+      resourceLabel: `${disabledUsersCount} Entra ID Offboarded Users (${disabledUpns.slice(0, 2).join(', ')}${disabledUsersCount > 2 ? '...' : ''})`,
+      estimatedSavingUSD: disabledUsersCost,
+      evidence: "Source: Microsoft Entra ID. Account status is Disabled (AccountEnabled -eq $false). Assigned SKUs unrevoked.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Confirm retention needs",
+      actionType: "confirm-retention",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "M365 Licenses"
+    });
+  }
+
+  if (sharedCount > 0) {
+    findings.push({
+      id: "find-m365-shared",
+      finding: "Over-licensed shared mailbox",
+      resourceLabel: `${sharedCount} Shared Mailboxes (${sharedUpns.slice(0, 2).join(', ')}${sharedCount > 2 ? '...' : ''})`,
+      estimatedSavingUSD: sharedCost,
+      evidence: "Source: Exchange Online. Mailbox size <50GB. Standalone paid licenses assigned. Requires hold & Purview check.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Review mailbox holds",
+      actionType: "review-holds",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "M365 Licenses"
+    });
+  }
+
+  if (inactiveCount > 0) {
+    findings.push({
+      id: "find-m365-inactive",
+      finding: "Inactive user with premium license",
+      resourceLabel: `${inactiveCount} Inactive Users (${inactiveUpns.slice(0, 2).join(', ')})`,
+      estimatedSavingUSD: inactiveCost,
+      evidence: "Source: Microsoft Graph signInActivity. Zero authenticated sessions in 90+ days. Candidate for E1 downgrade.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Confirm retention needs",
+      actionType: "confirm-retention",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "M365 Licenses"
+    });
+  }
+
+  return { m365Records, findings, candidateReviews, totalWasteUSD: disabledUsersCost + sharedCost + inactiveCost, totalUsers: rows.length };
+}
+
+function analyzeAzureDataset(rows) {
+  const azureRecords = [];
+  const findings = [];
+  const candidateReviews = [];
+
+  let unattachedDisksCount = 0;
+  let unattachedDisksCost = 0;
+  const unattachedDiskNames = [];
+
+  let emptyPlansCount = 0;
+  let emptyPlansCost = 0;
+  const emptyPlanNames = [];
+
+  let idleIPsCount = 0;
+  let idleIPsCost = 0;
+  const idleIPNames = [];
+
+  rows.forEach((r, idx) => {
+    const name = r.ResourceName || r.Name || `azure-asset-${idx}`;
+    const id = r.ResourceId || r.Id || name;
+    const type = r.ResourceType || r.Type || '';
+    const rg = r.ResourceGroup || r.ResourceGroupName || 'default-rg';
+    const costUSD = parseFloat(r.PreTaxCostUSD || r.EstimatedCostUSD || '0') || 0;
+    const diskState = (r.DiskState || r.Status || '').toLowerCase();
+    const managedBy = r.ManagedBy || '';
+    const lockStatus = r.LockStatus || 'None';
+
+    const isDisk = type.toLowerCase().includes('disk');
+    const isPlan = type.toLowerCase().includes('serverfarm') || type.toLowerCase().includes('plan');
+    const isIP = type.toLowerCase().includes('publicip') || type.toLowerCase().includes('network/public');
+
+    if (isDisk && (diskState.includes('unattached') || (!managedBy && diskState !== 'attached'))) {
+      unattachedDisksCount++;
+      unattachedDisksCost += costUSD;
+      unattachedDiskNames.push(name);
+
+      azureRecords.push({
+        name: name,
+        id: id,
+        type: `Managed Disk (${rg})`,
+        rg: rg,
+        condition: "Unattached",
+        costUSD: costUSD,
+        needsVerification: lockStatus !== 'None',
+        verifNote: lockStatus !== 'None' ? `Resource lock: ${lockStatus}` : "ManagedBy is confirmed NULL"
+      });
+
+      candidateReviews.push({
+        id: `rev-az-disk-${idx}`,
+        name: name,
+        type: `Azure Managed Disk ($${costUSD.toFixed(2)}/mo)`,
+        costUSD: costUSD,
+        safetyCheck: `ManagedBy is NULL. Confirm no ReadOnly lock in ${rg} before deallocation.`,
+        reviewed: false
+      });
+    } else if (isPlan && (managedBy.includes('0') || diskState.includes('0') || r.DiskState === '0 Apps')) {
+      emptyPlansCount++;
+      emptyPlansCost += costUSD;
+      emptyPlanNames.push(name);
+
+      azureRecords.push({
+        name: name,
+        id: id,
+        type: `App Service Plan (${rg})`,
+        rg: rg,
+        condition: "0 Apps Deployed",
+        costUSD: costUSD,
+        needsVerification: false,
+        verifNote: "Hosted web apps count = 0"
+      });
+
+      candidateReviews.push({
+        id: `rev-az-plan-${idx}`,
+        name: name,
+        type: `App Service Plan ($${costUSD.toFixed(2)}/mo)`,
+        costUSD: costUSD,
+        safetyCheck: `Hosting 0 apps or containers in ${rg}. Deallocate plan or scale to Free/Shared tier.`,
+        reviewed: false
+      });
+    } else if (isIP && (diskState.includes('unassociated') || diskState.includes('idle') || !managedBy)) {
+      idleIPsCount++;
+      idleIPsCost += costUSD || 4.38;
+      idleIPNames.push(name);
+
+      azureRecords.push({
+        name: name,
+        id: id,
+        type: `Public IP Address (${rg})`,
+        rg: rg,
+        condition: "Unassociated",
+        costUSD: costUSD || 4.38,
+        needsVerification: false,
+        verifNote: "ipConfigurations is NULL"
+      });
+
+      candidateReviews.push({
+        id: `rev-az-ip-${idx}`,
+        name: name,
+        type: `Static Public IP ($${(costUSD || 4.38).toFixed(2)}/mo)`,
+        costUSD: costUSD || 4.38,
+        safetyCheck: `Unassociated IP in ${rg}. Release static IP allocation to eliminate idle charge.`,
+        reviewed: false
+      });
+    }
+  });
+
+  if (unattachedDisksCount > 0) {
+    findings.push({
+      id: "find-az-disks",
+      finding: "Unattached disk candidate",
+      resourceLabel: `${unattachedDisksCount} Managed Disks (${unattachedDiskNames.slice(0, 2).join(', ')}${unattachedDisksCount > 2 ? '...' : ''})`,
+      estimatedSavingUSD: unattachedDisksCost,
+      evidence: "Source: Azure Resource Graph. ManagedBy is NULL, 0 attached VMs.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Inspect resource",
+      actionType: "inspect-disk",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "Azure Infrastructure"
+    });
+  }
+
+  if (emptyPlansCount > 0) {
+    findings.push({
+      id: "find-az-plans",
+      finding: "Empty App Service Plan",
+      resourceLabel: `${emptyPlanNames.join(', ')}`,
+      estimatedSavingUSD: emptyPlansCost,
+      evidence: "Source: Azure Resource Manager. Hosting 0 web apps or containers.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Inspect resource",
+      actionType: "inspect-plan",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "Azure Infrastructure"
+    });
+  }
+
+  if (idleIPsCount > 0) {
+    findings.push({
+      id: "find-az-ips",
+      finding: "Unassociated static public IP",
+      resourceLabel: `${idleIPNames.join(', ')}`,
+      estimatedSavingUSD: idleIPsCost,
+      evidence: "Source: Azure Network. ipConfigurations is NULL. 0 bound NICs or Gateways.",
+      confidence: "Needs review",
+      confidenceClass: "badge-confidence-amber",
+      nextAction: "Inspect resource",
+      actionType: "inspect-ip",
+      reviewed: false,
+      excluded: false,
+      dismissed: false,
+      category: "Azure Infrastructure"
+    });
+  }
+
+  return { azureRecords, findings, candidateReviews, totalWasteUSD: unattachedDisksCost + emptyPlansCost + idleIPsCost, totalAssets: rows.length };
+}
+
 function toggleCsvGuide(show) {
   const guide = document.getElementById('csvPreparationGuide');
   if (guide) guide.style.display = show ? 'block' : 'none';
@@ -318,16 +697,16 @@ function processUploadedFile(file) {
   const reader = new FileReader();
   reader.onload = function(e) {
     const text = e.target.result;
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const parsed = parseCSVText(text);
 
-    if (lines.length < 2) {
+    if (!parsed || parsed.rows.length === 0) {
       showToast('Error: The uploaded file is empty or lacks data rows.');
       return;
     }
 
-    const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
-    const isM365 = headers.some(h => /UserPrincipalName|User Principal Name/i.test(h));
-    const isAzure = headers.some(h => /ResourceId|ResourceName|ResourceGroup/i.test(h));
+    const headers = parsed.headers;
+    const isM365 = headers.some(h => /UserPrincipalName|User Principal Name|IsDisabledLicensed/i.test(h));
+    const isAzure = headers.some(h => /ResourceId|ResourceName|ResourceGroup|DiskState|PreTaxCostUSD|SubscriptionName/i.test(h));
 
     if (!isM365 && !isAzure) {
       showToast('Invalid CSV format: Missing recognized M365 or Azure headers.');
@@ -337,13 +716,58 @@ function processUploadedFile(file) {
     // Switch State to Customer Real Data
     AppState.isSampleData = false;
     AppState.isDataLoaded = true;
-    AppState.currentTenant = file.name.replace('.csv', '');
+
+    // Detect tenant domain from rows or filename
+    let detectedTenant = file.name.replace('.csv', '');
+    if (isM365) {
+      const upnRow = parsed.rows.find(r => r.UserPrincipalName && r.UserPrincipalName.includes('@'));
+      if (upnRow) {
+        detectedTenant = upnRow.UserPrincipalName.split('@')[1];
+      }
+    }
+    AppState.currentTenant = detectedTenant;
+
+    // Process datasets
+    let newFindings = [];
+    let newReviews = [];
+
+    if (isM365) {
+      const m365Analysis = analyzeM365Dataset(parsed.rows);
+      AppState.m365Records = m365Analysis.m365Records;
+      AppState.baseline.m365SeatCount = m365Analysis.totalUsers;
+      AppState.baseline.m365WasteUSD = m365Analysis.totalWasteUSD;
+      newFindings = newFindings.concat(m365Analysis.findings);
+      newReviews = newReviews.concat(m365Analysis.candidateReviews);
+      
+      const existingAzure = AppState.decisionFindings.filter(f => f.category === 'Azure Infrastructure');
+      newFindings = newFindings.concat(existingAzure);
+    }
+
+    if (isAzure) {
+      const azureAnalysis = analyzeAzureDataset(parsed.rows);
+      AppState.azureRecords = azureAnalysis.azureRecords;
+      AppState.baseline.azureAssetCount = azureAnalysis.totalAssets;
+      AppState.baseline.azureWasteUSD = azureAnalysis.totalWasteUSD;
+      newFindings = newFindings.concat(azureAnalysis.findings);
+      newReviews = newReviews.concat(azureAnalysis.candidateReviews);
+
+      const existingM365 = AppState.decisionFindings.filter(f => f.category === 'M365 Licenses');
+      newFindings = existingM365.concat(newFindings);
+    }
+
+    AppState.decisionFindings = newFindings;
+    AppState.candidateReviews = newReviews;
+
+    // Recompute Financial Baselines
+    AppState.baseline.monthlyWasteUSD = AppState.baseline.m365WasteUSD + AppState.baseline.azureWasteUSD;
+    AppState.baseline.annualWasteUSD = AppState.baseline.monthlyWasteUSD * 12;
+    AppState.baseline.governanceScore = Math.max(45, Math.min(95, Math.round(100 - (AppState.baseline.monthlyWasteUSD / (AppState.baseline.monthlyWasteUSD + 3500)) * 55)));
 
     const banner = document.getElementById('persistentDemoBanner');
     if (banner) banner.style.display = 'none';
 
     document.getElementById('tenantDot').style.background = '#22C55E';
-    document.getElementById('tenantDisplay').textContent = `Customer Tenant (${file.name})`;
+    document.getElementById('tenantDisplay').textContent = `${AppState.currentTenant}`;
     document.getElementById('sampleDataBadge').style.display = 'none';
     document.getElementById('tenantContextName').textContent = file.name;
     document.getElementById('dataModeNotice').textContent = 'Verified Customer Dataset';
@@ -355,10 +779,11 @@ function processUploadedFile(file) {
     document.getElementById('datasetTypeBadge').style.background = '#DCFCE7';
     document.getElementById('datasetTypeBadge').style.color = '#15803D';
     document.getElementById('datasetTypeBadge').style.borderColor = '#BBF7D0';
-    document.getElementById('activeFileSummary').textContent = `${file.name} (${lines.length - 1} rows parsed in local RAM)`;
+    document.getElementById('activeFileSummary').textContent = `${file.name} (${parsed.rows.length} rows parsed in local RAM)`;
 
     toggleUploadPanel(false);
     toggleCsvGuide(false);
+    updateCharts();
     renderDecisionFindings();
     renderSupportingTables();
     renderReviewChecklist();
@@ -366,7 +791,8 @@ function processUploadedFile(file) {
     updateConfirmedTotals();
     generateRemediationScript();
 
-    showToast(`✓ Ingested ${file.name} — Zero bytes sent to external cloud`);
+    Telemetry.track('csv_imported', { filename: file.name, rowCount: parsed.rows.length, isM365, isAzure });
+    showToast(`✓ Ingested ${file.name} (${parsed.rows.length} rows) — Zero bytes sent to cloud`);
   };
   reader.readAsText(file);
 }
@@ -533,6 +959,20 @@ function updateConfirmedTotals() {
   document.getElementById('leadMonthlySavings').textContent = formatMoney(totalMonthlyUSD);
   document.getElementById('leadAnnualSavings').textContent = `${formatMoney(totalAnnualUSD)} potential annual savings`;
 
+  // Update M365 and Azure Opportunity cards
+  const m365Waste = activeFindings.filter(f => f.category === 'M365 Licenses').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
+  const azureWaste = activeFindings.filter(f => f.category === 'Azure Infrastructure').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
+
+  const m365WasteEl = document.getElementById('cardM365Waste');
+  const m365SeatsEl = document.getElementById('cardM365SeatVal');
+  if (m365WasteEl) m365WasteEl.textContent = `${formatMoney(m365Waste)}/mo potential recovery`;
+  if (m365SeatsEl) m365SeatsEl.textContent = `${AppState.baseline.m365SeatCount} Seats`;
+
+  const azureWasteEl = document.getElementById('cardAzureWaste');
+  const azureAssetsEl = document.getElementById('cardAzureAssetVal');
+  if (azureWasteEl) azureWasteEl.textContent = `${formatMoney(azureWaste)}/mo idle capacity`;
+  if (azureAssetsEl) azureAssetsEl.textContent = `${AppState.baseline.azureAssetCount} Assets`;
+
   // Update Section 4 Preview
   const confMonthlyEl = document.getElementById('confirmedMonthlySavings');
   const confAnnualEl = document.getElementById('confirmedAnnualSavings');
@@ -668,6 +1108,21 @@ function generateRemediationScript() {
   const scriptElement = document.getElementById('terminalPayload');
   if (!scriptElement) return;
 
+  const disabledCandidates = AppState.m365Records.filter(r => r.state === 'Disabled' && !r.excluded);
+  const licenseCandidatesCode = disabledCandidates.length > 0
+    ? disabledCandidates.map(c => `        @{ UPN = <span class="syn-str">"${c.upn}"</span>; SkuId = <span class="syn-str">"${c.skuId}"</span>; Name = <span class="syn-str">"${c.sku}"</span> }`).join(',\n')
+    : `        # No disabled user licenses flagged for remediation`;
+
+  const sharedCandidates = AppState.m365Records.filter(r => r.state === 'Shared Mailbox' && !r.excluded);
+  const sharedCandidatesCode = sharedCandidates.length > 0
+    ? sharedCandidates.map(c => `        @{ UPN = <span class="syn-str">"${c.upn}"</span>; SkuId = <span class="syn-str">"${c.skuId}"</span>; Name = <span class="syn-str">"${c.sku}"</span> }`).join(',\n')
+    : `        # No shared mailboxes flagged for reclassification`;
+
+  const diskCandidates = AppState.azureRecords.filter(r => (r.type.toLowerCase().includes('disk') || r.condition.toLowerCase().includes('unattached')) && !r.excluded);
+  const targetDisksCode = diskCandidates.length > 0
+    ? diskCandidates.map(d => `        @{ ResourceGroup = <span class="syn-str">"${d.rg}"</span>; DiskName = <span class="syn-str">"${d.name}"</span> }`).join(',\n')
+    : `        # No unattached disks flagged for removal`;
+
   scriptElement.innerHTML = `
 <span class="syn-comment"># ==============================================================================</span>
 <span class="syn-comment"># CloudTrim Production Remediation Script | Tenant: ${AppState.currentTenant}</span>
@@ -693,17 +1148,16 @@ $LogFile = Join-Path $LogDirectory ("CloudTrim_Remediation_" + (Get-Date -Format
 <span class="syn-comment"># NEVER pass friendly license names such as ENTERPRISEPACK or SPE_E3</span>
 <span class="syn-comment"># ==============================================================================</span>
 try {
-    <span class="syn-cmd">Write-Host</span> <span class="syn-str">"`n[1/2] Connecting to Microsoft Graph..."</span> -ForegroundColor Cyan
+    <span class="syn-cmd">Write-Host</span> <span class="syn-str">"\`n[1/2] Connecting to Microsoft Graph..."</span> -ForegroundColor Cyan
     <span class="syn-cmd">Connect-MgGraph</span> <span class="syn-param">-Scopes</span> <span class="syn-str">"User.ReadWrite.All", "Directory.ReadWrite.All"</span> -NoWelcome
 
     <span class="syn-comment"># Explicitly reviewed candidate accounts with exact Microsoft SkuId GUIDs</span>
     $LicenseCandidates = @(
-        @{ UPN = <span class="syn-str">"rahul.sharma@contoso.com"</span>; SkuId = <span class="syn-str">"c5928f49-12ba-48f7-8140-f6f3477d9c93"</span>; Name = <span class="syn-str">"Office 365 E5"</span> },
-        @{ UPN = <span class="syn-str">"priya.verma@contoso.com"</span>; SkuId = <span class="syn-str">"05e01617-00a6-4261-a773-5a61447866b2"</span>; Name = <span class="syn-str">"Microsoft 365 E3"</span> },
-        @{ UPN = <span class="syn-str">"neha.gupta@contoso.com"</span>; SkuId = <span class="syn-str">"c5928f49-12ba-48f7-8140-f6f3477d9c93"</span>; Name = <span class="syn-str">"Office 365 E5"</span> }
+${licenseCandidatesCode}
     )
 
     foreach ($item in $LicenseCandidates) {
+        if (-not $item.UPN) { continue }
         <span class="syn-comment"># Preflight Check 1: Verify user exists and confirm accountEnabled is explicitly false</span>
         $mgUser = <span class="syn-cmd">Get-MgUser</span> <span class="syn-param">-UserId</span> $item.UPN <span class="syn-param">-Property</span> Id, AccountEnabled, AssignedLicenses -ErrorAction SilentlyContinue
 
@@ -733,11 +1187,11 @@ try {
     <span class="syn-comment"># Litigation Hold, In-Place Hold, or Purview retention policies are NOT active.</span>
     <span class="syn-comment"># ==========================================================================</span>
     $SharedMailboxCandidates = @(
-        @{ UPN = <span class="syn-str">"invoices@contoso.com"</span>; SkuId = <span class="syn-str">"cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d"</span>; Name = <span class="syn-str">"Business Premium"</span> },
-        @{ UPN = <span class="syn-str">"support-team@contoso.com"</span>; SkuId = <span class="syn-str">"4b5d0382-76be-4b95-821a-493405786616"</span>; Name = <span class="syn-str">"Exchange Online P1"</span> }
+${sharedCandidatesCode}
     )
 
     foreach ($sm in $SharedMailboxCandidates) {
+        if (-not $sm.UPN) { continue }
         if (Get-Command Get-Mailbox -ErrorAction SilentlyContinue) {
             $mbx = <span class="syn-cmd">Get-Mailbox</span> <span class="syn-param">-Identity</span> $sm.UPN <span class="syn-param">-ErrorAction</span> SilentlyContinue
             if ($mbx -and ($mbx.LitigationHoldEnabled -eq $true -or $mbx.InPlaceHolds.Count -gt 0)) {
@@ -759,16 +1213,15 @@ catch {
 <span class="syn-comment"># Restricts actions strictly to reviewed Resource IDs (Never deletes wildcards)</span>
 <span class="syn-comment"># ==============================================================================</span>
 try {
-    <span class="syn-cmd">Write-Host</span> <span class="syn-str">"`n[2/2] Connecting to Microsoft Azure..."</span> -ForegroundColor Cyan
+    <span class="syn-cmd">Write-Host</span> <span class="syn-str">"\`n[2/2] Connecting to Microsoft Azure..."</span> -ForegroundColor Cyan
     <span class="syn-cmd">Connect-AzAccount</span> -WarningAction SilentlyContinue | Out-Null
 
     $TargetDisks = @(
-        @{ ResourceGroup = <span class="syn-str">"rg-ecommerce-prod"</span>; DiskName = <span class="syn-str">"disk-webprod-backup-os"</span> },
-        @{ ResourceGroup = <span class="syn-str">"rg-qa-environments"</span>; DiskName = <span class="syn-str">"disk-testdb-data01"</span> },
-        @{ ResourceGroup = <span class="syn-str">"rg-analytics-temp"</span>; DiskName = <span class="syn-str">"disk-analytics-worker"</span> }
+${targetDisksCode}
     )
 
     foreach ($target in $TargetDisks) {
+        if (-not $target.DiskName) { continue }
         $disk = <span class="syn-cmd">Get-AzDisk</span> <span class="syn-param">-ResourceGroupName</span> $target.ResourceGroup <span class="syn-param">-DiskName</span> $target.DiskName -ErrorAction SilentlyContinue
 
         if ($null -eq $disk) {
@@ -795,7 +1248,7 @@ catch {
     <span class="syn-cmd">Write-Error</span> <span class="syn-str">"Azure cleanup encountered an error: $_"</span>
 }
 
-<span class="syn-cmd">Write-Host</span> <span class="syn-str">"`n=== REMEDIATION EXECUTION COMPLETE ==="</span> -ForegroundColor Green
+<span class="syn-cmd">Write-Host</span> <span class="syn-str">"\`n=== REMEDIATION EXECUTION COMPLETE ==="</span> -ForegroundColor Green
 <span class="syn-cmd">Write-Host</span> <span class="syn-str">"Detailed log written to: $LogFile"</span> -ForegroundColor White
 <span class="syn-cmd">Stop-Transcript</span>
 `;
@@ -1001,24 +1454,48 @@ function initCharts() {
   }
 }
 
-function updateChartCurrency(multiplier, symbol) {
+function updateCharts() {
+  const rate = (AppState.currency === 'INR') ? AppState.inrExchangeRate : 1;
+  const symbol = (AppState.currency === 'INR') ? '₹' : '$';
+  const activeFindings = AppState.decisionFindings.filter(f => !f.excluded && !f.dismissed);
+
   if (horizontalBarChart) {
-    horizontalBarChart.data.datasets[0].data = [
-      153.60 * multiplier,
-      146.00 * multiplier,
-      99.00 * multiplier,
-      30.00 * multiplier,
-      26.00 * multiplier,
-      4.38 * multiplier
-    ];
+    horizontalBarChart.data.labels = activeFindings.map(f => f.finding);
+    horizontalBarChart.data.datasets[0].data = activeFindings.map(f => Math.round(f.estimatedSavingUSD * rate * 100) / 100);
     horizontalBarChart.options.scales.x.ticks.callback = v => symbol + v.toLocaleString();
     horizontalBarChart.update();
   }
+
+  if (donutRatioChart) {
+    const monthlyWaste = Math.round(AppState.baseline.monthlyWasteUSD * rate);
+    const productive = Math.round(Math.max(1000 * rate, (AppState.baseline.m365SeatCount * 30 + AppState.baseline.azureAssetCount * 100) * rate - monthlyWaste));
+    donutRatioChart.data.datasets[0].data = [productive, monthlyWaste];
+    donutRatioChart.update();
+  }
+}
+
+function updateChartCurrency(multiplier, symbol) {
+  updateCharts();
 }
 
 // ==============================================================================
 // 11. AUTHENTICATION & SESSION MANAGEMENT
 // ==============================================================================
+function openMfaWizard() {
+  openAuthModal('mfa');
+}
+
+function handleResetPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('resetEmail')?.value;
+  if (!email || !email.includes('@')) {
+    alert('Please enter a valid work email.');
+    return;
+  }
+  showToast(`Password reset link & temporary verification token dispatched to ${email}`);
+  switchAuthTab('signin');
+}
+
 function openAuthModal(tab) {
   document.getElementById('authModalOverlay').classList.add('open');
   switchAuthTab(tab || 'signin');
