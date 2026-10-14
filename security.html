@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Architecture | CloudTrim Enterprise</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .security-container {
+      max-width: 960px;
+      margin: 36px auto 60px;
+      padding: 0 24px;
+    }
+    .security-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 36px 40px;
+      box-shadow: var(--shadow-sm);
+    }
+    .security-card h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .security-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .security-card h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 32px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .security-card h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 20px 0 8px;
+    }
+    .security-card p, .security-card li {
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .security-card ul {
+      padding-left: 22px;
+      margin-bottom: 16px;
+    }
+    .arch-flow-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .flow-step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .flow-step-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .flow-step-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .flow-step-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .flow-step-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .evidence-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0 24px;
+      font-size: 0.85rem;
+    }
+    .evidence-table th {
+      background: #F1F5F9;
+      color: var(--text-main);
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+    .evidence-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+    .callout-evidence {
+      background: #EFF6FF;
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      margin: 18px 0;
+      font-size: 0.86rem;
+      color: #1E3A8A;
+      line-height: 1.55;
+    }
+    @media (max-width: 768px) {
+      .flow-step-grid {
+        grid-template-columns: 1fr;
+      }
+      .security-card {
+        padding: 24px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="global-header">
+    <div class="header-brand">
+      <a href="index.html" class="brand-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        <span>CloudTrim Enterprise</span>
+      </a>
+      <div class="tenant-badge">
+        <span class="tenant-dot"></span>
+        <span>Security &amp; Architecture Specification</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn btn-secondary" style="font-size:0.75rem;">← Return to Console</a>
+      <a href="checkout.html" class="btn btn-primary" style="font-size:0.75rem;">Activate License</a>
+    </div>
+  </header>
+
+  <div class="security-container">
+    <div class="security-card">
+      
+      <h1>Security, Privacy &amp; Architecture Specification</h1>
+      <div class="security-meta">
+        <span><strong>Document Version:</strong> 2.4</span> &bull; 
+        <span><strong>Last Updated:</strong> October 2026</span> &bull; 
+        <span><strong>Model:</strong> Client-Side RAM Ingestion (Zero-Transit)</span> &bull; 
+        <span><strong>Inquiries:</strong> security@skypeexchange4u.com</span>
+      </div>
+
+      <div class="callout-evidence">
+        <strong>Executive Summary for Security &amp; Compliance Officers:</strong> CloudTrim operates on a zero-server, client-side data minimization model. Unlike legacy SaaS FinOps platforms, CloudTrim requires zero cloud API keys, zero Entra ID app registrations, and zero database storage. All tenant data ingestion and calculations execute strictly within the administrator's local browser memory (RAM) via standard HTML5 File APIs.
+      </div>
+
+      <!-- Section 1: End-to-End Architecture -->
+      <h2>
+        <svg style="width:20px;height:20px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        1. Architecture &amp; Data Boundary
+      </h2>
+      <p>
+        Traditional cloud management tools require global tenant permissions (e.g., Application Administrator, Directory.ReadWrite.All) and persist corporate user directories in third-party multi-tenant databases. CloudTrim eliminates third-party transit risk by maintaining a strict air-gap between your tenant credentials and any external network.
+      </p>
+
+      <div class="arch-flow-box">
+        <strong style="font-size:0.92rem; color:var(--text-main);">Data Flow &amp; Isolation Model:</strong>
+        <div class="flow-step-grid">
+          <div class="flow-step-card">
+            <div class="flow-step-num">Step 1: Local Discovery</div>
+            <div class="flow-step-title">PowerShell on Workstation</div>
+            <div class="flow-step-desc">
+              Admin runs local export script. Connects directly to Microsoft Graph and Azure APIs using admin's own credentials. Generates local CSV snapshots on the admin's machine.
+            </div>
+          </div>
+          <div class="flow-step-card">
+            <div class="flow-step-num">Step 2: Browser Ingestion</div>
+            <div class="flow-step-title">In-Memory HTML5 File API</div>
+            <div class="flow-step-desc">
+              Admin drops CSV into browser. Browser reads file bytes directly into client RAM using JavaScript <code>FileReader</code>. 0 network calls sent to any server.
+            </div>
+          </div>
+          <div class="flow-step-card">
+            <div class="flow-step-num">Step 3: Local Remediation</div>
+            <div class="flow-step-title">Tailored Script Execution</div>
+            <div class="flow-step-desc">
+              Browser generates preflight-checked PowerShell scripts. Admin reviews and executes scripts locally via PowerShell terminal with <code>-WhatIf</code> dry-run safety.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Evidenced Security Controls -->
+      <h2>
+        <svg style="width:20px;height:20px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        2. Evidenced Security Controls &amp; Commitments
+      </h2>
+      <p>
+        Rather than relying on generic, self-asserted marketing badges, CloudTrim provides specific, verifiable technical commitments:
+      </p>
+
+      <table class="evidence-table">
+        <thead>
+          <tr>
+            <th style="width:28%;">Control Area</th>
+            <th style="width:36%;">CloudTrim Technical Implementation</th>
+            <th style="width:36%;">Verification / Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Credential Security</strong></td>
+            <td>Zero ingestion of Entra ID client secrets, passwords, OAuth refresh tokens, or certificates.</td>
+            <td>Admin authenticates via official Microsoft modules (<code>Connect-MgGraph</code>, <code>Connect-AzAccount</code>) on their own endpoint.</td>
+          </tr>
+          <tr>
+            <td><strong>Data Transit (Network Ingress)</strong></td>
+            <td>No directory data, user identities (UPNs), or cloud resource names ever leave the browser session.</td>
+            <td>Verifiable in browser DevTools Network tab: zero POST/PUT requests containing customer tenant payload.</td>
+          </tr>
+          <tr>
+            <td><strong>Data at Rest &amp; Retention</strong></td>
+            <td>Zero server-side database storage. Data exists in browser heap memory and is purged upon tab close or refresh.</td>
+            <td>No backend relational or NoSQL database is provisioned. Code runs as static client-side JavaScript.</td>
+          </tr>
+          <tr>
+            <td><strong>Script Safety &amp; Production Readiness</strong></td>
+            <td>Remediation scripts use exact Microsoft SkuId GUIDs, enforce <code>-WhatIf</code> dry-run safety by default, verify <code>AccountEnabled -eq $false</code>, check Azure resource locks, and log execution via <code>Start-Transcript</code>.</td>
+            <td>Inspectable script code block generated directly in the UI prior to copying or execution.</td>
+          </tr>
+          <tr>
+            <td><strong>Local Task Automation</strong></td>
+            <td>Scheduled audits run via Windows Task Scheduler on the customer's workstation. Historical CSVs reside in <code>C:\CloudTrim\History\</code>.</td>
+            <td>PowerShell script source code is fully transparent, open for internal security review, and uncompiled.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Section 3: Regulatory Alignment -->
+      <h2>
+        <svg style="width:20px;height:20px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        3. Regulatory &amp; Compliance Standard Alignment
+      </h2>
+
+      <h3>3.1 GDPR (General Data Protection Regulation) Alignment</h3>
+      <ul>
+        <li><strong>Data Minimization (Article 5(1)(c)):</strong> CloudTrim does not collect, process, or aggregate personal data on central servers. Directory parsing is confined to client memory on the data controller's device.</li>
+        <li><strong>Cross-Border Transfer Restrictions (Chapter V):</strong> Because data never leaves the administrator's local machine, no international data transfers or standard contractual clauses (SCCs) are triggered.</li>
+        <li><strong>Right to Erasure (Article 17):</strong> Closing the browser tab or clicking "Clear Session" instantly zeroes all memory structures containing parsed records.</li>
+      </ul>
+
+      <h3>3.2 SOC-2 Trust Services Criteria Alignment (Security &amp; Confidentiality)</h3>
+      <ul>
+        <li><strong>CC6.1 (Logical Access Controls):</strong> No service accounts or privileged tenant roles are granted to CloudTrim. Access remains governed by your organization's Conditional Access, MFA, and Entra ID PIM policies.</li>
+        <li><strong>CC6.6 &amp; CC6.7 (Boundary Protection &amp; Transmission):</strong> Data remains behind your corporate firewall and inside your administrative perimeter. No external ingestion endpoints are exposed.</li>
+      </ul>
+
+      <h3>3.3 HIPAA &amp; PCI-DSS Non-Applicability</h3>
+      <p>
+        CloudTrim does not store, transmit, or process protected health information (PHI) or credit card primary account numbers (PANs). All commercial licensing transactions are routed through PayPal’s PCI-DSS Level 1 certified payment infrastructure.
+      </p>
+
+      <!-- Section 4: Enterprise Vendor Assessment FAQ -->
+      <h2>
+        <svg style="width:20px;height:20px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        4. Vendor Assessment Questionnaire FAQ
+      </h2>
+      <p>Common questions from Enterprise InfoSec &amp; Procurement teams:</p>
+
+      <div style="margin-bottom:14px;">
+        <strong style="color:var(--text-main); font-size:0.88rem;">Q: Does CloudTrim require an Azure Enterprise Application registration?</strong>
+        <p style="font-size:0.84rem; color:#475569; margin-top:2px;">No. CloudTrim does not require an Enterprise Application, multi-tenant app consent, or client secrets in your Entra ID tenant.</p>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <strong style="color:var(--text-main); font-size:0.88rem;">Q: Can CloudTrim inadvertently modify live production services?</strong>
+        <p style="font-size:0.84rem; color:#475569; margin-top:2px;">No. Generated remediation scripts explicitly include the <code>-WhatIf</code> dry-run safety parameter by default and require manual review and execution by an authorized administrator in an elevated PowerShell session.</p>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <strong style="color:var(--text-main); font-size:0.88rem;">Q: Where are audit reports and history files saved?</strong>
+        <p style="font-size:0.84rem; color:#475569; margin-top:2px;">All CSV files, execution logs, and PDF exports are saved to your local filesystem (e.g., <code>C:\CloudTrim\History\</code> or your local Downloads directory).</p>
+      </div>
+
+      <div style="margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <span style="font-size:0.8rem; color:var(--text-muted);">&copy; 2026 CloudTrim Enterprise &bull; Operated by Satya Pathak in partnership with skypeexchange4u.com</span>
+        <div style="display:flex; gap:12px;">
+          <a href="terms.html" class="btn btn-secondary" style="font-size:0.78rem;">Terms of Service</a>
+          <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">Activate License</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+ResourceId,ResourceName,ResourceType,ResourceGroup,SubscriptionId,PreTaxCostUSD,DiskState,ManagedBy,LockStatus
+/subscriptions/sub-8921/resourceGroups/rg-ecommerce-prod/providers/Microsoft.Compute/disks/disk-webprod-backup-os,disk-webprod-backup-os,Microsoft.Compute/disks,rg-ecommerce-prod,sub-8921,76.80,Unattached,,None
+/subscriptions/sub-8921/resourceGroups/rg-qa-environments/providers/Microsoft.Compute/disks/disk-testdb-data01,disk-testdb-data01,Microsoft.Compute/disks,rg-qa-environments,sub-8921,76.80,Unattached,,None
+/subscriptions/sub-8921/resourceGroups/rg-apps-legacy/providers/Microsoft.Web/serverfarms/asp-legacy-api-dev,asp-legacy-api-dev,Microsoft.Web/serverfarms,rg-apps-legacy,sub-8921,146.00,Running,0 Apps,None
+/subscriptions/sub-8921/resourceGroups/rg-analytics-temp/providers/Microsoft.Compute/disks/disk-analytics-worker,disk-analytics-worker,Microsoft.Compute/disks,rg-analytics-temp,sub-8921,81.92,Unattached,,None
+/subscriptions/sub-8921/resourceGroups/rg-network-core/providers/Microsoft.Network/publicIPAddresses/pip-gateway-old-test,pip-gateway-old-test,Microsoft.Network/publicIPAddresses,rg-network-core,sub-8921,4.38,Unassociated,,None
+/subscriptions/sub-8921/resourceGroups/rg-data-prod/providers/Microsoft.Compute/disks/disk-sqldata-prod01,disk-sqldata-prod01,Microsoft.Compute/disks,rg-data-prod,sub-8921,153.60,Attached,/subscriptions/sub-8921/resourceGroups/rg-data-prod/providers/Microsoft.Compute/virtualMachines/vm-sql-prod01,ReadOnly

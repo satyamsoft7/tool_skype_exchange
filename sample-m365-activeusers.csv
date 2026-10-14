@@ -1,0 +1,10 @@
+UserPrincipalName,DisplayName,AccountEnabled,AssignedLicenses,LastSignInDateTime,MailboxSizeGB,MailboxType,LitigationHoldEnabled,ArchiveStatus
+rahul.sharma@contoso.com,Rahul Sharma,False,c5928f49-12ba-48f7-8140-f6f3477d9c93,2026-05-12T08:30:00Z,12.4,User,False,None
+priya.verma@contoso.com,Priya Verma,False,05e01617-00a6-4261-a773-5a61447866b2,2026-04-10T14:15:00Z,8.1,User,False,None
+neha.gupta@contoso.com,Neha Gupta,False,c5928f49-12ba-48f7-8140-f6f3477d9c93,2026-06-01T11:20:00Z,18.7,User,False,None
+invoices@contoso.com,Invoices Department,True,cbdc14ab-e9e6-432d-9e9d-47abedd7ac2d,2026-10-10T09:00:00Z,14.2,SharedMailbox,False,None
+support-team@contoso.com,Support Team Shared,True,4b5d0382-76be-4b95-821a-493405786616,2026-10-12T16:45:00Z,4.8,SharedMailbox,False,None
+amit.kumar@contoso.com,Amit Kumar,True,c5928f49-12ba-48f7-8140-f6f3477d9c93,2026-02-18T10:00:00Z,22.0,User,False,None
+operations@contoso.com,Operations Shared,True,19e2a5dc-d259-48e6-b9b9-630ea7d40dd5,2026-10-11T12:30:00Z,9.5,SharedMailbox,False,None
+vikram.singh@contoso.com,Vikram Singh,True,c5928f49-12ba-48f7-8140-f6f3477d9c93,2026-10-14T08:15:00Z,31.2,User,False,None
+ananya.iyer@contoso.com,Ananya Iyer,True,05e01617-00a6-4261-a773-5a61447866b2,2026-10-13T17:05:00Z,15.6,User,False,None

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudTrim Enterprise | Cloud Cost & License Optimization for M365 and Azure</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .landing-hero {
+      padding: 64px 24px 50px;
+      text-align: center;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FC 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .landing-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-subtle);
+      border: 1px solid #BFDBFE;
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .landing-hero h1 {
+      font-size: 2.7rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 860px;
+      margin: 0 auto 18px;
+    }
+    .landing-hero p {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+    }
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .hero-privacy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: white;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+    }
+
+    .landing-section {
+      padding: 60px 24px;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .section-headline {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      line-height: 1.55;
+      margin-bottom: 36px;
+    }
+
+    /* Audience Grid */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .audience-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-subtle);
+    }
+    .audience-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .audience-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .audience-card p {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Detection Capabilities Grid */
+    .detection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+    .detection-column {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow-subtle);
+    }
+    .detection-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .detection-header h3 {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .detection-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .detection-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.86rem;
+      color: #334155;
+      line-height: 1.45;
+    }
+    .detection-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* 3-Step Walkthrough */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .step-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-subtle);
+      position: relative;
+    }
+    .step-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #CBD5E1;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .step-box h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .step-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Sample Report Interactive Preview */
+    .sample-report-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow-card);
+    }
+    .report-mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .report-stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .report-stat-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+    }
+    .report-stat-box .val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 4px;
+    }
+    .report-stat-box .val.green { color: var(--savings-green); }
+
+    /* Pricing Section */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .pricing-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border: 2px solid var(--primary);
+      box-shadow: var(--shadow-card);
+    }
+    .popular-tag {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .price-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 12px 0 4px;
+    }
+    .pricing-features {
+      list-style: none;
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #334155;
+    }
+
+    @media (max-width: 960px) {
+      .landing-hero h1 { font-size: 2.1rem; }
+      .audience-grid, .steps-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .detection-grid { grid-template-columns: 1fr; }
+      .report-stat-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Global Header -->
+  <header class="global-header">
+    <div class="header-left">
+      <a href="landing.html" class="brand-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        <span>CloudTrim Enterprise</span>
+      </a>
+      <div class="tenant-pill">
+        <span class="tenant-dot"></span>
+        <span>FinOps &amp; License Governance</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="btn btn-outline" style="font-size:0.78rem; color:#FFFFFF; border-color:#334155; background:#1E293B;">
+        Explore Live Demo
+      </a>
+      <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">
+        Activate License ($39)
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="landing-hero">
+    <div class="landing-hero-badge">
+      <span>🛡️ 100% In-Browser Memory Processing &bull; Zero Server Transits</span>
+    </div>
+    <h1>Stop Wasting 20–30% of Your Microsoft 365 &amp; Azure Spend</h1>
+    <p>
+      Instant, deterministic discovery of orphaned licenses, unattached managed disks, and idle cloud infrastructure. No Entra ID app registrations, no cloud API secrets, and zero external database storage.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="index.html" class="btn btn-primary" style="font-size:0.95rem; padding:12px 24px;">
+        Open Interactive Audit Console →
+      </a>
+      <a href="index.html#csv-guide" class="btn btn-outline" style="font-size:0.95rem; padding:12px 20px;">
+        Download Sample CSVs
+      </a>
+    </div>
+
+    <div class="hero-privacy-pill">
+      <span>🔒 <strong>Air-Gapped Privacy:</strong> HTML5 File API reads files strictly into your local browser RAM. No directory records ever leave your workstation.</span>
+    </div>
+  </section>
+
+  <!-- Who It Serves -->
+  <section class="landing-section">
+    <div class="section-eyebrow">Target Audience</div>
+    <div class="section-headline">Engineered for IT Leaders, FinOps &amp; MSPs</div>
+    <div class="section-desc">
+      Built for administrators who need rapid, audit-ready cost recovery without granting third-party SaaS vendors persistent global tenant permissions.
+    </div>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="audience-icon">
+          <svg style="width:24px;height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>IT Administrators &amp; SysAdmins</h3>
+        <p>
+          Reconcile Entra ID user offboarding against active subscription billing. Ensure former employees and contractors do not retain expensive E5 or E3 licenses.
+        </p>
+      </div>
+
+      <div class="audience-card">
+        <div class="audience-icon">
+          <svg style="width:24px;height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+        </div>
+        <h3>FinOps &amp; Cloud Architects</h3>
+        <p>
+          Pinpoint orphaned Azure disks, unassociated static public IPs, and empty App Service plans left behind after VM decommissions and dev experiments.
+        </p>
+      </div>
+
+      <div class="audience-card">
+        <div class="audience-icon">
+          <svg style="width:24px;height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
+        </div>
+        <h3>MSPs &amp; Cloud Consultants</h3>
+        <p>
+          Conduct quarterly tenant audits across client environments. Generate co-branded, CFO-ready executive PDF summaries that prove tangible monthly ROI.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What It Detects -->
+  <section class="landing-section" style="background:#FFFFFF; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Detection Engine</div>
+    <div class="section-headline">What CloudTrim Automatically Detects</div>
+    <div class="section-desc">
+      Rigorous deterministic rules covering both M365 subscription entitlements and Azure cloud infrastructure.
+    </div>
+
+    <div class="detection-grid">
+      <!-- M365 Detection -->
+      <div class="detection-column">
+        <div class="detection-header">
+          <svg style="width:24px;height:24px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <h3>Microsoft 365 License Inefficiencies</h3>
+        </div>
+        <ul class="detection-list">
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--critical-red-bg); color:var(--critical-red); border:1px solid var(--critical-red-border);">Critical</span>
+            <div>
+              <strong>Disabled Entra ID Accounts with Active Licenses:</strong> Staff offboarded in directory but retaining billed licenses ($38/mo E5, $23/mo E3).
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--attention-amber-bg); color:var(--attention-amber); border:1px solid var(--attention-amber-border);">High</span>
+            <div>
+              <strong>Over-Licensed Shared Mailboxes:</strong> Mailboxes under 50GB holding paid licenses when no Litigation Hold or Purview retention policy requires it.
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--primary-subtle); color:var(--primary); border:1px solid #BFDBFE;">Medium</span>
+            <div>
+              <strong>Inactive Licensed Users:</strong> Accounts with zero interactive sign-ins in 90+ days that qualify for license suspension or E1 downgrade.
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:#F1F5F9; color:var(--text-muted); border:1px solid var(--border);">Medium</span>
+            <div>
+              <strong>Redundant Standalone SKUs:</strong> Standalone add-ons (Exchange Online Plan 1/2) assigned to users already possessing bundled suites.
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Azure Detection -->
+      <div class="detection-column">
+        <div class="detection-header">
+          <svg style="width:24px;height:24px;color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/></svg>
+          <h3>Azure Infrastructure Waste</h3>
+        </div>
+        <ul class="detection-list">
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--critical-red-bg); color:var(--critical-red); border:1px solid var(--critical-red-border);">Critical</span>
+            <div>
+              <strong>Unattached Managed Disks (Premium/Standard SSD):</strong> Disks retained after VM deletion still billing hourly storage at full rate.
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--attention-amber-bg); color:var(--attention-amber); border:1px solid var(--attention-amber-border);">High</span>
+            <div>
+              <strong>Empty App Service Plans:</strong> Dedicated compute instances (P1v2, S1) running 24/7 with zero hosted web apps or API containers.
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:var(--primary-subtle); color:var(--primary); border:1px solid #BFDBFE;">Medium</span>
+            <div>
+              <strong>Unassociated Static Public IPs:</strong> Reserved IPv4 addresses not bound to any NIC, Load Balancer, or Virtual Network Gateway.
+            </div>
+          </li>
+          <li class="detection-item">
+            <span class="detection-badge" style="background:#F1F5F9; color:var(--text-muted); border:1px solid var(--border);">Verification</span>
+            <div>
+              <strong>Needs Verification State:</strong> Whenever cost exports lack attachment or lock status, assets are flagged for explicit confirmation.
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3-Step Walkthrough -->
+  <section class="landing-section">
+    <div class="section-eyebrow">Workflow</div>
+    <div class="section-headline">How It Works: 3 Simple Steps</div>
+    <div class="section-desc">
+      Zero software installation, zero browser extensions, and zero central database ingress.
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-box">
+        <div class="step-number">01</div>
+        <h3>Export CSV Locally</h3>
+        <p>
+          Export standard <code>ActiveUsers.csv</code> from Microsoft 365 Admin Center, Azure Cost Management, or run our transparent PowerShell collector script.
+        </p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-number">02</div>
+        <h3>Drop Into Browser RAM</h3>
+        <p>
+          Drop your CSV into the console. The HTML5 File API parses data strictly within your browser's heap memory. Zero bytes transmitted over the network.
+        </p>
+      </div>
+
+      <div class="step-box">
+        <div class="step-number">03</div>
+        <h3>Review &amp; Remediate</h3>
+        <p>
+          Review itemized opportunities, verify mailbox holds and resource locks, and execute validated PowerShell scripts with safe <code>-WhatIf</code> dry-run checks.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sample Report Preview -->
+  <section class="landing-section" style="background:#FFFFFF; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Deliverable Preview</div>
+    <div class="section-headline">Audit-Ready Executive CFO Report</div>
+    <div class="section-desc">
+      Every audit produces an itemized Executive PDF summary designed for budget approvals and governance reviews.
+    </div>
+
+    <div class="sample-report-card">
+      <div class="report-mock-header">
+        <div>
+          <div style="font-size:1.15rem; font-weight:800; color:var(--text-main);">CloudTrim Executive Optimization Assessment</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Tenant: contoso.onmicrosoft.com &bull; Date: October 2026</div>
+        </div>
+        <span class="file-active-badge">Sample Deliverable Preview</span>
+      </div>
+
+      <div class="report-stat-row">
+        <div class="report-stat-box">
+          <div class="metric-label">Potential Monthly Recovery</div>
+          <div class="val green">$1,485.50</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">$17,826.00 annual run-rate</div>
+        </div>
+        <div class="report-stat-box">
+          <div class="metric-label">Tenant Governance Score</div>
+          <div class="val">74 / 100</div>
+          <div style="font-size:0.75rem; color:var(--attention-amber); margin-top:2px;">26 pts lost to waste</div>
+        </div>
+        <div class="report-stat-box">
+          <div class="metric-label">Identified Action Items</div>
+          <div class="val">9 Assets</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">6 M365 Seats &bull; 3 Azure Resources</div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 18px;">
+        <span style="font-size:0.85rem; color:var(--text-main);">
+          Includes full remediation scripts with exact Microsoft SkuIds and transcript logs.
+        </span>
+        <a href="index.html" class="btn btn-outline" style="font-size:0.78rem;">
+          View Full Interactive Demo →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="landing-section" id="pricing">
+    <div class="section-eyebrow">Commercial Tiers</div>
+    <div class="section-headline">Transparent, Predictable Pricing</div>
+    <div class="section-desc">
+      Pay once for an immediate cleanup, or subscribe for monthly drift tracking and automation.
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Tier 0: Free Demo -->
+      <div class="pricing-card">
+        <div>
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Free Preview</div>
+          <div class="price-num">$0</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Explore sample workspace</div>
+          <ul class="pricing-features">
+            <li>✓ Full interactive demo console</li>
+            <li>✓ CSV format inspection</li>
+            <li>✓ Downloadable sample CSV files</li>
+            <li>✓ In-browser calculations</li>
+          </ul>
+        </div>
+        <a href="index.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
+          Launch Demo Console
+        </a>
+      </div>
+
+      <!-- Tier 1: Single Audit ($39) -->
+      <div class="pricing-card featured">
+        <span class="popular-tag">Most Popular</span>
+        <div>
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Single Tenant Package</div>
+          <div class="price-num">$39</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">One-time payment per tenant</div>
+          <ul class="pricing-features">
+            <li>✓ Full remediation script unlock</li>
+            <li>✓ Exact Microsoft SkuId resolution</li>
+            <li>✓ Audit-ready Executive CFO PDF report</li>
+            <li>✓ Preflight checks &amp; transcript logs</li>
+            <li>✓ 14-day execution email support</li>
+          </ul>
+        </div>
+        <a href="checkout.html" class="btn btn-primary" style="width:100%; justify-content:center; font-size:0.8rem;">
+          Activate License ($39)
+        </a>
+      </div>
+
+      <!-- Tier 2: Continuous Pro ($19/mo) -->
+      <div class="pricing-card">
+        <div>
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Continuous Pro</div>
+          <div class="price-num">$19<span style="font-size:0.9rem; font-weight:normal; color:var(--text-muted);">/mo</span></div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Monthly recurring drift tracking</div>
+          <ul class="pricing-features">
+            <li>✓ Month-over-month drift engine</li>
+            <li>✓ Automated Windows Task Scheduler scripts</li>
+            <li>✓ Continuously updated SKU definitions</li>
+            <li>✓ Monthly email summary digests</li>
+          </ul>
+        </div>
+        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
+          Subscribe Pro ($19/mo)
+        </a>
+      </div>
+
+      <!-- Tier 3: MSP Partner ($69/mo) -->
+      <div class="pricing-card">
+        <div>
+          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">MSP Partner</div>
+          <div class="price-num">$69<span style="font-size:0.9rem; font-weight:normal; color:var(--text-muted);">/mo</span></div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Unlimited client tenants</div>
+          <ul class="pricing-features">
+            <li>✓ Unlimited client tenant audits</li>
+            <li>✓ White-label client PDF reports</li>
+            <li>✓ Multi-tenant automation scripts</li>
+            <li>✓ Priority engineering support channel</li>
+          </ul>
+        </div>
+        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
+          Join MSP Partner ($69/mo)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Support & Operator Disclosures -->
+  <section class="landing-section" style="padding-top:20px; padding-bottom:40px;">
+    <div style="background:white; border:1px solid var(--border); border-radius:var(--radius); padding:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+      <div>
+        <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">Enterprise Support &amp; Operator Details</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted);">
+          Operated by <strong>Satya Pathak</strong> in partnership with <strong>skypeexchange4u.com</strong>.
+          Direct engineering support: <strong>support@skypeexchange4u.com</strong> &bull; 14-day money-back guarantee on all licenses.
+        </p>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <a href="security.html" class="btn btn-secondary" style="font-size:0.8rem;">Security Spec</a>
+        <a href="terms.html" class="btn btn-secondary" style="font-size:0.8rem;">Terms &amp; Policies</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Corporate Footer -->
+  <footer class="enterprise-footer">
+    <div>
+      <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.
+    </div>
+    <div style="display:flex; gap:16px;">
+      <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Overview</a>
+      <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Audit Console</a>
+      <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
+      <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
+      <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Activate License ($39)</a>
+    </div>
+  </footer>
+
+</body>
+</html>

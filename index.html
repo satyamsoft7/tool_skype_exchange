@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudTrim Enterprise | Overview</title>
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Corporate Design System Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Persistent Demo Workspace Banner */
+    .demo-workspace-banner {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-left: 4px solid #D97706;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+      color: #92400E;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .demo-workspace-banner strong { color: #78350F; }
+
+    /* Evidenced Data Handling Notice */
+    .evidence-security-bar {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    /* Preflight check badge */
+    .preflight-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    /* Data Period & Methodology Bar */
+    .methodology-bar {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header class="global-header">
+    <div class="header-left">
+      <a href="landing.html" class="brand-link" title="CloudTrim Enterprise - Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+        <span>CloudTrim Enterprise</span>
+      </a>
+      <div class="tenant-pill">
+        <span class="tenant-dot" style="background:#D97706;" id="tenantDot"></span>
+        <span id="tenantDisplay">Demo Workspace (contoso.onmicrosoft.com)</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Public Landing Page Link -->
+      <a href="landing.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;">
+        Product Tour &bull; Landing
+      </a>
+
+      <!-- Top MFA Status Badge (Hidden until user logs in and verifies Email OTP) -->
+      <div class="mfa-top-badge" id="mfaTopStatus" style="display:none;" onclick="openMfaWizard()" title="Multi-Factor Authentication Status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>MFA Active</span>
+      </div>
+
+      <!-- Currency Switcher -->
+      <div class="currency-pill">
+        <button class="curr-btn active" id="btn-usd" onclick="setCurrency('USD')">USD ($)</button>
+        <button class="curr-btn" id="btn-inr" onclick="setCurrency('INR')">INR (₹)</button>
+      </div>
+
+      <!-- Demo Data Loader -->
+      <button class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;" onclick="loadSampleDataMode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        Load demo data
+      </button>
+
+      <!-- Header Sign In Button (When logged out) -->
+      <button class="btn btn-outline" id="btnHeaderSignIn" style="font-size:0.78rem; padding:5px 12px; color:#FFFFFF; border-color:#334155; background:#1E293B;" onclick="openAuthModal('signin')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </button>
+
+      <!-- User Profile Menu (When logged in) -->
+      <div class="user-menu-wrap" id="userProfileMenu" style="display:none;">
+        <button class="user-btn" onclick="toggleUserMenu()">
+          <span class="user-avatar-sm">A</span>
+          <span id="userEmailDisplay">admin@contoso.com</span>
+          <svg style="width:12px;height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-header">
+            <span>Signed in as Tenant Admin</span>
+            <strong id="dropdownUserEmail">admin@contoso.com</strong>
+          </div>
+          <div class="dropdown-item" onclick="openAuthModal('reset')">
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Reset Password</span>
+          </div>
+          <div class="dropdown-item" onclick="openAuthModal('mfa')">
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>MFA Security Settings</span>
+          </div>
+          <a href="admin.html" class="dropdown-item">
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+            <span>Admin Console</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" style="color:var(--critical-red);" onclick="handleSignOut()">
+            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span>Sign Out</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commercial License Link -->
+      <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem; padding:6px 14px;">
+        Activate License ($39)
+      </a>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    
+    <!-- Sidebar with Shortened Labels -->
+    <aside class="app-sidebar">
+      <div>
+        <div class="sidebar-nav-title">Navigation</div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item active" id="side-overview" onclick="selectSidebar('overview')">
+            <div class="sidebar-item-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              <span>Overview</span>
+            </div>
+            <span class="sidebar-item-badge" id="sideDemoBadge" style="background:#FEF3C7; color:#92400E;">Demo mode</span>
+          </li>
+          <li class="sidebar-item" id="side-m365" onclick="selectSidebar('m365')">
+            <div class="sidebar-item-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>M365 Licenses</span>
+            </div>
+            <span class="sidebar-item-badge" id="badgeM365Count">9</span>
+          </li>
+          <li class="sidebar-item" id="side-azure" onclick="selectSidebar('azure')">
+            <div class="sidebar-item-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+              <span>Azure Resources</span>
+            </div>
+            <span class="sidebar-item-badge" id="badgeAzureCount">11</span>
+          </li>
+          <li class="sidebar-item" id="side-remediation" onclick="selectSidebar('remediation')">
+            <div class="sidebar-item-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>Remediation</span>
+            </div>
+          </li>
+          <li class="sidebar-item" id="side-automation" onclick="selectSidebar('automation')">
+            <div class="sidebar-item-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Scheduled Audits</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div><strong>Data Handling Standard:</strong></div>
+        <div>100% In-Browser RAM</div>
+        <div style="margin-top:6px;"><a href="security.html" style="color:var(--primary); text-decoration:underline;">Evidenced Security Spec</a></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main class="app-main" id="overviewWorkspace">
+
+      <!-- Guided First-Use Journey Stepper -->
+      <div class="journey-guide-card" id="journeyStepper">
+        <div class="journey-header">
+          <div class="journey-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Guided Optimization Journey</span>
+          </div>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Step-by-step audit &amp; remediation path</span>
+        </div>
+        <div class="journey-steps-grid">
+          <div class="journey-step done" onclick="location.href='landing.html'">
+            <div class="journey-step-num">Step 1</div>
+            <div class="journey-step-label">Understand Benefit</div>
+          </div>
+          <div class="journey-step active" id="jStep2" onclick="loadSampleDataMode()">
+            <div class="journey-step-num">Step 2</div>
+            <div class="journey-step-label">Explore Demo</div>
+          </div>
+          <div class="journey-step" id="jStep3" onclick="toggleCsvGuide(true)">
+            <div class="journey-step-num">Step 3</div>
+            <div class="journey-step-label">Get Export Guide</div>
+          </div>
+          <div class="journey-step" id="jStep4" onclick="toggleUploadPanel(true)">
+            <div class="journey-step-num">Step 4</div>
+            <div class="journey-step-label">Import Tenant CSV</div>
+          </div>
+          <div class="journey-step" id="jStep5" onclick="scrollToDecisions()">
+            <div class="journey-step-num">Step 5</div>
+            <div class="journey-step-label">Review Findings</div>
+          </div>
+          <div class="journey-step" id="jStep6" onclick="location.href='checkout.html'">
+            <div class="journey-step-num">Step 6</div>
+            <div class="journey-step-label">Unlock &amp; Remediate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Persistent Demo Workspace Banner -->
+      <div class="demo-workspace-banner" id="persistentDemoBanner">
+        <div>
+          <span>⚠️ <strong>Demo workspace &bull; Sample data:</strong> You are currently viewing illustrative baseline data for <em>contoso.onmicrosoft.com</em>. Drop your tenant CSV below to load your organization's actual figures.</span>
+        </div>
+        <button class="btn btn-outline" style="font-size:0.75rem; padding:3px 10px; background:white; color:#92400E; border-color:#FCD34D;" onclick="toggleUploadPanel(true)">
+          Import Customer CSV
+        </button>
+      </div>
+
+      <!-- Evidenced Data Handling Notice -->
+      <div class="evidence-security-bar">
+        <strong>Client-Side Execution:</strong> All CSV processing runs strictly within local browser memory via HTML5 File APIs. No tenant credentials, user directories, or cloud resources are transmitted to or stored on external servers.
+      </div>
+
+      <!-- Visual Polish: Page Heading Shortened to "Overview" with tenant and date underneath -->
+      <div class="overview-header">
+        <div class="overview-title-group">
+          <h1>
+            Overview
+            <span class="sample-data-badge" id="sampleDataBadge">Sample Data</span>
+          </h1>
+          <div class="overview-subtext">
+            <span>Tenant: <strong id="tenantContextName">contoso.onmicrosoft.com</strong></span>
+            <span>&bull;</span>
+            <span>Assessed: <strong id="assessmentDateText">October 14, 2026</strong></span>
+            <span>&bull;</span>
+            <span id="dataModeNotice" style="color:var(--attention-amber); font-weight:600;">Illustrative Sample Scenario</span>
+          </div>
+        </div>
+
+        <div class="header-actions-group">
+          <button class="btn btn-outline" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Executive PDF
+          </button>
+          <button class="btn btn-outline" onclick="exportAuditCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- CSV Preparation Guidance Drawer (Hidden by default) -->
+      <div class="csv-guide-box" id="csvPreparationGuide" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:0.95rem; color:var(--text-main);">CSV Preparation &amp; Downloadable Sample Files</strong>
+          <button style="background:none; border:none; font-size:1.1rem; cursor:pointer;" onclick="toggleCsvGuide(false)">&times;</button>
+        </div>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
+          CloudTrim natively accepts official exports from Microsoft 365 Admin Center, Azure Cost Management, or our local PowerShell collector.
+        </p>
+
+        <div class="csv-guide-grid">
+          <div class="csv-guide-col">
+            <h4>Microsoft 365 ActiveUsers.csv</h4>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">
+              <strong>How to obtain:</strong> M365 Admin Center &gt; Users &gt; Active users &gt; Export users. Or run: <code>Get-MgUser -All | Export-Csv</code>
+            </p>
+            <div style="font-size:0.76rem; color:#334155; margin-bottom:10px;">
+              <strong>Required Columns:</strong> <code>UserPrincipalName</code>, <code>AccountEnabled</code> (or Block credential), <code>AssignedLicenses</code>, <code>LastSignInDateTime</code>
+            </div>
+            <a href="sample-m365-activeusers.csv" download="sample-m365-activeusers.csv" class="btn btn-outline" style="font-size:0.74rem;">
+              ⬇ Download Sample M365 CSV
+            </a>
+          </div>
+
+          <div class="csv-guide-col">
+            <h4>Azure Cost &amp; Resource CSV</h4>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">
+              <strong>How to obtain:</strong> Azure Portal &gt; Cost Management &gt; Cost analysis &gt; Export. Or run <code>Export-CloudTrimData.ps1</code>
+            </p>
+            <div style="font-size:0.76rem; color:#334155; margin-bottom:10px;">
+              <strong>Required Columns:</strong> <code>ResourceId</code>, <code>ResourceType</code>, <code>ResourceGroup</code>, <code>PreTaxCostUSD</code>, <code>DiskState</code> / <code>ManagedBy</code>
+            </div>
+            <a href="sample-azure-resources.csv" download="sample-azure-resources.csv" class="btn btn-outline" style="font-size:0.74rem;">
+              ⬇ Download Sample Azure CSV
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Panel: Collapses cleanly after import -->
+      <div class="upload-panel-card">
+        <!-- Expanded Large Drop Zone (Hidden after file is loaded) -->
+        <div class="upload-expanded" id="uploadExpanded" style="display:none;">
+          <div class="drop-zone-large" id="largeDropZone" onclick="document.getElementById('csvFileInput').click()">
+            <input type="file" id="csvFileInput" style="display:none;" accept=".csv" onchange="processUploadedFile(this.files[0])">
+            <h3>Drag &amp; Drop M365 ActiveUsers.csv or Azure Cost CSV Here</h3>
+            <p>Or click to browse from local drive. Parsed entirely in local browser RAM — zero bytes sent to external servers.</p>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:0.78rem;">
+            <a href="#" onclick="toggleCsvGuide(true); return false;" style="color:var(--primary); text-decoration:underline;">Need help formatting your CSV? View column requirements</a>
+            <button class="btn btn-outline" style="font-size:0.72rem; padding:3px 10px;" onclick="toggleUploadPanel(false)">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Collapsed Bar ("Import data") -->
+        <div class="upload-collapsed" id="uploadCollapsed" style="display:flex;">
+          <div class="collapsed-left">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Active Dataset: <strong id="activeFileSummary">Sample data loaded (contoso.onmicrosoft.com)</strong></span>
+            <span class="file-active-badge" id="datasetTypeBadge" style="background:#FEF3C7; color:#92400E; border-color:#FDE68A;">Sample Demo Mode</span>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px;" onclick="toggleCsvGuide(true)">
+              CSV Guide &amp; Samples
+            </button>
+            <button class="btn btn-outline" style="font-size:0.78rem; padding:4px 12px;" onclick="toggleUploadPanel(true)">
+              ↑ Import customer CSV / Replace Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- SECTION 1: POTENTIAL MONTHLY SAVINGS WITH DATA PERIOD & ESTIMATION METHOD -->
+      <!-- ==================================================================== -->
+      <div class="savings-cards-grid">
+        <!-- Card 1: Lead Metric (Potential Savings) -->
+        <div class="metric-card lead-card">
+          <div class="metric-label">Potential Monthly Savings</div>
+          <div class="metric-main-value green" id="leadMonthlySavings">$1,485.50</div>
+          <div class="metric-sub-value" id="leadAnnualSavings">$17,826.00 potential annual savings</div>
+        </div>
+
+        <!-- Card 2: Governance Score (Visual Polish: Amber Fair score, no misleading green ring) -->
+        <div class="metric-card lead-amber">
+          <div class="metric-label">Governance Score</div>
+          <div class="metric-main-value" style="color:#B45309;">74 <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span></div>
+          <div class="score-pill-row">
+            <span class="score-pill-amber">Fair &bull; Attention Required</span>
+            <span class="metric-sub-value">26 pts lost to waste</span>
+          </div>
+        </div>
+
+        <!-- Card 3: M365 Opportunities -->
+        <div class="metric-card">
+          <div class="metric-label">M365 Opportunities</div>
+          <div class="metric-main-value" id="cardM365SeatVal">9 Seats</div>
+          <div class="metric-sub-value" id="cardM365Waste">$495.50/mo potential recovery</div>
+        </div>
+
+        <!-- Card 4: Azure Opportunities -->
+        <div class="metric-card">
+          <div class="metric-label">Azure Opportunities</div>
+          <div class="metric-main-value" id="cardAzureAssetVal">11 Assets</div>
+          <div class="metric-sub-value" id="cardAzureWaste">$990.00/mo idle capacity</div>
+        </div>
+      </div>
+
+      <!-- Data Period and Estimation Method Bar -->
+      <div class="methodology-bar">
+        <div>
+          <strong>Billing Data Period:</strong> <span>Trailing 30 Days (September 15 – October 14, 2026)</span>
+        </div>
+        <div>
+          <strong>Estimation Method:</strong> <span>Microsoft published tier rate cards &bull; 730 hrs/mo unattached compute &amp; storage calculation</span>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- SECTION 2: FINDINGS TO REVIEW (SORTED BY POTENTIAL SAVINGS) -->
+      <!-- ==================================================================== -->
+      <div class="section-card" id="findingsDecisionSection">
+        <div class="section-card-header">
+          <div>
+            <div class="section-card-title">Findings to Review</div>
+            <div class="section-card-subtitle">Prioritized decisions sorted descending by potential savings. Customer eligibility required before execution.</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Sort: <strong>Highest Potential Savings First</strong></span>
+          </div>
+        </div>
+
+        <table class="decision-table">
+          <thead>
+            <tr>
+              <th style="width:26%;">Finding</th>
+              <th style="width:16%;">Estimated Saving</th>
+              <th style="width:30%;">Evidence</th>
+              <th style="width:12%;">Confidence</th>
+              <th style="width:16%;">Next Action &amp; Decisions</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyDecisionFindings">
+            <!-- Rendered dynamically by app.js (Sorted by potential savings) -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paid Deliverable Unlock Preview (Why to Upgrade for $39) -->
+      <div class="upgrade-preview-card" style="background:linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%); border:2px solid var(--primary); border-radius:var(--radius); padding:24px 28px; margin-bottom:28px; box-shadow:var(--shadow-card);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+          <div style="max-width:640px;">
+            <div style="display:inline-flex; align-items:center; gap:6px; background:#EFF6FF; border:1px solid #BFDBFE; color:var(--primary); font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:9999px; text-transform:uppercase; margin-bottom:8px;">
+              Single Tenant Audit &bull; Paid Deliverable Preview
+            </div>
+            <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-main); margin-bottom:6px;">
+              Ready to act on these findings? Unlock the Full Production Package
+            </h3>
+            <p style="font-size:0.83rem; color:var(--text-muted); line-height:1.5; margin-bottom:14px;">
+              Free mode gives you import validation and summary metrics. Unlocking the $39 Single Audit package delivers verified execution scripts, unmasked tenant findings, and an executive CFO presentation deck.
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.78rem;">
+              <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 14px;">
+                <div style="font-weight:700; color:var(--text-muted); margin-bottom:4px;">Free Assessment ($0)</div>
+                <ul style="padding-left:16px; color:#475569; line-height:1.45;">
+                  <li>✓ In-browser CSV validation</li>
+                  <li>✓ Top 3 findings preview</li>
+                  <li>✓ General savings estimate</li>
+                </ul>
+              </div>
+              <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-sm); padding:10px 14px;">
+                <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">Single Audit Package ($39)</div>
+                <ul style="padding-left:16px; color:#1E3A8A; line-height:1.45;">
+                  <li>★ <strong>Full 9+ findings unmasked</strong></li>
+                  <li>★ <strong>Production PowerShell scripts</strong> (Graph SkuIds)</li>
+                  <li>★ <strong>Audit-ready Executive CFO PDF</strong></li>
+                  <li>★ <strong>14-day technical email support</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:20px; text-align:center; min-width:240px; box-shadow:var(--shadow-subtle);">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">License Scope</div>
+            <div style="font-size:0.85rem; font-weight:700; color:var(--text-main); margin-top:2px;">1 Verified Tenant Domain</div>
+            <div style="font-size:2.2rem; font-weight:800; color:var(--text-main); margin:10px 0 2px;">$39</div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:14px;">1-time payment &bull; Non-recurring</div>
+            <a href="checkout.html?plan=single" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; font-size:0.85rem;">
+              Unlock Full Package ($39) →
+            </a>
+            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:8px;">14-day money-back guarantee</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- SECTION 3: EVIDENCE AND EXCLUSIONS FOR EACH FINDING -->
+      <!-- ==================================================================== -->
+      <div class="section-card">
+        <div class="section-card-header">
+          <div>
+            <div class="section-card-title">Evidence &amp; Exclusions Management</div>
+            <div class="section-card-subtitle">Granular technical verification and items excluded from potential savings calculation</div>
+          </div>
+          <button class="btn btn-outline" style="font-size:0.74rem;" onclick="toggleEvidenceDrawer()">
+            Toggle Evidence Details
+          </button>
+        </div>
+
+        <div style="padding: 18px 22px;">
+          <div class="evidence-exclusions-grid">
+            <!-- Left: Technical Evidence Detail Box -->
+            <div class="evidence-box-card">
+              <div class="evidence-box-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit Evidence Standards</span>
+              </div>
+              <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.5; margin-bottom:10px;">
+                Every recommendation links to verified tenant metadata parsed in local RAM:
+              </p>
+              <ul style="padding-left:18px; font-size:0.78rem; color:#334155; line-height:1.6;">
+                <li><strong>Entra ID:</strong> Verified via <code>AccountEnabled -eq $false</code> and <code>AssignedLicenses</code> GUID SkuIds.</li>
+                <li><strong>Azure Compute Disks:</strong> Verified via <code>ManagedBy -eq $null</code> and resource lock inspection.</li>
+                <li><strong>Shared Mailboxes:</strong> Flagged as <span class="badge-confidence-amber" style="font-size:0.68rem; padding:1px 5px;">Needs review</span> until Litigation Hold and Purview retention policies are checked.</li>
+              </ul>
+            </div>
+
+            <!-- Right: Active Exclusions Box -->
+            <div class="evidence-box-card">
+              <div class="evidence-box-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--attention-amber);"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <span>Active Exclusions &amp; Exceptions (<span id="exclusionsCount">0</span> Excluded)</span>
+              </div>
+              <div id="exclusionsListContainer" style="margin-top:8px;">
+                <p style="font-size:0.78rem; color:var(--text-muted);" id="noExclusionsNotice">
+                  No findings excluded yet. Click "Exclude" on any finding above to deduct it from potential savings (e.g. for retention holds or disaster recovery spares).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- SECTION 4: SELECTED ACTIONS AND REPORT PREVIEW -->
+      <!-- ==================================================================== -->
+      <div class="selected-actions-summary-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <h2 style="font-size:1.1rem; font-weight:800; color:var(--text-main);">Selected Actions &amp; Report Preview</h2>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+              Live summary of confirmed remediation actions ready for script generation and executive reporting.
+            </p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" style="font-size:0.78rem;" onclick="window.print()">
+              Download Executive CFO Report (PDF)
+            </button>
+            <button class="btn btn-primary" style="font-size:0.78rem;" onclick="selectSidebar('remediation')">
+              Proceed to Safe Remediation (-WhatIf) →
+            </button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:16px;">
+          <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirmed Potential Monthly Recovery</div>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--savings-green); margin-top:4px;" id="confirmedMonthlySavings">$1,485.50</div>
+            <span style="font-size:0.74rem; color:var(--text-muted);" id="confirmedAnnualSavings">$17,826.00 / year projected</span>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Decisions Status</div>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="reviewedItemsRatio">0 / 6 Reviewed</div>
+            <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">6 items awaiting admin confirmation</span>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Remediation Safety Gate</div>
+            <div style="font-size:1.15rem; font-weight:800; color:var(--primary); margin-top:6px;" id="scriptUnlockStatus">Safety Dry-Run Active</div>
+            <span style="font-size:0.74rem; color:var(--text-muted);">Mandatory review locks production script</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- SECTION 5: SUPPORTING CHARTS -->
+      <!-- ==================================================================== -->
+      <div class="charts-grid-layout">
+        <!-- Horizontal Bar Chart -->
+        <div class="chart-panel-card">
+          <div class="chart-heading-group">
+            <div class="chart-title">Where Savings Come From</div>
+            <span style="font-size:0.78rem; color:var(--text-muted);">Potential Monthly Recovery ($/mo)</span>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="chartHorizontalSavings"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut Ratio Chart (Amber for Fair Governance Score) -->
+        <div class="chart-panel-card">
+          <div class="chart-heading-group">
+            <div class="chart-title">Efficiency Ratio</div>
+            <span style="font-size:0.75rem; color:#B45309; font-weight:700;">22.8% Potential Savings (Fair Score)</span>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="chartEfficiencyRatio"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supporting Details & Production Remediation Section -->
+      <div class="section-card" id="supportingDetailsCard">
+        <div class="section-card-header">
+          <div>
+            <div class="section-card-title">Supporting Details &amp; Production Remediation Payloads</div>
+            <div class="section-card-subtitle">Granular inventory breakdown and parameter-validated remediation scripts</div>
+          </div>
+        </div>
+
+        <div style="padding: 16px 22px;">
+          <!-- Tabs Navigation Strip -->
+          <div class="tabs-navigation-strip">
+            <button class="sub-tab-btn active" id="subtab-m365" onclick="switchSupportingTab('m365')">
+              M365 Licenses
+              <span class="sub-tab-badge">9</span>
+            </button>
+            <button class="sub-tab-btn" id="subtab-azure" onclick="switchSupportingTab('azure')">
+              Azure Resources
+              <span class="sub-tab-badge">11</span>
+            </button>
+            <button class="sub-tab-btn" id="subtab-remediation" onclick="switchSupportingTab('remediation')">
+              PowerShell Remediation
+            </button>
+            <button class="sub-tab-btn" id="subtab-automation" onclick="switchSupportingTab('automation')">
+              Scheduled Audits
+            </button>
+          </div>
+
+          <!-- Tab Pane 1: M365 Table -->
+          <div id="tab-pane-m365">
+            <table>
+              <thead>
+                <tr>
+                  <th>User Principal Name</th>
+                  <th>Account State</th>
+                  <th>Assigned SKU (SkuPartNumber)</th>
+                  <th>Exact SkuId GUID</th>
+                  <th>Verification &amp; Hold State</th>
+                  <th>Monthly Impact</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyM365Supporting"></tbody>
+            </table>
+          </div>
+
+          <!-- Tab Pane 2: Azure Table -->
+          <div id="tab-pane-azure" style="display:none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Exact Azure Resource ID / Name</th>
+                  <th>Classification</th>
+                  <th>Resource Group</th>
+                  <th>State Condition</th>
+                  <th>Verification Status</th>
+                  <th>Monthly Impact</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyAzureSupporting"></tbody>
+            </table>
+          </div>
+
+          <!-- Tab Pane 3: Remediation Console with Mandatory Review Checklist -->
+          <div id="tab-pane-remediation" style="display:none;">
+            <div class="mandatory-review-card">
+              <div class="review-card-header">
+                <div>
+                  <div class="review-card-title">Mandatory Resource Review Checklist</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+                    Microsoft guidance requires manual verification of mailbox holds and disk attachments prior to script generation.
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <span class="review-progress-badge" id="reviewProgressBadge">Review Progress: 0 of 6 confirmed safe</span>
+                  <button class="btn btn-outline" style="font-size:0.72rem; padding:4px 10px;" onclick="markAllReviewed()">
+                    Mark All as Reviewed (Safe)
+                  </button>
+                </div>
+              </div>
+
+              <table class="review-checklist-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px;">Check</th>
+                    <th>Candidate Resource</th>
+                    <th>Classification</th>
+                    <th>Mandatory Safety Verification</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyReviewChecklist"></tbody>
+              </table>
+
+              <div class="review-lock-notice" id="reviewLockNotice">
+                <span>⚠️ <strong>Review Mandatory:</strong> You must review and check all candidate resources above to unlock live script generation.</span>
+              </div>
+            </div>
+
+            <!-- Terminal Payload & Script Controls -->
+            <div id="remediationScriptArea" style="opacity:0.6; pointer-events:none; transition:opacity 0.2s ease;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:14px;">
+                  <div class="toggle-switch-wrap">
+                    <label class="switch">
+                      <input type="checkbox" id="dryRunToggle" checked onchange="toggleDryRun(this)">
+                      <span class="slider"></span>
+                    </label>
+                    <span>Safe Dry-Run Mode (-WhatIf)</span>
+                  </div>
+                  <span class="preflight-badge">✓ Preflight Verification Enforced</span>
+                  <span class="preflight-badge">✓ Transcript Logging Enabled</span>
+                </div>
+                <button class="btn btn-outline" id="btnCopyScript" style="font-size:0.75rem;" onclick="copyCode('terminalPayload')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                  Copy Production Script
+                </button>
+              </div>
+              <div class="terminal-box">
+                <div class="terminal-header-bar">
+                  <span>powershell.exe -NoProfile -ExecutionPolicy Bypass</span>
+                  <span>Tenant: contoso.onmicrosoft.com &bull; SkuIds Resolved</span>
+                </div>
+                <pre class="terminal-code-body" id="terminalPayload"></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Pane 4: Scheduled Audits -->
+          <div id="tab-pane-automation" style="display:none;">
+            <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:16px;">
+              <strong style="color:var(--text-main); font-size:0.88rem;">Architecture &amp; Execution Specification:</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; line-height:1.5;">
+                • <strong>Execution Location:</strong> Runs locally on your administrative workstation or jumpbox via Windows Task Scheduler.<br>
+                • <strong>Host Availability:</strong> The host computer must be powered on and connected to the internet at the scheduled time.<br>
+                • <strong>History Storage:</strong> Audit CSV snapshots are stored locally on your machine at <code>C:\CloudTrim\History\</code>.<br>
+                • <strong>Continuous Pro Entitlement:</strong> Provides monthly web diff comparison, automated rule and SKU updates, and email notifications.
+              </p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
+                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">Weekly Assessment Schedule</div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">Executes every Monday at 09:00 AM local time.</p>
+                <pre class="terminal-code-body" style="background:#0F172A; padding:10px; border-radius:4px; font-size:0.76rem;" id="codeWeekly">.\Schedule-CloudTrimAudit.ps1 -Cadence "Weekly" -DayOfWeek "Monday" -Time "09:00"</pre>
+                <button class="btn btn-outline" style="font-size:0.75rem; margin-top:8px;" onclick="copyCode('codeWeekly')">Copy Command</button>
+              </div>
+
+              <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
+                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">Monthly Financial Close Schedule</div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">Executes on Day 1 of every month at 09:00 AM.</p>
+                <pre class="terminal-code-body" style="background:#0F172A; padding:10px; border-radius:4px; font-size:0.76rem;" id="codeMonthly">.\Schedule-CloudTrimAudit.ps1 -Cadence "Monthly" -DayOfMonth 1 -Time "09:00"</pre>
+                <button class="btn btn-outline" style="font-size:0.75rem; margin-top:8px;" onclick="copyCode('codeMonthly')">Copy Command</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Corporate Footer -->
+  <footer class="enterprise-footer">
+    <div>
+      <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.
+    </div>
+    <div style="display:flex; gap:16px;">
+      <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Public Landing Page</a>
+      <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
+      <a href="terms.html#terms" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
+      <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Privacy Policy</a>
+      <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Activate License ($39)</a>
+    </div>
+  </footer>
+
+  <!-- Authentication, Reset Password & Email OTP Modal Overlay -->
+  <div class="modal-overlay" id="authModalOverlay" onclick="if(event.target===this) closeAuthModal()">
+    <div class="auth-card-modal">
+      <div class="auth-modal-header">
+        <span class="auth-modal-title">CloudTrim Security Gateway</span>
+        <button style="background:none; border:none; font-size:1.2rem; cursor:pointer;" onclick="closeAuthModal()">&times;</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="authTabSignIn" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab-btn" id="authTabReset" onclick="switchAuthTab('reset')">Reset Password</button>
+        <button class="auth-tab-btn" id="authTabMfa" style="display:none;" onclick="switchAuthTab('mfa')">Email OTP Check</button>
+      </div>
+
+      <div class="auth-modal-body">
+        <!-- Form 1: Sign In & Request Email OTP -->
+        <form id="formSignIn" onsubmit="handleSignIn(event)">
+          <div class="form-field">
+            <label>Administrative Work Email</label>
+            <input type="email" id="signInEmail" placeholder="admin@contoso.com" required value="admin@contoso.com">
+          </div>
+          <div class="form-field">
+            <label>Account Password</label>
+            <input type="password" id="signInPassword" placeholder="••••••••••••" value="EnterprisePass123!">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; margin-top:8px;">
+            Continue to Email OTP Verification →
+          </button>
+          <div style="margin-top:14px; text-align:center; font-size:0.78rem; color:var(--text-muted);">
+            Forgot credentials? <a href="#" onclick="switchAuthTab('reset')" style="color:var(--primary); text-decoration:underline;">Reset password</a>
+          </div>
+        </form>
+
+        <!-- Form 2: Reset Password -->
+        <form id="formReset" style="display:none;" onsubmit="handleResetPassword(event)">
+          <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:14px;">
+            Enter your administrative work email. We will dispatch a secure, single-use password reset link via SMTP.
+          </p>
+          <div class="form-field">
+            <label>Registered Work Email</label>
+            <input type="email" id="resetEmail" placeholder="admin@contoso.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; margin-top:8px;">
+            Dispatch Password Reset Email
+          </button>
+          <div style="margin-top:14px; text-align:center; font-size:0.78rem; color:var(--text-muted);">
+            Remember password? <a href="#" onclick="switchAuthTab('signin')" style="color:var(--primary); text-decoration:underline;">Return to Sign In</a>
+          </div>
+        </form>
+
+        <!-- Form 3: Mandatory Email OTP Verification (MFA Challenge) -->
+        <form id="formMfa" style="display:none;" onsubmit="handleMfaVerify(event)">
+          <div style="text-align:center; margin-bottom:14px;">
+            <div style="font-size:1.8rem; margin-bottom:4px;">📩</div>
+            <strong style="font-size:0.95rem; color:var(--text-main);">Email OTP Security Verification</strong>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+              A single-use 6-digit passcode was dispatched to <strong id="mfaEmailTarget" style="color:var(--text-main);">admin@contoso.com</strong>. Enter it below to unlock your session:
+            </p>
+          </div>
+
+          <div class="otp-inputs-row">
+            <input type="text" class="otp-box" id="otp1" maxlength="1" autofocus onkeyup="autoFocusNext(this, 'otp2')">
+            <input type="text" class="otp-box" id="otp2" maxlength="1" onkeyup="autoFocusNext(this, 'otp3')">
+            <input type="text" class="otp-box" id="otp3" maxlength="1" onkeyup="autoFocusNext(this, 'otp4')">
+            <input type="text" class="otp-box" id="otp4" maxlength="1" onkeyup="autoFocusNext(this, 'otp5')">
+            <input type="text" class="otp-box" id="otp5" maxlength="1" onkeyup="autoFocusNext(this, 'otp6')">
+            <input type="text" class="otp-box" id="otp6" maxlength="1">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; margin-top:8px;">
+            Verify Email OTP &amp; Unlock Session
+          </button>
+          <div style="margin-top:14px; text-align:center; font-size:0.78rem; color:var(--text-muted);">
+            Didn't receive passcode? <a href="#" onclick="handleSignIn(event)" style="color:var(--primary); text-decoration:underline;">Resend Code</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Box -->
+  <div class="toast-box" id="toastBox">
+    <span id="toastMsg">Operation successful</span>
+  </div>
+
+  <!-- Application Engine Script -->
+  <script src="app.js"></script>
+
+</body>
+</html>
