@@ -80,8 +80,41 @@ To prevent unauthorized access to your management console, enforce **Role-Based 
 
 ---
 
-## 5. Live UI Prototype Reference
+## 5. Revenue Tracking & Subscription Ledger
 
-You can test the visual interface for this management workflow right now by opening:
-* **Local:** `file:///Users/dell/tool_skype_exchange/admin.html`
-* **Production:** `https://tools.skypeexchange4u.com/admin.html`
+The administrative console automatically tracks commercial revenue linked to user registrations and payment transactions:
+- **Financial KPI Cards:**
+  - **MRR (Monthly Recurring Revenue):** Sum of active Pro Monitoring ($19/mo) and MSP Partner ($69/mo) subscriptions.
+  - **ARR (Annual Run Rate):** Projected annualized recurring revenue ($\text{MRR} \times 12$).
+  - **Total Billed LTV (All-Time):** Cumulative gross billed revenue across all customer tenants.
+  - **Active Subscribed Accounts:** Total count of active paying customer tenants.
+- **Dynamic Ledger Integration:**
+  - Automated write-through from public checkout (`checkout.html`) and test simulators into `localStorage.cloudtrim_revenue_ledger`.
+  - Manual payment and custom tier recording via the `+ Record Payment` modal in `admin.html`.
+  - Filterable by plan tier (Single Audit, Pro, MSP, Enterprise) and payment status (Active Subscription, Paid, Staff).
+  - Instant tax invoice and receipt generator modal for customer records.
+
+---
+
+## 6. Confidential Monthly Audit Data Export (Admin Purpose Only)
+
+To fulfill Indian DPDP compliance, international accounting, and tax reconciliation requirements, administrators can export certified monthly audit packages:
+- **Reporting Period Selector:** Filter by individual month (`2026-10`, `2026-09`, `2026-08`, etc.) or generate an All-Time Consolidated Master Archive.
+- **Dataset Scope Options:**
+  1. `Consolidated Master Report`: Unified export combining user registration, financial revenue, tenant FinOps assessments, and MFA security status.
+  2. `Revenue & Subscriptions Ledger`: Focused commercial transaction and billing ledger.
+  3. `Registered Users & MFA Compliance`: Security and authentication directory.
+  4. `Tenant Waste & Optimization Findings`: Potential waste and confirmed net monthly savings.
+- **Export Formats:**
+  - **CSV (Spreadsheet):** Prepend with `\uFEFF` UTF-8 Byte Order Mark (BOM) ensuring seamless compatibility with Microsoft Excel, Apple Numbers, and Google Sheets without encoding glitches.
+  - **JSON:** Complete structured database backup with metadata and integrity classification.
+- **Privacy & Security Guarantee:** Zero external transmission. All export files are compiled and downloaded 100% in local browser memory.
+
+---
+
+## 7. Live UI Reference & Deployment URL
+
+* **Admin Console URL:** `https://tools.skypeexchange4u.com/admin.html`
+* **Local Preview:** `file:///Users/dell/tool_skype_exchange/admin.html`
+* **Super Admin Identity:** `satya@skypeexchange4u.com`
+

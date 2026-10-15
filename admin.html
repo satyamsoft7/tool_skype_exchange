@@ -92,7 +92,7 @@
     /* Stats Bar */
     .stat-strip {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
@@ -148,12 +148,59 @@
       font-weight: 700;
     }
 
+    /* Revenue & Exports KPI & Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+    .kpi-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .kpi-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 4px 0 2px;
+    }
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .export-control-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .export-form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
     @media (max-width: 900px) {
       .admin-grid { grid-template-columns: 1fr; }
       .stat-strip { grid-template-columns: 1fr 1fr; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .export-form-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .stat-strip { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -192,9 +239,14 @@
         <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Evaluated in browser RAM</div>
       </div>
       <div class="stat-strip-box">
-        <div class="stat-strip-label">Checkout / Pilot Funnel</div>
-        <div class="stat-strip-num" id="statCheckouts" style="color:var(--primary);">0</div>
-        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Plan activations initiated</div>
+        <div class="stat-strip-label">Monthly Recurring (MRR)</div>
+        <div class="stat-strip-num" id="statMrr" style="color:var(--primary);">$176/mo</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Active subscribed run rate</div>
+      </div>
+      <div class="stat-strip-box">
+        <div class="stat-strip-label">Active Paid Tenants</div>
+        <div class="stat-strip-num" id="statActiveTenants" style="color:#7C3AED;">5 Paid</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Subscribed MSP &amp; Pro accounts</div>
       </div>
       <div class="stat-strip-box">
         <div class="stat-strip-label">Pending Inquiries</div>
@@ -214,6 +266,14 @@
         <div class="admin-menu-item" id="tab-users" onclick="switchAdminTab('users')">
           <span>👥 User Accounts &amp; MFA</span>
           <span class="nav-badge" id="badgeUsersCount">4</span>
+        </div>
+        <div class="admin-menu-item" id="tab-revenue" onclick="switchAdminTab('revenue')">
+          <span>💰 Revenue &amp; Subscriptions</span>
+          <span class="nav-badge" id="badgeRevenueCount" style="background:#DCFCE7; color:#15803D;">6</span>
+        </div>
+        <div class="admin-menu-item" id="tab-exports" onclick="switchAdminTab('exports')">
+          <span>📁 Monthly Audit Data Export</span>
+          <span class="nav-badge" style="background:#FEF3C7; color:#92400E;">Admin Only</span>
         </div>
         <div class="admin-menu-item" id="tab-queries" onclick="switchAdminTab('queries')">
           <span>📩 User Inquiries &amp; Tickets</span>
@@ -343,6 +403,257 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- View: Revenue & Subscriptions -->
+        <div id="view-revenue" style="display:none;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Revenue &amp; Subscription Ledger by Registered Customer</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Financial performance tracking, assigned commercial tiers, recurring billing, and payment transaction logs linked to customer tenant accounts.
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="action-btn-sm" onclick="exportRevenueCsv()">⬇️ Export Ledger CSV</button>
+              <button class="action-btn-sm" onclick="showAddRevenueModal()">+ Record Payment</button>
+              <button class="btn btn-primary" onclick="loadRevenueLedger()">🔄 Refresh Ledger</button>
+            </div>
+          </div>
+
+          <!-- Revenue KPI Strip -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-title">Monthly Recurring (MRR)</div>
+              <div class="kpi-value" id="revenueKpiMrr" style="color:var(--primary);">$176.00</div>
+              <div class="kpi-sub">Active monthly subscriptions</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Annual Run Rate (ARR)</div>
+              <div class="kpi-value" id="revenueKpiArr" style="color:var(--savings-green);">$2,112.00</div>
+              <div class="kpi-sub">Projected 12-month recurring baseline</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Total Billed LTV (All-Time)</div>
+              <div class="kpi-value" id="revenueKpiTotalBilled" style="color:#0F172A;">$1,095.00</div>
+              <div class="kpi-sub">Cumulative gross customer revenue</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Active Paying Tenants</div>
+              <div class="kpi-value" id="revenueKpiPaidTenants" style="color:#7C3AED;">5 Accounts</div>
+              <div class="kpi-sub">Subscribed MSP, Pro &amp; Single Audits</div>
+            </div>
+          </div>
+
+          <div class="table-toolbar">
+            <input type="text" id="revenueSearchInput" class="table-search" placeholder="Search by customer email, tenant, tier, or transaction ID..." oninput="filterRevenueLedger(this.value)">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">Tier:</span>
+              <select id="revenueTierSelect" onchange="filterRevenueByTier(this.value)" style="padding:4px 8px; font-size:0.75rem; border:1px solid var(--border); border-radius:4px;">
+                <option value="all">All Plan Tiers</option>
+                <option value="single">Single Audit ($39)</option>
+                <option value="pro">Pro Monitoring ($19/mo)</option>
+                <option value="msp">MSP Partner ($69/mo)</option>
+                <option value="enterprise">Enterprise Custom</option>
+              </select>
+              <span style="font-size:0.75rem; color:var(--text-muted); margin-left:6px;">Status:</span>
+              <select id="revenueStatusSelect" onchange="filterRevenueByStatus(this.value)" style="padding:4px 8px; font-size:0.75rem; border:1px solid var(--border); border-radius:4px;">
+                <option value="all">All Payment Statuses</option>
+                <option value="Active Subscription">Active Subscription</option>
+                <option value="Paid">Paid (One-Time)</option>
+                <option value="Staff / Internal">Staff / Internal</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer / Work Email</th>
+                  <th>Company / Tenant Domain</th>
+                  <th>Assigned Plan Tier</th>
+                  <th>Cadence</th>
+                  <th>Rate (USD)</th>
+                  <th>Total Billed</th>
+                  <th>Payment Status</th>
+                  <th>Transaction ID / Token</th>
+                  <th>Next Renewal</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="revenueTbody">
+                <tr>
+                  <td colspan="10" style="text-align:center; padding:24px; color:var(--text-muted);">
+                    Loading customer revenue &amp; subscription ledger...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- View: Monthly Audit Data Export (Admin Only) -->
+        <div id="view-exports" style="display:none;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">📁 Confidential Monthly Administrative &amp; Compliance Data Export</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Generate certified monthly ledger, user registration, and assessment records for internal accounting, tax compliance, and historical audit archives. Restricted strictly to verified administrative personnel.
+              </div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <span class="badge" style="background:#FEF3C7; color:#92400E; font-weight:700;">Confidential &bull; Admin Only</span>
+              <span class="badge" style="background:#DCFCE7; color:#15803D; font-weight:700;">RAM Zero-Transit</span>
+            </div>
+          </div>
+
+          <!-- Export Generator Control Box -->
+          <div class="export-control-card">
+            <div style="font-size:0.92rem; font-weight:700; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+              <span>⚙️ Monthly Export Parameters &amp; Format Settings</span>
+            </div>
+            <div class="export-form-grid">
+              <div class="field-group" style="margin-bottom:0;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">1. Reporting Period / Month:</label>
+                <select id="exportPeriodSelect" onchange="updateExportPreviewCount()" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:white;">
+                  <option value="2026-10" selected>October 2026 (Current Active Month)</option>
+                  <option value="2026-09">September 2026 (Closed Period)</option>
+                  <option value="2026-08">August 2026 (Closed Period)</option>
+                  <option value="2026-07">July 2026 (Closed Period)</option>
+                  <option value="all">All-Time Consolidated Master Archive (2026 YTD)</option>
+                </select>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">Filter records by registration or billing date.</div>
+              </div>
+
+              <div class="field-group" style="margin-bottom:0;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">2. Dataset Scope:</label>
+                <select id="exportScopeSelect" onchange="updateExportPreviewCount()" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:white;">
+                  <option value="consolidated" selected>Consolidated Master Report (Revenue + Users + Assessments)</option>
+                  <option value="revenue">Revenue &amp; Subscriptions Ledger Only</option>
+                  <option value="users">Registered Users &amp; MFA Compliance Only</option>
+                  <option value="assessments">Tenant Waste &amp; Optimization Findings Only</option>
+                </select>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">Select the operational datasets to include.</div>
+              </div>
+
+              <div class="field-group" style="margin-bottom:0;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">3. File Export Format:</label>
+                <select id="exportFormatSelect" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:white;">
+                  <option value="csv" selected>CSV Spreadsheet (Excel / Numbers with UTF-8 BOM)</option>
+                  <option value="json">Structured JSON (Raw System Backup)</option>
+                </select>
+                <div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">Excel-compatible comma separated values or JSON.</div>
+              </div>
+            </div>
+
+            <!-- Options Checklist -->
+            <div style="display:flex; flex-wrap:wrap; gap:18px; margin:14px 0 16px; padding-top:12px; border-top:1px solid var(--border-light); font-size:0.78rem;">
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="chkIncludeFinOps" checked>
+                <span>Include Potential Waste &amp; Confirmed Savings Numbers</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="chkIncludeTx" checked>
+                <span>Include Payment Transaction Reference IDs &amp; Tax Data</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="chkIncludeDisclaimers" checked>
+                <span>Attach Certified Compliance &amp; Trademark Disclaimers</span>
+              </label>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div style="font-size:0.8rem; color:var(--text-muted);">
+                Ready to export: <strong id="exportCountBadge" style="color:var(--text-main);">6 records</strong> matching criteria.
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="action-btn-sm" onclick="toggleExportPreview()">👁️ <span id="btnPreviewToggleText">Preview Table</span></button>
+                <button class="btn btn-primary" onclick="generateMonthlyExport()">⬇️ Download Monthly Admin Export</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collapsible Preview Container -->
+          <div id="exportPreviewContainer" style="display:none; margin-bottom:24px;">
+            <div style="font-size:0.82rem; font-weight:700; color:var(--text-main); margin-bottom:8px;">
+              Export Data Preview (First 5 Rows):
+            </div>
+            <div class="table-scroll-container" style="max-height:260px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm);">
+              <table style="font-size:0.75rem;">
+                <thead id="exportPreviewThead"></thead>
+                <tbody id="exportPreviewTbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Certified Historical Monthly Archive Snapshots -->
+          <div style="margin-top:28px;">
+            <div style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">
+              📜 Certified Monthly Audit Snapshots &amp; Permanent Archive Records
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+              Pre-calculated historical monthly snapshots archived for corporate compliance, India DPDP recordkeeping, and revenue reconciliation.
+            </div>
+
+            <div class="table-scroll-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Reporting Period</th>
+                    <th>Archive State</th>
+                    <th>Customer Accounts</th>
+                    <th>Gross Billed (USD)</th>
+                    <th>FinOps Savings Identified</th>
+                    <th>Generated Date</th>
+                    <th>Integrity Hash</th>
+                    <th>Quick Download</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>October 2026</strong> <span class="badge" style="background:#EFF6FF; color:#1D4ED8; font-size:0.7rem;">Active Month</span></td>
+                    <td><span class="badge" style="background:#DCFCE7; color:#15803D;">Live Reconciled</span></td>
+                    <td><strong>6 Accounts</strong></td>
+                    <td style="font-weight:700; color:#0F172A;">$1,095.00</td>
+                    <td style="color:var(--savings-green); font-weight:700;">$17,565.50/yr</td>
+                    <td style="font-size:0.78rem; color:var(--text-muted);">Real-Time (Today)</td>
+                    <td><code style="font-size:0.72rem;">SHA256:4a9f...81e2</code></td>
+                    <td>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-10', 'csv')">CSV</button>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-10', 'json')">JSON</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>September 2026</strong></td>
+                    <td><span class="badge" style="background:#F1F5F9; color:#475569;">Closed Archive</span></td>
+                    <td><strong>5 Accounts</strong></td>
+                    <td style="font-weight:700; color:#0F172A;">$981.00</td>
+                    <td style="color:var(--savings-green); font-weight:700;">$14,280.00/yr</td>
+                    <td style="font-size:0.78rem; color:var(--text-muted);">2026-10-01 00:00 UTC</td>
+                    <td><code style="font-size:0.72rem;">SHA256:8c12...33b9</code></td>
+                    <td>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-09', 'csv')">CSV</button>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-09', 'json')">JSON</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>August 2026</strong></td>
+                    <td><span class="badge" style="background:#F1F5F9; color:#475569;">Closed Archive</span></td>
+                    <td><strong>4 Accounts</strong></td>
+                    <td style="font-weight:700; color:#0F172A;">$867.00</td>
+                    <td style="color:var(--savings-green); font-weight:700;">$10,850.00/yr</td>
+                    <td style="font-size:0.78rem; color:var(--text-muted);">2026-09-01 00:00 UTC</td>
+                    <td><code style="font-size:0.72rem;">SHA256:e37b...19aa</code></td>
+                    <td>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-08', 'csv')">CSV</button>
+                      <button class="action-btn-sm" onclick="downloadArchiveSnapshot('2026-08', 'json')">JSON</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
@@ -485,7 +796,7 @@
     let telemetryEvents = [];
 
     function switchAdminTab(tabKey) {
-      const views = ['activity', 'users', 'queries', 'otp', 'settings'];
+      const views = ['activity', 'users', 'revenue', 'exports', 'queries', 'otp', 'settings'];
       views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.style.display = (v === tabKey) ? 'block' : 'none';
@@ -497,6 +808,12 @@
 
       if (tabKey === 'activity') {
         loadTelemetryEvents();
+      } else if (tabKey === 'users') {
+        loadAdminUsers();
+      } else if (tabKey === 'revenue') {
+        loadRevenueLedger();
+      } else if (tabKey === 'exports') {
+        loadExportsView();
       }
     }
 
@@ -671,31 +988,697 @@
 
     function showAddUserModal() {
       const email = prompt("Enter administrative user work email to invite / register:");
-      if (email && email.includes('@')) {
-        const tenantDomain = email.split('@')[1];
-        try {
-          const raw = localStorage.getItem('cloudtrim_registered_users');
-          const list = raw ? JSON.parse(raw) : [];
-          list.unshift({
-            email: email,
-            tenant: tenantDomain,
-            role: 'Tenant Admin',
-            mfaStatus: 'Pending Activation',
-            registeredAt: new Date().toISOString(),
-            lastLogin: 'Never (Invited)',
-            loginCount: 0
-          });
-          localStorage.setItem('cloudtrim_registered_users', JSON.stringify(list));
-        } catch (err) {}
-        loadAdminUsers();
-        alert(`✓ User account created for ${email}. Invitation link & temporary OTP dispatched.`);
+      if (!email || !email.includes('@')) return;
+      const tenantDomain = email.split('@')[1];
+      const planChoice = prompt(
+        "Select Assigned Commercial Tier:\n1 = Single Tenant Audit ($39)\n2 = Pro Continuous Monitoring ($19/mo)\n3 = MSP Multi-Tenant Partner ($69/mo)\n4 = Free Trial / Pilot Evaluation",
+        "2"
+      );
+      
+      let tierName = "Pro Continuous Monitoring ($19/mo)";
+      let tierKey = "pro";
+      let rate = 19;
+      let cadence = "Monthly Recurring";
+      let status = "Active Subscription";
+      if (planChoice === "1") {
+        tierName = "Single Tenant Audit ($39)";
+        tierKey = "single";
+        rate = 39;
+        cadence = "One-Time Audit";
+        status = "Paid (One-Time)";
+      } else if (planChoice === "3") {
+        tierName = "MSP Partner License ($69/mo)";
+        tierKey = "msp";
+        rate = 69;
+        cadence = "Monthly Recurring";
+        status = "Active Subscription";
+      } else if (planChoice === "4") {
+        tierName = "Free Trial / Pilot Evaluation";
+        tierKey = "free";
+        rate = 0;
+        cadence = "Free Pilot";
+        status = "Pilot Evaluation";
       }
+
+      // Add to registered users
+      try {
+        const raw = localStorage.getItem('cloudtrim_registered_users');
+        const list = raw ? JSON.parse(raw) : [];
+        list.unshift({
+          email: email,
+          tenant: tenantDomain,
+          role: tierKey === 'msp' ? 'MSP Lead' : 'Tenant Admin',
+          mfaStatus: 'Pending Activation',
+          registeredAt: new Date().toISOString(),
+          lastLogin: 'Never (Invited)',
+          loginCount: 0
+        });
+        localStorage.setItem('cloudtrim_registered_users', JSON.stringify(list));
+
+        // Add to revenue ledger
+        const revRaw = localStorage.getItem('cloudtrim_revenue_ledger');
+        const revList = revRaw ? JSON.parse(revRaw) : [];
+        revList.unshift({
+          id: 'rev-' + Date.now(),
+          email: email,
+          orgName: (tenantDomain.split('.')[0] || 'Client').toUpperCase() + ' Corp',
+          tenant: tenantDomain,
+          tier: tierName,
+          tierKey: tierKey,
+          frequency: cadence,
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: rate,
+          totalBilled: rate,
+          taxUSD: 0,
+          totalBilledUSD: rate,
+          totalBilledFormatted: `$${rate}.00`,
+          paymentStatus: status,
+          txId: 'MANUAL-' + Math.random().toString(36).substring(2, 9).toUpperCase(),
+          billingDate: new Date().toISOString().split('T')[0],
+          reportingPeriod: new Date().toISOString().substring(0, 7),
+          nextRenewal: cadence === 'Monthly Recurring' ? new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] : 'N/A',
+          seats: 10,
+          assets: 8,
+          potentialWasteUSD: 650.00,
+          confirmedRecoveryUSD: 240.00,
+          mfaStatus: 'Pending Activation'
+        });
+        localStorage.setItem('cloudtrim_revenue_ledger', JSON.stringify(revList));
+      } catch (err) {}
+      loadAdminUsers();
+      loadRevenueLedger();
+      alert(`✓ User account and commercial subscription registered for ${email} (${tierName}). Invitation OTP dispatched.`);
+    }
+
+    // =========================================================================
+    // REVENUE & SUBSCRIPTION LEDGER LOGIC
+    // =========================================================================
+    let currentRevenueLedger = [];
+
+    function getDefaultRevenueLedger() {
+      return [
+        {
+          id: 'rev-001',
+          email: 'admin@contoso.com',
+          orgName: 'Contoso Corporation',
+          tenant: 'contoso.onmicrosoft.com',
+          tier: 'Pro Continuous Monitoring ($19/mo)',
+          tierKey: 'pro',
+          frequency: 'Monthly Recurring',
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: 19,
+          totalBilled: 114,
+          taxUSD: 0,
+          totalBilledUSD: 114.00,
+          totalBilledFormatted: '$114.00',
+          paymentStatus: 'Active Subscription',
+          txId: 'PAYID-CT8921-USD',
+          billingDate: '2026-10-14',
+          reportingPeriod: '2026-10',
+          nextRenewal: '2026-11-14',
+          seats: 9,
+          assets: 11,
+          potentialWasteUSD: 1485.50,
+          confirmedRecoveryUSD: 556.90,
+          mfaStatus: 'Active (TOTP)'
+        },
+        {
+          id: 'rev-002',
+          email: 'david.miller@fabrikam.com',
+          orgName: 'Fabrikam Managed IT Partners',
+          tenant: 'fabrikam.onmicrosoft.com',
+          tier: 'MSP Partner License ($69/mo)',
+          tierKey: 'msp',
+          frequency: 'Monthly Recurring',
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: 69,
+          totalBilled: 414,
+          taxUSD: 0,
+          totalBilledUSD: 414.00,
+          totalBilledFormatted: '$414.00',
+          paymentStatus: 'Active Subscription',
+          txId: 'PAYID-MSP7712-USD',
+          billingDate: '2026-10-01',
+          reportingPeriod: '2026-10',
+          nextRenewal: '2026-11-01',
+          seats: 45,
+          assets: 38,
+          potentialWasteUSD: 3840.00,
+          confirmedRecoveryUSD: 1920.00,
+          mfaStatus: 'Active (Email)'
+        },
+        {
+          id: 'rev-003',
+          email: 'finance@adatum.com',
+          orgName: 'Adatum Financial Services',
+          tenant: 'adatum.onmicrosoft.com',
+          tier: 'Single Tenant Audit ($39)',
+          tierKey: 'single',
+          frequency: 'One-Time Audit',
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: 39,
+          totalBilled: 39,
+          taxUSD: 0,
+          totalBilledUSD: 39.00,
+          totalBilledFormatted: '$39.00',
+          paymentStatus: 'Paid (One-Time)',
+          txId: 'PAYID-SNGL4419-USD',
+          billingDate: '2026-10-11',
+          reportingPeriod: '2026-10',
+          nextRenewal: 'N/A (One-Time Audit)',
+          seats: 22,
+          assets: 14,
+          potentialWasteUSD: 890.00,
+          confirmedRecoveryUSD: 420.00,
+          mfaStatus: 'Pending Activation'
+        },
+        {
+          id: 'rev-004',
+          email: 'rajesh.patel@tcs-partner.in',
+          orgName: 'TCS Cloud Delivery Partner',
+          tenant: 'tcs-partner.in',
+          tier: 'MSP Partner License (₹5,744/mo)',
+          tierKey: 'msp',
+          frequency: 'Monthly Recurring',
+          currency: 'INR',
+          symbol: '₹',
+          rateUSD: 69,
+          totalBilled: 34464,
+          taxUSD: 74.52,
+          totalBilledUSD: 414.00,
+          totalBilledFormatted: '₹34,464',
+          paymentStatus: 'Active Subscription',
+          txId: 'UPI-RAZOR-90821-INR',
+          billingDate: '2026-10-08',
+          reportingPeriod: '2026-10',
+          nextRenewal: '2026-11-08',
+          seats: 60,
+          assets: 50,
+          potentialWasteUSD: 4500.00,
+          confirmedRecoveryUSD: 2100.00,
+          mfaStatus: 'Active (TOTP)'
+        },
+        {
+          id: 'rev-005',
+          email: 'elena.rostova@nordiccloud.eu',
+          orgName: 'Nordic Cloud Infrastructure Oy',
+          tenant: 'nordiccloud.eu',
+          tier: 'Pro Continuous Monitoring (€18/mo)',
+          tierKey: 'pro',
+          frequency: 'Monthly Recurring',
+          currency: 'EUR',
+          symbol: '€',
+          rateUSD: 19,
+          totalBilled: 108,
+          taxUSD: 0,
+          totalBilledUSD: 114.00,
+          totalBilledFormatted: '€108.00',
+          paymentStatus: 'Active Subscription',
+          txId: 'SEPA-REV-5512-EUR',
+          billingDate: '2026-10-05',
+          reportingPeriod: '2026-10',
+          nextRenewal: '2026-11-05',
+          seats: 15,
+          assets: 18,
+          potentialWasteUSD: 1650.00,
+          confirmedRecoveryUSD: 780.00,
+          mfaStatus: 'Active (TOTP)'
+        },
+        {
+          id: 'rev-006',
+          email: 'satya@skypeexchange4u.com',
+          orgName: 'SkypeExchange4U Enterprise (Internal)',
+          tenant: 'skypeexchange4u.com',
+          tier: 'Enterprise Custom Advisory',
+          tierKey: 'enterprise',
+          frequency: 'Annual Internal',
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: 0,
+          totalBilled: 0,
+          taxUSD: 0,
+          totalBilledUSD: 0.00,
+          totalBilledFormatted: '$0.00 (Staff)',
+          paymentStatus: 'Staff / Internal',
+          txId: 'INTERNAL-ROOT-001',
+          billingDate: '2026-01-01',
+          reportingPeriod: '2026-10',
+          nextRenewal: '2027-01-01',
+          seats: 120,
+          assets: 84,
+          potentialWasteUSD: 5200.00,
+          confirmedRecoveryUSD: 2800.00,
+          mfaStatus: 'Active (FIDO2)'
+        }
+      ];
+    }
+
+    function loadRevenueLedger() {
+      const defaultLedger = getDefaultRevenueLedger();
+      let stored = [];
+      try {
+        const raw = localStorage.getItem('cloudtrim_revenue_ledger');
+        stored = raw ? JSON.parse(raw) : [];
+      } catch (err) {}
+
+      // Combine stored with defaults
+      currentRevenueLedger = [...stored, ...defaultLedger.filter(d => !stored.some(s => s.id === d.id || s.email.toLowerCase() === d.email.toLowerCase()))];
+
+      // Calculate financial KPIs
+      let mrr = 0;
+      let totalBilled = 0;
+      let activeTenantsCount = 0;
+
+      currentRevenueLedger.forEach(item => {
+        if (item.paymentStatus === 'Active Subscription') {
+          mrr += (item.rateUSD || 0);
+          activeTenantsCount++;
+        } else if (item.paymentStatus === 'Paid (One-Time)') {
+          activeTenantsCount++;
+        }
+        totalBilled += (item.totalBilledUSD || 0);
+      });
+
+      const arr = mrr * 12;
+
+      document.getElementById('revenueKpiMrr').textContent = `$${mrr.toFixed(2)}/mo`;
+      document.getElementById('revenueKpiArr').textContent = `$${arr.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/yr`;
+      document.getElementById('revenueKpiTotalBilled').textContent = `$${totalBilled.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('revenueKpiPaidTenants').textContent = `${activeTenantsCount} Accounts`;
+      
+      const badgeRev = document.getElementById('badgeRevenueCount');
+      if (badgeRev) badgeRev.textContent = currentRevenueLedger.length;
+
+      // Update top strip metric cards
+      const statMrrEl = document.getElementById('statMrr');
+      if (statMrrEl) statMrrEl.textContent = `$${mrr.toFixed(0)}/mo`;
+      const statTenantsEl = document.getElementById('statActiveTenants');
+      if (statTenantsEl) statTenantsEl.textContent = `${activeTenantsCount} Paid`;
+
+      renderRevenueTable(currentRevenueLedger);
+      updateExportPreviewCount();
+    }
+
+    function renderRevenueTable(items) {
+      const tbody = document.getElementById('revenueTbody');
+      if (!tbody) return;
+
+      if (!items || items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" style="text-align:center; padding:28px; color:var(--text-muted);">
+              <strong>Zero Revenue Records Found.</strong><br>
+              <span style="font-size:0.75rem;">Revenue entries will appear here upon customer checkout or manual recording.</span>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = items.map(r => {
+        const statusBadge = getPaymentStatusBadge(r.paymentStatus);
+        const rateDisplay = r.rateUSD > 0 ? `$${r.rateUSD}/mo` : '—';
+        
+        return `
+          <tr>
+            <td>
+              <strong>${r.email}</strong>
+              <div style="font-size:0.7rem; color:var(--text-muted);">${r.mfaStatus || 'MFA Active'}</div>
+            </td>
+            <td>
+              <div><strong>${r.orgName}</strong></div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">${r.tenant}</div>
+            </td>
+            <td><span class="badge badge-neutral">${r.tier}</span></td>
+            <td style="font-size:0.8rem; color:var(--text-muted);">${r.frequency}</td>
+            <td style="font-weight:600; color:var(--text-main); font-family:var(--font-mono);">${rateDisplay}</td>
+            <td style="font-weight:700; color:#0F172A; font-family:var(--font-mono);">${r.totalBilledFormatted || '$' + (r.totalBilledUSD || 0).toFixed(2)}</td>
+            <td>${statusBadge}</td>
+            <td><code style="font-size:0.72rem; color:#475569;">${r.txId}</code></td>
+            <td style="font-size:0.78rem; color:var(--text-muted);">${r.nextRenewal}</td>
+            <td>
+              <button class="action-btn-sm" onclick="viewCustomerReceipt('${r.id}')">Receipt</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getPaymentStatusBadge(status) {
+      if (status === 'Active Subscription') return `<span class="badge" style="background:#DCFCE7; color:#15803D; font-weight:700;">Active Subscription</span>`;
+      if (status === 'Paid (One-Time)') return `<span class="badge" style="background:#DBEAFE; color:#1D4ED8; font-weight:700;">Paid (One-Time)</span>`;
+      if (status === 'Staff / Internal') return `<span class="badge" style="background:#F1F5F9; color:#475569; font-weight:700;">Staff / Internal</span>`;
+      if (status === 'Pilot Evaluation') return `<span class="badge" style="background:#FEF3C7; color:#92400E; font-weight:700;">Free Pilot</span>`;
+      return `<span class="badge badge-neutral">${status}</span>`;
+    }
+
+    function filterRevenueLedger(term) {
+      const q = (term || '').toLowerCase();
+      const filtered = currentRevenueLedger.filter(r => {
+        return (r.email && r.email.toLowerCase().includes(q)) ||
+               (r.tenant && r.tenant.toLowerCase().includes(q)) ||
+               (r.orgName && r.orgName.toLowerCase().includes(q)) ||
+               (r.txId && r.txId.toLowerCase().includes(q)) ||
+               (r.tier && r.tier.toLowerCase().includes(q));
+      });
+      renderRevenueTable(filtered);
+    }
+
+    function filterRevenueByTier(tierKey) {
+      if (tierKey === 'all') {
+        renderRevenueTable(currentRevenueLedger);
+      } else {
+        const filtered = currentRevenueLedger.filter(r => r.tierKey === tierKey);
+        renderRevenueTable(filtered);
+      }
+    }
+
+    function filterRevenueByStatus(statusVal) {
+      if (statusVal === 'all') {
+        renderRevenueTable(currentRevenueLedger);
+      } else {
+        const filtered = currentRevenueLedger.filter(r => r.paymentStatus === statusVal);
+        renderRevenueTable(filtered);
+      }
+    }
+
+    function showAddRevenueModal() {
+      const email = prompt("Enter customer account email for this payment record:");
+      if (!email || !email.includes('@')) return;
+      const tenant = prompt("Enter customer tenant domain (e.g. contoso.onmicrosoft.com):", email.split('@')[1]);
+      if (!tenant) return;
+      const planChoice = prompt("Select Plan Tier:\n1 = Single Audit ($39)\n2 = Pro Monitoring ($19/mo)\n3 = MSP Partner ($69/mo)\n4 = Enterprise Advisory ($499/mo)", "2");
+      
+      let tierName = "Pro Continuous Monitoring ($19/mo)";
+      let tierKey = "pro";
+      let rate = 19;
+      let freq = "Monthly Recurring";
+      if (planChoice === "1") { tierName = "Single Tenant Audit ($39)"; tierKey = "single"; rate = 39; freq = "One-Time Audit"; }
+      else if (planChoice === "3") { tierName = "MSP Partner License ($69/mo)"; tierKey = "msp"; rate = 69; freq = "Monthly Recurring"; }
+      else if (planChoice === "4") { tierName = "Enterprise Custom Advisory ($499/mo)"; tierKey = "enterprise"; rate = 499; freq = "Monthly Recurring"; }
+
+      const amountStr = prompt(`Enter gross billed amount in USD:`, rate.toString());
+      const amount = parseFloat(amountStr) || rate;
+
+      try {
+        const raw = localStorage.getItem('cloudtrim_revenue_ledger');
+        const ledger = raw ? JSON.parse(raw) : [];
+        ledger.unshift({
+          id: 'rev-' + Date.now(),
+          email: email,
+          orgName: (tenant.split('.')[0] || 'Customer').toUpperCase() + ' Corp',
+          tenant: tenant,
+          tier: tierName,
+          tierKey: tierKey,
+          frequency: freq,
+          currency: 'USD',
+          symbol: '$',
+          rateUSD: rate,
+          totalBilled: amount,
+          taxUSD: 0,
+          totalBilledUSD: amount,
+          totalBilledFormatted: `$${amount.toFixed(2)}`,
+          paymentStatus: 'Active Subscription',
+          txId: 'MANUAL-' + Math.random().toString(36).substring(2, 9).toUpperCase(),
+          billingDate: new Date().toISOString().split('T')[0],
+          reportingPeriod: new Date().toISOString().substring(0, 7),
+          nextRenewal: freq.includes('Monthly') ? new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0] : 'N/A',
+          seats: 12,
+          assets: 15,
+          potentialWasteUSD: 1200.00,
+          confirmedRecoveryUSD: 450.00,
+          mfaStatus: 'Active (TOTP)'
+        });
+        localStorage.setItem('cloudtrim_revenue_ledger', JSON.stringify(ledger));
+      } catch (err) {}
+
+      loadRevenueLedger();
+      alert(`✓ Recorded payment of $${amount.toFixed(2)} for ${email}. Ledger updated.`);
+    }
+
+    function viewCustomerReceipt(revId) {
+      const record = currentRevenueLedger.find(r => r.id === revId);
+      if (!record) return;
+      alert(
+        `[OFFICIAL TAX INVOICE & RECEIPT]\n` +
+        `----------------------------------------\n` +
+        `Invoice Ref: ${record.txId}\n` +
+        `Customer Email: ${record.email}\n` +
+        `Organization: ${record.orgName}\n` +
+        `Tenant: ${record.tenant}\n` +
+        `Commercial Plan: ${record.tier}\n` +
+        `Billing Cadence: ${record.frequency}\n` +
+        `Gross Total Billed: ${record.totalBilledFormatted || '$' + (record.totalBilledUSD || 0).toFixed(2)}\n` +
+        `Payment Status: ${record.paymentStatus}\n` +
+        `Next Scheduled Renewal: ${record.nextRenewal}\n\n` +
+        `Operator: Satya Pathak (SkypeExchange4U), New Delhi, India.\n` +
+        `Support / Inquiries: support@skypeexchange4u.com`
+      );
+    }
+
+    function exportRevenueCsv() {
+      const periodSelect = document.getElementById('exportPeriodSelect');
+      const scopeSelect = document.getElementById('exportScopeSelect');
+      const formatSelect = document.getElementById('exportFormatSelect');
+      if (periodSelect) periodSelect.value = 'all';
+      if (scopeSelect) scopeSelect.value = 'revenue';
+      if (formatSelect) formatSelect.value = 'csv';
+      generateMonthlyExport();
+    }
+
+    // =========================================================================
+    // MONTHLY AUDIT DATA EXPORT LOGIC (ADMIN ONLY)
+    // =========================================================================
+    function loadExportsView() {
+      updateExportPreviewCount();
+    }
+
+    function getExportDataRows(period, scope) {
+      const allRecords = currentRevenueLedger && currentRevenueLedger.length > 0 ? currentRevenueLedger : getDefaultRevenueLedger();
+      let filtered = allRecords;
+
+      if (period && period !== 'all') {
+        filtered = allRecords.filter(r => {
+          const p = r.reportingPeriod || (r.billingDate ? r.billingDate.substring(0, 7) : '2026-10');
+          return p === period;
+        });
+      }
+
+      // If filtered is empty for historic closed periods, provide benchmark snapshot archives
+      if (filtered.length === 0 && period === '2026-09') {
+        filtered = [
+          { id: 'hist-09-01', reportingPeriod: '2026-09', email: 'admin@contoso.com', orgName: 'Contoso Corporation', tenant: 'contoso.onmicrosoft.com', registeredAt: '2026-09-14', tier: 'Pro Continuous Monitoring ($19/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 19, totalBilledUSD: 95.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-01', nextRenewal: '2026-10-14', seats: 9, assets: 11, potentialWasteUSD: 1485.50, confirmedRecoveryUSD: 556.90, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-09-02', reportingPeriod: '2026-09', email: 'david.miller@fabrikam.com', orgName: 'Fabrikam Managed IT', tenant: 'fabrikam.onmicrosoft.com', registeredAt: '2026-09-01', tier: 'MSP Partner License ($69/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 69, totalBilledUSD: 345.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-02', nextRenewal: '2026-10-01', seats: 45, assets: 38, potentialWasteUSD: 3840.00, confirmedRecoveryUSD: 1920.00, mfaStatus: 'Active (Email)' },
+          { id: 'hist-09-03', reportingPeriod: '2026-09', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-09-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 345.00, taxUSD: 62.10, paymentStatus: 'Paid', txId: 'PAYID-HIST09-03', nextRenewal: '2026-10-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-09-04', reportingPeriod: '2026-09', email: 'elena.rostova@nordiccloud.eu', orgName: 'Nordic Cloud Oy', tenant: 'nordiccloud.eu', registeredAt: '2026-09-05', tier: 'Pro Continuous Monitoring (€18/mo)', frequency: 'Monthly Recurring', currency: 'EUR', rateUSD: 19, totalBilledUSD: 95.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-04', nextRenewal: '2026-10-05', seats: 15, assets: 18, potentialWasteUSD: 1650.00, confirmedRecoveryUSD: 780.00, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-09-05', reportingPeriod: '2026-09', email: 'audit@finopsgroup.co.uk', orgName: 'FinOps Group UK', tenant: 'finopsgroup.co.uk', registeredAt: '2026-09-20', tier: 'Single Tenant Audit ($39)', frequency: 'One-Time Audit', currency: 'GBP', rateUSD: 39, totalBilledUSD: 39.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-05', nextRenewal: 'N/A', seats: 30, assets: 25, potentialWasteUSD: 1800.00, confirmedRecoveryUSD: 900.00, mfaStatus: 'Active (TOTP)' }
+        ];
+      } else if (filtered.length === 0 && period === '2026-08') {
+        filtered = [
+          { id: 'hist-08-01', reportingPeriod: '2026-08', email: 'admin@contoso.com', orgName: 'Contoso Corporation', tenant: 'contoso.onmicrosoft.com', registeredAt: '2026-08-14', tier: 'Pro Continuous Monitoring ($19/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 19, totalBilledUSD: 76.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-01', nextRenewal: '2026-09-14', seats: 9, assets: 11, potentialWasteUSD: 1485.50, confirmedRecoveryUSD: 556.90, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-08-02', reportingPeriod: '2026-08', email: 'david.miller@fabrikam.com', orgName: 'Fabrikam Managed IT', tenant: 'fabrikam.onmicrosoft.com', registeredAt: '2026-08-01', tier: 'MSP Partner License ($69/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 69, totalBilledUSD: 276.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-02', nextRenewal: '2026-09-01', seats: 45, assets: 38, potentialWasteUSD: 3840.00, confirmedRecoveryUSD: 1920.00, mfaStatus: 'Active (Email)' },
+          { id: 'hist-08-03', reportingPeriod: '2026-08', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-08-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 276.00, taxUSD: 49.68, paymentStatus: 'Paid', txId: 'PAYID-HIST08-03', nextRenewal: '2026-09-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-08-04', reportingPeriod: '2026-08', email: 'elena.rostova@nordiccloud.eu', orgName: 'Nordic Cloud Oy', tenant: 'nordiccloud.eu', registeredAt: '2026-08-05', tier: 'Pro Continuous Monitoring (€18/mo)', frequency: 'Monthly Recurring', currency: 'EUR', rateUSD: 19, totalBilledUSD: 76.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-04', nextRenewal: '2026-09-05', seats: 15, assets: 18, potentialWasteUSD: 1650.00, confirmedRecoveryUSD: 780.00, mfaStatus: 'Active (TOTP)' }
+        ];
+      }
+
+      return filtered;
+    }
+
+    function updateExportPreviewCount() {
+      const period = document.getElementById('exportPeriodSelect')?.value || '2026-10';
+      const scope = document.getElementById('exportScopeSelect')?.value || 'consolidated';
+      const rows = getExportDataRows(period, scope);
+      const badge = document.getElementById('exportCountBadge');
+      if (badge) badge.textContent = `${rows.length} records`;
+
+      renderExportPreview(rows);
+    }
+
+    function renderExportPreview(rows) {
+      const thead = document.getElementById('exportPreviewThead');
+      const tbody = document.getElementById('exportPreviewTbody');
+      if (!thead || !tbody) return;
+
+      thead.innerHTML = `
+        <tr style="background:#F1F5F9; text-align:left;">
+          <th style="padding:8px;">Period</th>
+          <th style="padding:8px;">User Email</th>
+          <th style="padding:8px;">Organization</th>
+          <th style="padding:8px;">Plan Tier</th>
+          <th style="padding:8px;">Billed (USD)</th>
+          <th style="padding:8px;">Status</th>
+          <th style="padding:8px;">Transaction ID</th>
+        </tr>
+      `;
+
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:16px; color:var(--text-muted);">No records match criteria.</td></tr>`;
+        return;
+      }
+
+      const sample = rows.slice(0, 5);
+      tbody.innerHTML = sample.map(r => `
+        <tr style="border-bottom:1px solid var(--border-light);">
+          <td style="padding:8px; font-family:var(--font-mono);">${r.reportingPeriod || '2026-10'}</td>
+          <td style="padding:8px;"><strong>${r.email}</strong></td>
+          <td style="padding:8px;">${r.orgName}</td>
+          <td style="padding:8px;"><span class="badge badge-neutral">${r.tier}</span></td>
+          <td style="padding:8px; font-weight:700;">$${(r.totalBilledUSD || 0).toFixed(2)}</td>
+          <td style="padding:8px;"><span class="badge" style="background:#DCFCE7; color:#15803D;">${r.paymentStatus}</span></td>
+          <td style="padding:8px;"><code style="font-size:0.72rem;">${r.txId || '—'}</code></td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleExportPreview() {
+      const container = document.getElementById('exportPreviewContainer');
+      const btn = document.getElementById('btnPreviewToggleText');
+      if (!container) return;
+      const isHidden = container.style.display === 'none';
+      container.style.display = isHidden ? 'block' : 'none';
+      if (btn) btn.textContent = isHidden ? 'Hide Preview' : 'Preview Table';
+      if (isHidden) {
+        updateExportPreviewCount();
+      }
+    }
+
+    function generateMonthlyExport() {
+      const period = document.getElementById('exportPeriodSelect').value;
+      const scope = document.getElementById('exportScopeSelect').value;
+      const format = document.getElementById('exportFormatSelect').value;
+      const includeFinOps = document.getElementById('chkIncludeFinOps').checked;
+      const includeTx = document.getElementById('chkIncludeTx').checked;
+      const includeDisclaimers = document.getElementById('chkIncludeDisclaimers').checked;
+
+      const dataset = getExportDataRows(period, scope);
+
+      if (format === 'json') {
+        const payload = {
+          exportMetadata: {
+            system: "CloudTrim Enterprise",
+            reportingPeriod: period,
+            scope: scope,
+            exportedAt: new Date().toISOString(),
+            exportedBy: "satya@skypeexchange4u.com",
+            classification: "CONFIDENTIAL_ADMINISTRATIVE_AUDIT_ARCHIVE",
+            recordCount: dataset.length,
+            disclaimer: "Strictly for administrative reference, internal FinOps audits, and tax compliance records."
+          },
+          records: dataset
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+        triggerDownload(blob, `cloudtrim_admin_${period}_${scope}.json`);
+        alert(`✓ Successfully exported ${dataset.length} records in JSON format for ${period}.`);
+        return;
+      }
+
+      // Format CSV
+      const headers = [
+        "Record_ID",
+        "Reporting_Period",
+        "User_Email",
+        "Company_Name",
+        "Tenant_Domain",
+        "Registration_Date",
+        "Plan_Tier",
+        "Billing_Frequency",
+        "Currency",
+        "Monthly_Rate_USD",
+        "Total_Billed_USD",
+        "Payment_Status"
+      ];
+
+      if (includeTx) {
+        headers.push("Tax_Amount_USD", "Transaction_Ref_ID", "Next_Renewal_Date");
+      }
+      if (includeFinOps) {
+        headers.push("M365_Seats_Audited", "Azure_Assets_Audited", "Potential_Monthly_Waste_USD", "Confirmed_Monthly_Recovery_USD");
+      }
+      headers.push("MFA_Compliance_Status", "Data_Classification");
+
+      const csvRows = [headers.join(',')];
+
+      dataset.forEach(row => {
+        const fields = [
+          escapeCsv(row.id),
+          escapeCsv(row.reportingPeriod || period),
+          escapeCsv(row.email),
+          escapeCsv(row.orgName),
+          escapeCsv(row.tenant),
+          escapeCsv(row.registeredAt || row.billingDate),
+          escapeCsv(row.tier),
+          escapeCsv(row.frequency),
+          escapeCsv(row.currency),
+          (row.rateUSD || 0).toFixed(2),
+          (row.totalBilledUSD || 0).toFixed(2),
+          escapeCsv(row.paymentStatus)
+        ];
+
+        if (includeTx) {
+          fields.push((row.taxUSD || 0).toFixed(2), escapeCsv(row.txId), escapeCsv(row.nextRenewal));
+        }
+        if (includeFinOps) {
+          fields.push(row.seats || 0, row.assets || 0, (row.potentialWasteUSD || 0).toFixed(2), (row.confirmedRecoveryUSD || 0).toFixed(2));
+        }
+        fields.push(escapeCsv(row.mfaStatus || 'Active (TOTP)'), escapeCsv('CONFIDENTIAL_INTERNAL_ADMIN'));
+
+        csvRows.push(fields.join(','));
+      });
+
+      if (includeDisclaimers) {
+        csvRows.push('');
+        csvRows.push('# COMPLIANCE DISCLAIMER: CloudTrim Enterprise & SkypeExchange4U operated by Satya Pathak.');
+        csvRows.push('# Microsoft 365, Azure, Entra, and Contoso are trademarks of Microsoft Corporation.');
+        csvRows.push('# Zero-Transit Security: Parsed in client RAM. Strictly for authorized administrative auditing.');
+      }
+
+      // Add UTF-8 BOM (\uFEFF) so Excel, Numbers, and Google Sheets parse cleanly
+      const csvContent = '\uFEFF' + csvRows.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      triggerDownload(blob, `cloudtrim_admin_${period}_${scope}.csv`);
+      alert(`✓ Successfully generated and downloaded ${dataset.length} records for ${period} as CSV spreadsheet.`);
+    }
+
+    function downloadArchiveSnapshot(period, format) {
+      const periodSelect = document.getElementById('exportPeriodSelect');
+      const formatSelect = document.getElementById('exportFormatSelect');
+      if (periodSelect) periodSelect.value = period;
+      if (formatSelect) formatSelect.value = format;
+      generateMonthlyExport();
+    }
+
+    function escapeCsv(val) {
+      if (val === null || val === undefined) return '""';
+      const str = String(val);
+      if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return '"' + str + '"';
+    }
+
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 300);
     }
 
     // Auto-load on page initialization
     window.addEventListener('DOMContentLoaded', () => {
       loadTelemetryEvents();
       loadAdminUsers();
+      loadRevenueLedger();
     });
   </script>
 

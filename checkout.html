@@ -731,6 +731,11 @@
       const curr = CURRENCIES[currentCurrencyCode] || CURRENCIES.USD;
       const planData = curr.plans[currentTier];
       const totalText = document.getElementById('summaryTotal').textContent;
+      const taxAmountEl = document.getElementById('taxAmount');
+      const taxVal = taxAmountEl ? parseFloat(taxAmountEl.textContent.replace(/[^0-9.]/g, '')) || 0 : 0;
+      const token = 'CT-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
+
+      recordCheckoutTransaction(email, domain, currentTier, curr.code, planData.price, taxVal, totalText, token);
 
       alert(
         `[Gateway Sandbox Checkout]\n` +
@@ -740,6 +745,7 @@
         `Currency: ${curr.code}\n` +
         `Tenant Bound: ${domain}\n` +
         `License Key Dispatch Target: ${email}\n\n` +
+        `✓ Transaction successfully logged to internal administrative revenue ledger.\n` +
         `Initiating secure smart checkout transaction...`
       );
     }
@@ -756,6 +762,11 @@
         const token = 'CT-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
         out.innerHTML = `✓ [200 SUCCESS] Captured ${totalText} (${curr.code}).<br>&bull; Cryptographic Token: <code>${token}</code><br>&bull; Bound Tenant: <code>${domain}</code><br>&bull; SMTP Dispatch: License confirmation delivered to ${email} (200 OK).`;
         out.style.color = '#A7F3D0';
+
+        const planData = curr.plans[currentTier];
+        const taxAmountEl = document.getElementById('taxAmount');
+        const taxVal = taxAmountEl ? parseFloat(taxAmountEl.textContent.replace(/[^0-9.]/g, '')) || 0 : 0;
+        recordCheckoutTransaction(email, domain, currentTier, curr.code, planData.price, taxVal, totalText, token);
       } else if (scenario === 'cancel') {
         out.innerHTML = `⚠️ [CHECKOUT_CANCELLED] Buyer closed gateway dialog without completing payment. Session and state preserved.`;
         out.style.color = '#FDE68A';
@@ -768,6 +779,73 @@
       } else if (scenario === 'delivery') {
         out.innerHTML = `✓ [DISPATCH_VERIFIED] MIME email payload assembled: PDF Executive Audit + License JSON + Production PowerShell Runbook sent to ${email}.`;
         out.style.color = '#A7F3D0';
+      }
+    }
+
+    function recordCheckoutTransaction(email, domain, tierKey, currencyCode, planPrice, taxVal, totalFormatted, token) {
+      try {
+        const raw = localStorage.getItem('cloudtrim_revenue_ledger');
+        const ledger = raw ? JSON.parse(raw) : [];
+
+        const planNames = {
+          single: 'Single Tenant Audit ($39)',
+          pro: 'Pro Continuous Monitoring ($19/mo)',
+          msp: 'MSP Partner License ($69/mo)'
+        };
+        const rateUSDMap = { single: 39, pro: 19, msp: 69 };
+
+        let totalBilledUSD = planPrice + taxVal;
+        if (currencyCode === 'GBP') totalBilledUSD = Math.round((planPrice + taxVal) * 1.3);
+        else if (currencyCode === 'EUR') totalBilledUSD = Math.round((planPrice + taxVal) * 1.08);
+        else if (currencyCode === 'INR') totalBilledUSD = Math.round((planPrice + taxVal) / 83.25);
+
+        const newTx = {
+          id: 'rev-' + Date.now(),
+          email: email,
+          orgName: (domain.split('.')[0] || 'Customer').toUpperCase() + ' Corp',
+          tenant: domain,
+          tier: planNames[tierKey] || planNames.single,
+          tierKey: tierKey,
+          frequency: tierKey === 'single' ? 'One-Time Audit' : 'Monthly Recurring',
+          currency: currencyCode,
+          symbol: CURRENCIES[currencyCode] ? CURRENCIES[currencyCode].symbol : '$',
+          rateUSD: rateUSDMap[tierKey] || 39,
+          totalBilled: planPrice + taxVal,
+          taxUSD: currencyCode === 'INR' ? Math.round(taxVal / 83.25) : taxVal,
+          totalBilledUSD: totalBilledUSD,
+          totalBilledFormatted: totalFormatted,
+          paymentStatus: tierKey === 'single' ? 'Paid (One-Time)' : 'Active Subscription',
+          txId: token || ('PAYID-' + Math.random().toString(36).substring(2, 9).toUpperCase()),
+          billingDate: new Date().toISOString().split('T')[0],
+          reportingPeriod: new Date().toISOString().substring(0, 7),
+          nextRenewal: tierKey === 'single' ? 'N/A (One-Time Audit)' : new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+          seats: 9,
+          assets: 11,
+          potentialWasteUSD: 1485.50,
+          confirmedRecoveryUSD: 556.90,
+          mfaStatus: 'Active (TOTP)'
+        };
+
+        ledger.unshift(newTx);
+        localStorage.setItem('cloudtrim_revenue_ledger', JSON.stringify(ledger));
+
+        // Also ensure user is registered
+        const usersRaw = localStorage.getItem('cloudtrim_registered_users');
+        const users = usersRaw ? JSON.parse(usersRaw) : [];
+        if (!users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+          users.unshift({
+            email: email,
+            tenant: domain,
+            role: tierKey === 'msp' ? 'MSP Lead' : 'Tenant Admin',
+            mfaStatus: 'Active (TOTP)',
+            registeredAt: new Date().toISOString(),
+            lastLogin: 'Just now',
+            loginCount: 1
+          });
+          localStorage.setItem('cloudtrim_registered_users', JSON.stringify(users));
+        }
+      } catch (err) {
+        console.error('Error saving transaction to admin revenue ledger:', err);
       }
     }
 
