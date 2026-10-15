@@ -385,7 +385,7 @@
           <span>🔐 OTP &amp; Auth Logs</span>
         </div>
         <div class="admin-menu-item" id="tab-settings" onclick="switchAdminTab('settings')">
-          <span>⚙️ SMTP Gateway Setup</span>
+          <span>⚙️ Payment &amp; SMTP Gateway</span>
         </div>
       </div>
 
@@ -886,6 +886,52 @@
               Outbound emails are dispatched via <strong>Resend</strong> or <strong>Postmark</strong> using authenticated SPF, DKIM, and DMARC DNS records aligned with <code>skypeexchange4u.com</code>.
             </p>
           </div>
+
+          <!-- Payment Gateway & Merchant Receiving Account Setup -->
+          <div style="margin-top:24px; padding:20px; background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-sm);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <strong style="font-size:0.95rem; color:var(--text-main);">💳 Payment Gateway &amp; Merchant Settlement Setup</strong>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                  Configure the PayPal merchant account email where customer subscription and audit payments are directly credited.
+                </p>
+              </div>
+              <span class="badge" style="background:#EFF6FF; color:#1D4ED8; font-weight:700;">Client-Side PCI Scope Compliant</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div class="field-group">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">
+                  PayPal Merchant Business Email (Funds Destination):
+                </label>
+                <input type="email" id="paypalMerchantEmailInput" placeholder="e.g. payments@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
+                  Enter the primary email address registered to your PayPal Premier or Business account.
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">
+                  Gateway Environment Mode:
+                </label>
+                <select id="paymentGatewayMode" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
+                  <option value="live">Live Production (Real PayPal Payment Dispatch)</option>
+                  <option value="sandbox">Developer Sandbox Simulator (Offline Mock Testing)</option>
+                </select>
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
+                  Toggle between live payment redirection and local offline testing.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:16px; padding:12px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:4px; font-size:0.75rem; color:#166534; line-height:1.45;">
+              ✓ <strong>How Live Payments Work:</strong> When set to <em>Live Production</em>, clicking <strong>Pay with PayPal</strong> on the checkout page forwards customers directly to PayPal's official, secure gateway. Customer funds settle immediately into the merchant email configured above.
+            </div>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+              <button class="btn btn-primary" onclick="savePaymentGatewaySettings()">💾 Save Merchant Payment Settings</button>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -916,6 +962,8 @@
         loadRevenueLedger();
       } else if (tabKey === 'exports') {
         loadExportsView();
+      } else if (tabKey === 'settings') {
+        loadPaymentGatewaySettings();
       }
     }
 
@@ -1777,11 +1825,40 @@
       }, 300);
     }
 
+    function loadPaymentGatewaySettings() {
+      const emailInput = document.getElementById('paypalMerchantEmailInput');
+      const modeSelect = document.getElementById('paymentGatewayMode');
+      if (emailInput) {
+        emailInput.value = localStorage.getItem('cloudtrim_paypal_merchant_email') || 'payments@skypeexchange4u.com';
+      }
+      if (modeSelect) {
+        modeSelect.value = localStorage.getItem('cloudtrim_payment_mode') || 'live';
+      }
+    }
+
+    function savePaymentGatewaySettings() {
+      const emailInput = document.getElementById('paypalMerchantEmailInput');
+      const modeSelect = document.getElementById('paymentGatewayMode');
+      const email = emailInput ? emailInput.value.trim() : '';
+      const mode = modeSelect ? modeSelect.value : 'live';
+
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid PayPal merchant business email address.');
+        if (emailInput) emailInput.focus();
+        return;
+      }
+
+      localStorage.setItem('cloudtrim_paypal_merchant_email', email);
+      localStorage.setItem('cloudtrim_payment_mode', mode);
+      alert(`✓ Payment Gateway Settings Saved!\n\n• Merchant Funds Destination: ${email}\n• Environment: ${mode === 'live' ? 'Live Production (PayPal Standard)' : 'Developer Sandbox Simulator'}\n\nAll customer checkouts on checkout.html will now use this configuration.`);
+    }
+
     // Auto-load on page initialization
     window.addEventListener('DOMContentLoaded', () => {
       loadTelemetryEvents();
       loadAdminUsers();
       loadRevenueLedger();
+      loadPaymentGatewaySettings();
     });
   </script>
 

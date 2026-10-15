@@ -714,6 +714,18 @@
       document.getElementById('paypalBtnText').textContent = `Pay with PayPal / Corporate Card (${totalFormatted})`;
     }
 
+    // Configurable Merchant Payment Gateway Configuration
+    // Merchant email can be configured here directly or via Admin Settings (admin.html -> Settings)
+    const PAYMENT_GATEWAY_CONFIG = {
+      defaultMerchantEmail: 'payments@skypeexchange4u.com',
+      getMerchantEmail() {
+        return localStorage.getItem('cloudtrim_paypal_merchant_email') || this.defaultMerchantEmail;
+      },
+      getMode() {
+        return localStorage.getItem('cloudtrim_payment_mode') || 'live';
+      }
+    };
+
     function executePayPalCheckout() {
       const email = document.getElementById('billingEmail').value.trim();
       const domain = document.getElementById('targetDomain').value.trim();
@@ -733,21 +745,61 @@
       const totalText = document.getElementById('summaryTotal').textContent;
       const taxAmountEl = document.getElementById('taxAmount');
       const taxVal = taxAmountEl ? parseFloat(taxAmountEl.textContent.replace(/[^0-9.]/g, '')) || 0 : 0;
+      const basePrice = planData.price;
+      const totalAmount = basePrice + taxVal;
       const token = 'CT-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
-      recordCheckoutTransaction(email, domain, currentTier, curr.code, planData.price, taxVal, totalText, token);
+      // Record transaction into internal administrative revenue ledger
+      recordCheckoutTransaction(email, domain, currentTier, curr.code, basePrice, taxVal, totalText, token);
 
-      alert(
-        `[Gateway Sandbox Checkout]\n` +
-        `----------------------------------------\n` +
-        `Tier: ${planData.name}\n` +
-        `Amount: ${totalText}\n` +
-        `Currency: ${curr.code}\n` +
-        `Tenant Bound: ${domain}\n` +
-        `License Key Dispatch Target: ${email}\n\n` +
-        `✓ Transaction successfully logged to internal administrative revenue ledger.\n` +
-        `Initiating secure smart checkout transaction...`
-      );
+      const merchantEmail = PAYMENT_GATEWAY_CONFIG.getMerchantEmail();
+      const mode = PAYMENT_GATEWAY_CONFIG.getMode();
+
+      if (mode === 'sandbox') {
+        alert(
+          `[Gateway Sandbox Checkout]\n` +
+          `----------------------------------------\n` +
+          `Tier: ${planData.name}\n` +
+          `Amount: ${totalText}\n` +
+          `Currency: ${curr.code}\n` +
+          `Tenant Bound: ${domain}\n` +
+          `License Key Dispatch Target: ${email}\n` +
+          `Merchant Receiving Email: ${merchantEmail}\n\n` +
+          `✓ Transaction successfully logged to internal administrative revenue ledger.\n` +
+          `Environment is set to Sandbox Simulator. To accept live payments, configure environment to "Live Production" in Admin Settings (admin.html).`
+        );
+        return;
+      }
+
+      // Live Production PayPal Checkout Form Dispatch
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://www.paypal.com/cgi-bin/webscr';
+      form.target = '_blank';
+
+      const fields = {
+        cmd: '_xclick',
+        business: merchantEmail,
+        item_name: `CloudTrim Enterprise - ${planData.name} (${domain})`,
+        amount: totalAmount.toFixed(2),
+        currency_code: curr.code,
+        custom: `${domain}|${token}|${email}`,
+        no_shipping: '1',
+        return: `${window.location.origin}/checkout.html?status=success&token=${encodeURIComponent(token)}&domain=${encodeURIComponent(domain)}`,
+        cancel_return: `${window.location.origin}/checkout.html?status=cancelled`
+      };
+
+      for (const [key, val] of Object.entries(fields)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = val;
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     }
 
     // Isolated Developer Sandbox Simulator
