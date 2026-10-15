@@ -532,10 +532,10 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
               Enterprise Access Architecture &bull; Self-Service Audit vs. Paid Remediation
             </div>
             <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-main); margin-bottom:6px;">
-              Free Governance Discovery &bull; Strict Paid Remediation Scripts
+              Free Governance Discovery &bull; Zero-Touch Cloud Execution &amp; Monthly Reports
             </h3>
             <p style="font-size:0.83rem; color:var(--text-muted); line-height:1.5; margin-bottom:14px;">
-              Anyone can run a 100% free, private in-browser assessment to identify orphaned licenses and idle infrastructure. Production PowerShell execution scripts and automated Windows Task Scheduler runbooks are strictly reserved for paid license holders.
+              Anyone can run a 100% free, private in-browser assessment to identify orphaned licenses and idle infrastructure. Automated cloud remediation, zero-touch Azure App Registration sync, and recurring monthly diff reporting are reserved for paid members to eliminate manual work and avoid human error.
             </p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.78rem;">
               <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px;">
@@ -546,7 +546,7 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                   <li>✓ Zero-transit client RAM privacy scan</li>
                   <li>✓ Dollar waste &amp; savings calculation</li>
                   <li>✓ Governance score &amp; candidate review</li>
-                  <li style="color:#DC2626; font-weight:600;">🔒 Remediation Scripts: Locked</li>
+                  <li style="color:#DC2626; font-weight:600;">🔒 Automated Cloud Execution: Locked</li>
                 </ul>
               </div>
               <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-sm); padding:12px 14px;">
@@ -554,22 +554,22 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                   <span>★ Paid Remediation ($39 / $19/mo)</span>
                 </div>
                 <ul style="padding-left:16px; color:#1E3A8A; line-height:1.5;">
-                  <li>★ Full production PowerShell runbook</li>
-                  <li>★ Exact Microsoft SkuId GUID resolution</li>
+                  <li>★ Zero-Touch Azure App Registration sync</li>
+                  <li>★ Automated cloud API remediation (Zero error)</li>
                   <li>★ Fail-closed Exchange &amp; disk preflights</li>
-                  <li>★ Task Scheduler continuous monitoring</li>
+                  <li>★ Monthly diff reconciliation &amp; reporting</li>
                 </ul>
               </div>
             </div>
           </div>
 
           <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:20px; text-align:center; min-width:240px; box-shadow:var(--shadow-subtle);">
-            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Remediation License</div>
-            <div style="font-size:0.85rem; font-weight:700; color:var(--primary); margin-top:2px;">Production Script Access</div>
-            <div style="font-size:2.2rem; font-weight:800; color:var(--text-main); margin:10px 0 2px;">$39</div>
-            <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:14px;">One-time audit &bull; Or $19/mo Pro</div>
-            <a href="checkout.html" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; font-size:0.85rem; text-decoration:none;">
-              Unlock Remediation Scripts →
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Continuous Governance</div>
+            <div style="font-size:0.85rem; font-weight:700; color:var(--primary); margin-top:2px;">Pro Monthly Subscription</div>
+            <div style="font-size:2.2rem; font-weight:800; color:var(--text-main); margin:10px 0 2px;">$19<span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">/mo</span></div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:14px;">Or $39 one-time single audit</div>
+            <a href="checkout.html?tier=pro" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; font-size:0.85rem; text-decoration:none;">
+              Subscribe to Monthly Reporting →
             </a>
             <div style="font-size:0.7rem; color:var(--text-muted); margin-top:8px;">Instant license token dispatch</div>
           </div>
@@ -821,10 +821,13 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
               <span class="sub-tab-badge" id="subtabBadgeAzure">5</span>
             </button>
             <button class="sub-tab-btn" id="subtab-remediation" onclick="switchSupportingTab('remediation')">
-              PowerShell Remediation
+              Automated Cloud Remediation
+            </button>
+            <button class="sub-tab-btn" id="subtab-azure-connect" onclick="switchSupportingTab('azure-connect')">
+              Azure Cloud Connector (Zero-Touch)
             </button>
             <button class="sub-tab-btn" id="subtab-automation" onclick="switchSupportingTab('automation')">
-              Scheduled Audits
+              Monthly Subscription &amp; Diff
             </button>
           </div>
 
@@ -915,16 +918,27 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
               </div>
             </div>
 
-            <!-- Terminal Payload & Script Controls -->
+            <!-- Terminal Payload & Script Controls (Zero Script Exposure / Automated Cloud Pipeline) -->
             <div id="remediationScriptArea" style="opacity:0.6; pointer-events:none; transition:opacity 0.2s ease;">
               <!-- Active License Banner (Revealed when licensed) -->
               <div id="unlockedLicenseBanner" class="license-unlocked-banner" style="display:none;">
                 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                   <strong style="color:#065F46;">✓ Enterprise License Active:</strong>
                   <span id="activeLicenseTokenDisplay" style="font-family:var(--font-mono); font-weight:700; color:var(--primary); background:rgba(255,255,255,0.7); padding:2px 8px; border-radius:4px; border:1px solid #A7F3D0;"></span>
-                  <span style="color:#047857; font-size:0.78rem;">&bull; Full Production PowerShell Runbooks &amp; Task Scheduler Scripts Unlocked</span>
+                  <span style="color:#047857; font-size:0.78rem;">&bull; Automated Cloud Remediation &amp; Zero-Touch Pipeline Unlocked</span>
                 </div>
                 <button type="button" class="btn btn-outline" style="font-size:0.72rem; padding:4px 8px;" onclick="lockLicense()">Lock / Switch Token</button>
+              </div>
+
+              <!-- Security Notice: Zero Script Exposure Policy -->
+              <div style="background:#0F172A; border:1px solid rgba(59,130,246,0.3); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#38BDF8" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <span style="font-size:0.78rem; color:#E2E8F0;">
+                    <strong>Zero-Touch Cloud Execution:</strong> Remediation runs directly via automated API in the cloud sandbox. Raw script export is strictly disabled to eliminate human error and prevent configuration drift.
+                  </span>
+                </div>
+                <span style="font-size:0.72rem; color:#94A3B8; font-family:var(--font-mono);">Encrypted Pipeline &bull; Zero Human Intervention</span>
               </div>
 
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -934,30 +948,32 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                       <input type="checkbox" id="dryRunToggle" checked onchange="toggleDryRun(this)">
                       <span class="slider"></span>
                     </label>
-                    <span>Safe Dry-Run Mode (-WhatIf)</span>
+                    <span>Safe Dry-Run Mode (Simulation)</span>
                   </div>
-                  <span class="preflight-badge">✓ Preflight Verification Enforced</span>
-                  <span class="preflight-badge">✓ Transcript Logging Enabled</span>
+                  <span class="preflight-badge">✓ Fail-Closed Safety Enforced</span>
+                  <span class="preflight-badge">✓ Audit Ledger Logging Active</span>
                 </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-outline" id="btnCopyScript" style="font-size:0.75rem;" onclick="copyCode('terminalPayload')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                    Copy Production Script
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="btn btn-primary" id="btnExecuteRemediation" style="font-size:0.8rem; gap:6px;" onclick="runAutomatedCloudRemediation()">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    ⚡ Execute Automated Cloud Remediation
                   </button>
-                  <button class="btn btn-outline" id="btnDownloadScript" style="font-size:0.75rem;" onclick="downloadRemediationScript()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download .ps1
+                  <button class="btn btn-outline" style="font-size:0.75rem;" onclick="switchSupportingTab('azure-connect')">
+                    🔗 Direct Azure Connector (Zero-Touch)
+                  </button>
+                  <button class="btn btn-outline" style="font-size:0.75rem;" onclick="switchSupportingTab('automation')">
+                    📅 Monthly Reporting Subscription
                   </button>
                 </div>
               </div>
 
               <div class="remediation-terminal-wrapper">
-                <div class="terminal-box" id="terminalBoxContainer">
+                <div class="terminal-box" id="terminalBoxContainer" style="user-select:none; -webkit-user-select:none;" oncopy="return false;" oncut="return false;" oncontextmenu="return false;">
                   <div class="terminal-header-bar">
-                    <span>powershell.exe -NoProfile -ExecutionPolicy Bypass</span>
-                    <span id="terminalTenantStatus">Tenant: contoso.onmicrosoft.com &bull; SkuIds Resolved</span>
+                    <span>CloudTrim Automated Governance Engine v3.2 &bull; Direct Microsoft Graph &amp; ARM API</span>
+                    <span id="terminalTenantStatus">Tenant: contoso.onmicrosoft.com &bull; Fail-Closed Sandboxed</span>
                   </div>
-                  <pre class="terminal-code-body" id="terminalPayload"></pre>
+                  <pre class="terminal-code-body terminal-secure-pipeline" id="terminalPayload" style="user-select:none; -webkit-user-select:none; pointer-events:none; font-size:0.78rem;"></pre>
                 </div>
 
                 <!-- Strict Paywall Overlay for Free Users -->
@@ -965,34 +981,34 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                   <div class="paywall-card">
                     <div class="paywall-badge">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      Production Remediation Script Locked
+                      Automated Cloud Remediation Locked
                     </div>
-                    <h3 class="paywall-title">Production Execution Runbook Reserved for Paid Members</h3>
+                    <h3 class="paywall-title">Zero-Touch Execution &amp; Monthly Reports Reserved for Paid Members</h3>
                     <p class="paywall-subtitle">
-                      Your assessment calculated <strong style="color:#F87171;">$556.90/month ($6,682.80/year)</strong> in unoptimized licensing &amp; orphaned cloud assets. The production PowerShell script with exact Microsoft SkuId GUIDs and fail-closed safety preflights requires a paid license key.
+                      Your assessment identified <strong style="color:#F87171;">$556.90/month ($6,682.80/year)</strong> in unoptimized licensing &amp; idle cloud assets. To execute zero-touch remediations automatically with zero manual work and zero human error, subscribe to Pro Monthly ($19/mo) or unlock Single Audit ($39).
                     </p>
 
                     <div class="paywall-highlight-box">
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Exact SkuId GUID Resolution:</strong> Microsoft Graph SDK license revocation runbook.</span>
+                        <span><strong>Zero Manual Script Work:</strong> Automated cloud API execution with zero terminal copy-pasting.</span>
                       </div>
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Fail-Closed Safety Preflights:</strong> Prevents accidental deletion of active accounts or held mailboxes.</span>
+                        <span><strong>Direct Azure / Microsoft 365 Connector:</strong> Connect via App Registration for automated monthly runs.</span>
                       </div>
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Windows Task Scheduler Runbooks:</strong> Automated monthly background audit scripts.</span>
+                        <span><strong>Automated Monthly Reporting:</strong> Compares monthly snapshots (Diff comparison) and emails CFO reports.</span>
                       </div>
                     </div>
 
                     <div class="paywall-cta-group">
-                      <a href="checkout.html" class="paywall-primary-btn">
-                        Unlock Full Production Script — $39 Single Tenant / $19/mo Pro →
+                      <a href="checkout.html?tier=pro" class="paywall-primary-btn">
+                        Subscribe to Monthly Governance ($19/mo Pro) / Single Audit ($39) →
                       </a>
                       <button type="button" class="paywall-secondary-btn" onclick="toggleTokenUnlockInput()">
-                        Already Purchased? Enter License Token (CT-XXXX-XXXX)
+                        Already Subscribed? Enter License Token (CT-XXXX-XXXX)
                       </button>
                     </div>
 
@@ -1010,50 +1026,252 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
             </div>
           </div>
 
-          <!-- Tab Pane 4: Scheduled Audits -->
-          <div id="tab-pane-automation" style="display:none;">
-            <!-- Automation Paywall Banner if not licensed -->
-            <div id="automationLockedNotice" class="automation-locked-notice" style="display:none; background:#FFFBEB; border:1px solid #FCD34D; border-radius:var(--radius-sm); padding:16px; margin-bottom:16px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <!-- Tab Pane 4: Azure Cloud Connector (Zero-Touch Integration) -->
+          <div id="tab-pane-azure-connect" style="display:none;">
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-sm); padding:14px 18px; margin-bottom:18px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
-                  <div style="font-weight:700; color:#92400E; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
-                    🔒 Automated Scheduled Audits Reserved for Pro / MSP Members
-                  </div>
-                  <p style="font-size:0.8rem; color:#B45309; margin-top:4px; line-height:1.4;">
-                    Windows Task Scheduler scripts for automated weekly scanning, monthly financial close diff comparisons, and automated alert dispatch are available on Pro ($19/mo) and MSP plans.
+                  <strong style="color:#166534; font-size:0.9rem;">Direct Azure &amp; Microsoft 365 Cloud Connector</strong>
+                  <p style="font-size:0.8rem; color:#15803D; margin-top:3px; line-height:1.45;">
+                    Eliminate manual script execution and human error. Connect your Microsoft Entra ID / Azure tenant once via App Registration to automate all licensing audits, continuous diff tracking, and board-ready reporting without manual user intervention.
                   </p>
                 </div>
-                <a href="checkout.html?tier=pro" class="btn btn-primary" style="font-size:0.82rem; padding:8px 14px; white-space:nowrap; text-decoration:none;">
-                  Upgrade to Pro ($19/mo) →
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="badge" style="background:#DCFCE7; color:#166534; font-size:0.75rem; padding:4px 10px; font-weight:700;" id="connectorLiveStatusBadge">
+                    ● Disconnected (Configure Below)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="azure-connector-grid">
+              <!-- Connector Column 1: App Registration Credentials -->
+              <div class="connector-form-card">
+                <div style="font-weight:700; font-size:0.9rem; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                  Azure App Registration (Service Principal)
+                </div>
+
+                <div class="connector-form-group">
+                  <label for="azureTenantId">Directory (Tenant) ID or Primary Domain</label>
+                  <input type="text" id="azureTenantId" value="contoso.onmicrosoft.com" placeholder="e.g. contoso.onmicrosoft.com or GUID" />
+                  <div class="form-hint">Found in Microsoft Entra Admin Center &gt; Overview</div>
+                </div>
+
+                <div class="connector-form-group">
+                  <label for="azureClientId">Application (Client) ID</label>
+                  <input type="text" id="azureClientId" value="4f92a1b0-e381-4b12-9c44-78192a019482" placeholder="e.g. 00000000-0000-0000-0000-000000000000" />
+                  <div class="form-hint">App Registration client GUID</div>
+                </div>
+
+                <div class="connector-form-group">
+                  <label for="azureAuthType">Authentication Method</label>
+                  <select id="azureAuthType">
+                    <option value="secret">Client Secret (Key Credential)</option>
+                    <option value="cert">Certificate (Thumbprint / PKCS#12)</option>
+                    <option value="managed">Azure Managed Identity (Jumpbox / Agent)</option>
+                  </select>
+                </div>
+
+                <div class="connector-form-group">
+                  <label for="azureSecretKey">Client Secret Value or Certificate Thumbprint</label>
+                  <input type="password" id="azureSecretKey" value="CT-Secret-Live-Sandbox-Token-Key9981" placeholder="Paste Client Secret or Certificate Thumbprint" />
+                  <div class="form-hint">Encrypted locally in browser RAM &bull; Zero external transit</div>
+                </div>
+
+                <div style="margin-top:16px; display:flex; gap:10px;">
+                  <button type="button" class="btn btn-primary" style="font-size:0.8rem; padding:8px 14px;" onclick="testAzureConnection()">
+                    Test Connection &amp; Authenticate
+                  </button>
+                  <button type="button" class="btn btn-outline" style="font-size:0.8rem; padding:8px 14px;" onclick="saveAzureConnectorConfig()">
+                    Save Configuration
+                  </button>
+                </div>
+              </div>
+
+              <!-- Connector Column 2: Automation Governance Policies -->
+              <div class="connector-form-card">
+                <div style="font-weight:700; font-size:0.9rem; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Zero-Touch Governance &amp; Executive Dispatch
+                </div>
+
+                <div class="connector-form-group">
+                  <label>Automated Scan &amp; Diff Cadence</label>
+                  <select id="azureScheduleCadence">
+                    <option value="monthly_day1">Day 1 of Each Month at 09:00 UTC (Recommended)</option>
+                    <option value="biweekly">Every 1st &amp; 15th of the Month</option>
+                    <option value="weekly_monday">Weekly on Monday at 09:00 UTC</option>
+                  </select>
+                  <div class="form-hint">Scans live Entra &amp; ARM telemetry automatically without manual login</div>
+                </div>
+
+                <div class="connector-form-group">
+                  <label for="azureReportEmail">Executive Report Dispatch Email(s)</label>
+                  <input type="text" id="azureReportEmail" value="admin@contoso.com, cfo@contoso.com" placeholder="admin@contoso.com, cio@contoso.com" />
+                  <div class="form-hint">Delivers Board-Ready PDF Audit &amp; Month-over-Month Delta automatically</div>
+                </div>
+
+                <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-top:12px;">
+                  <div style="font-size:0.78rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">Enforced Safety Guardrails (Zero Human Error):</div>
+                  <div style="font-size:0.75rem; color:#475569; line-height:1.5;">
+                    ✓ <strong>Fail-Closed Hold Protection:</strong> Mailboxes with Litigation Hold or &gt;50GB are automatically skipped.<br>
+                    ✓ <strong>Entra Account Validation:</strong> Only verified disabled identities are eligible for license revocation.<br>
+                    ✓ <strong>Disk Lock Check:</strong> Unattached disks with ReadOnly / CanNotDelete locks are never modified.<br>
+                    ✓ <strong>Cryptographic Audit Ledger:</strong> Every action is sealed with SHA-256 for compliance verification.
+                  </div>
+                </div>
+
+                <div id="azureConnectorTestOutput" style="display:none; margin-top:14px; background:#0F172A; color:#A7F3D0; font-family:var(--font-mono); font-size:0.74rem; padding:10px 12px; border-radius:4px; line-height:1.4;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Pane 5: Monthly Subscription & Diff Reporting -->
+          <div id="tab-pane-automation" style="display:none;">
+            <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-sm); padding:16px 20px; margin-bottom:18px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <strong style="color:var(--primary); font-size:0.92rem;">Monthly Subscription &amp; Continuous Cost Governance</strong>
+                  <p style="font-size:0.82rem; color:#1E3A8A; margin-top:4px; line-height:1.45;">
+                    Continuous monthly governance without manual work. Upload monthly tenant snapshots or connect direct Azure sync to track month-over-month license reduction, verify realized budget recoveries, and receive board-ready compliance reports automatically.
+                  </p>
+                </div>
+                <a href="checkout.html?tier=pro" class="btn btn-primary" style="font-size:0.84rem; padding:8px 16px; white-space:nowrap; text-decoration:none;">
+                  Subscribe to Monthly Reporting ($19/mo) →
                 </a>
               </div>
             </div>
 
-            <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:16px;">
-              <strong style="color:var(--text-main); font-size:0.88rem;">Architecture &amp; Execution Specification:</strong>
-              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; line-height:1.5;">
-                • <strong>Execution Location:</strong> Runs locally on your administrative workstation or jumpbox via Windows Task Scheduler.<br>
-                • <strong>Host Availability:</strong> The host computer must be powered on and connected to the internet at the scheduled time.<br>
-                • <strong>History Storage:</strong> Audit CSV snapshots are stored locally on your machine at <code>C:\CloudTrim\History\</code>.<br>
-                • <strong>Continuous Pro Entitlement:</strong> Provides monthly web diff comparison, automated rule and SKU updates, and email notifications.
-              </p>
+            <!-- Month-over-Month Delta Comparison Cards -->
+            <div class="diff-stat-grid">
+              <div class="diff-stat-box">
+                <div class="diff-stat-label">Baseline Waste (Month 1)</div>
+                <div class="diff-stat-val" style="color:#EF4444;">$556.90<span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">/mo</span></div>
+                <div class="diff-stat-sub" style="color:#DC2626;">$6,682.80/year annualized</div>
+              </div>
+
+              <div class="diff-stat-box">
+                <div class="diff-stat-label">Current Waste (Month 2)</div>
+                <div class="diff-stat-val" style="color:#059669;">$0.00<span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">/mo</span></div>
+                <div class="diff-stat-sub">100% Waste Remediated</div>
+              </div>
+
+              <div class="diff-stat-box">
+                <div class="diff-stat-label">Net Budget Reclaimed</div>
+                <div class="diff-stat-val" style="color:#059669;">+$556.90<span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">/mo</span></div>
+                <div class="diff-stat-sub">+$6,682.80/year saved</div>
+              </div>
+
+              <div class="diff-stat-box">
+                <div class="diff-stat-label">Governance Health Score</div>
+                <div class="diff-stat-val" style="color:#2563EB;">96 <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">/ 100</span></div>
+                <div class="diff-stat-sub" style="color:#2563EB;">▲ +22 pts (Previous: 74)</div>
+              </div>
             </div>
 
+            <!-- Month-over-Month Delta Diff Table -->
+            <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 20px; margin-bottom:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                <div>
+                  <h4 style="font-size:0.9rem; font-weight:700; color:var(--text-main); margin-bottom:2px;">Month-over-Month Delta Governance Diff</h4>
+                  <p style="font-size:0.78rem; color:var(--text-muted);">Reconciliation between baseline audit (October 2026) and post-remediation report</p>
+                </div>
+                <button type="button" class="btn btn-outline" style="font-size:0.75rem;" onclick="exportAuditCSV()">
+                  Export Diff Reconciliation CSV
+                </button>
+              </div>
+
+              <div class="diff-table-container">
+                <table class="diff-table">
+                  <thead>
+                    <tr>
+                      <th>Candidate Identity / Resource</th>
+                      <th>Category</th>
+                      <th>Baseline State (M1)</th>
+                      <th>Post-Remediation (M2)</th>
+                      <th>Monthly Savings</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>rahul.sharma@contoso.com</strong></td>
+                      <td>M365 (Office 365 E5)</td>
+                      <td>Disabled (License Billed)</td>
+                      <td>License Revoked via Graph API</td>
+                      <td style="color:#059669; font-weight:700;">+$38.00/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>priya.verma@contoso.com</strong></td>
+                      <td>M365 (Microsoft 365 E3)</td>
+                      <td>Offboarded Staff</td>
+                      <td>License Revoked via Graph API</td>
+                      <td style="color:#059669; font-weight:700;">+$23.00/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>invoices@contoso.com</strong></td>
+                      <td>Shared Mailbox (14GB)</td>
+                      <td>Business Premium ($22)</td>
+                      <td>Reclassified to Free Shared Tier</td>
+                      <td style="color:#059669; font-weight:700;">+$22.00/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>disk-webprod-backup-os</strong></td>
+                      <td>Azure Managed Disk (512GB)</td>
+                      <td>Unattached (62 days)</td>
+                      <td>Deallocated via ARM API</td>
+                      <td style="color:#059669; font-weight:700;">+$76.80/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>disk-testdb-data01</strong></td>
+                      <td>Azure Managed Disk (1TB)</td>
+                      <td>Unattached (38 days)</td>
+                      <td>Deallocated via ARM API</td>
+                      <td style="color:#059669; font-weight:700;">+$76.80/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>asp-legacy-api-dev</strong></td>
+                      <td>App Service Plan (P1v2)</td>
+                      <td>0 Deployed Apps</td>
+                      <td>Scaled Down / Removed</td>
+                      <td style="color:#059669; font-weight:700;">+$146.00/mo</td>
+                      <td><span class="diff-badge-remediated">✓ Remediated</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Subscription Tier Cards -->
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
               <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
-                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">Weekly Assessment Schedule</div>
-                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">Executes every Monday at 09:00 AM local time.</p>
-                <pre class="terminal-code-body" style="background:#0F172A; padding:10px; border-radius:4px; font-size:0.76rem;" id="codeWeekly">.\Schedule-CloudTrimAudit.ps1 -Cadence "Weekly" -DayOfWeek "Monday" -Time "09:00"</pre>
-                <button class="btn btn-outline" style="font-size:0.75rem; margin-top:8px;" onclick="copyCode('codeWeekly')">Copy Command</button>
+                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">Pro Continuous Subscription ($19/mo)</div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+                  Automatic monthly diff assessment based on monthly CSV upload or direct Azure connector. Executive PDF report delivered on Day 1 of each month.
+                </p>
+                <a href="checkout.html?tier=pro" class="btn btn-primary" style="font-size:0.78rem; text-decoration:none; display:inline-flex;">
+                  Activate Pro Subscription ($19/mo) →
+                </a>
               </div>
 
               <div style="background:var(--bg-app); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
-                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">Monthly Financial Close Schedule</div>
-                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">Executes on Day 1 of every month at 09:00 AM.</p>
-                <pre class="terminal-code-body" style="background:#0F172A; padding:10px; border-radius:4px; font-size:0.76rem;" id="codeMonthly">.\Schedule-CloudTrimAudit.ps1 -Cadence "Monthly" -DayOfMonth 1 -Time "09:00"</pre>
-                <button class="btn btn-outline" style="font-size:0.75rem; margin-top:8px;" onclick="copyCode('codeMonthly')">Copy Command</button>
+                <div style="font-weight:700; font-size:0.88rem; margin-bottom:4px;">MSP Partner Multi-Tenant ($69/mo)</div>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+                  Continuous cross-tenant monitoring for IT managed service providers. Automated monthly client reporting with white-label delivery.
+                </p>
+                <a href="checkout.html?tier=msp" class="btn btn-outline" style="font-size:0.78rem; text-decoration:none; display:inline-flex;">
+                  Activate MSP License ($69/mo) →
+                </a>
               </div>
             </div>
+          </div></div>
           </div>
 
         </div>

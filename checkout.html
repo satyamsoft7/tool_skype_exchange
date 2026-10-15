@@ -315,7 +315,7 @@
     <div style="margin-bottom: 24px;">
       <h1 style="font-size:1.6rem; font-weight:800; color:var(--text-main); letter-spacing:-0.02em;">Plan Activation &amp; Remediation Licensing</h1>
       <p style="font-size:0.88rem; color:var(--text-muted); margin-top:4px;">
-        Transparent, auditable licensing for tenant cost remediation, PowerShell automation scripts, and executive reporting.
+        Transparent, auditable licensing for zero-touch cloud remediation, recurring monthly diff reports, and Azure App Registration integration.
       </p>
     </div>
 
@@ -337,7 +337,7 @@
               <div class="plan-title">Single Audit</div>
               <div class="plan-price-display" id="planPriceSingle">$39</div>
               <div class="plan-sub">1-Time Payment &bull; Non-recurring</div>
-              <div style="font-size:0.7rem; color:var(--primary); font-weight:600; margin-top:6px;">1 Tenant Audit &amp; Scripts</div>
+              <div style="font-size:0.7rem; color:var(--primary); font-weight:600; margin-top:6px;">1-Time Automated Cloud Run</div>
             </div>
 
             <!-- Plan 2: Pro Continuous Monitoring (Recommended) -->
@@ -346,7 +346,7 @@
               <div class="plan-title">Pro Monitoring</div>
               <div class="plan-price-display" id="planPricePro">$19<span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/mo</span></div>
               <div class="plan-sub">Monthly Subscription &bull; Cancel anytime</div>
-              <div style="font-size:0.7rem; color:var(--primary); font-weight:600; margin-top:6px;">Continuous Drift Detection</div>
+              <div style="font-size:0.7rem; color:var(--primary); font-weight:600; margin-top:6px;">Zero-Touch Sync &amp; Monthly Diff</div>
             </div>
 
             <!-- Plan 3: MSP Multi-Tenant Partner -->
@@ -379,11 +379,18 @@
                   <td><strong>✓ Multi-Tenant Export</strong></td>
                 </tr>
                 <tr>
-                  <td>Production PowerShell Remediation Script</td>
+                  <td>Zero-Touch Cloud Remediation &amp; Azure Connector</td>
                   <td>🔒 Locked (Discovery Only)</td>
-                  <td><strong>✓ Full Production Script</strong></td>
-                  <td><strong>✓ Automated Runbooks</strong></td>
-                  <td><strong>✓ Batch MSP Runbooks</strong></td>
+                  <td><strong>✓ Automated Cloud Run</strong></td>
+                  <td><strong>✓ Zero-Touch Azure Sync</strong></td>
+                  <td><strong>✓ Multi-Tenant Cloud Sync</strong></td>
+                </tr>
+                <tr>
+                  <td>Month-over-Month Delta Diff Governance Reports</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td><strong>✓ Automated Monthly Delivery</strong></td>
+                  <td><strong>✓ Cross-Tenant Diff Reports</strong></td>
                 </tr>
                 <tr>
                   <td>Fail-Closed Mailbox &amp; Hold Safety Preflights</td>
@@ -840,7 +847,7 @@
         out.innerHTML = `ℹ️ [IDEMPOTENCY_GUARD] Active license CT-9821 already registered for tenant ${domain}. Re-dispatching existing token to ${email} without re-billing.`;
         out.style.color = '#93C5FD';
       } else if (scenario === 'delivery') {
-        out.innerHTML = `✓ [DISPATCH_VERIFIED] MIME email payload assembled: PDF Executive Audit + License JSON + Production PowerShell Runbook sent to ${email}.`;
+        out.innerHTML = `✓ [DISPATCH_VERIFIED] MIME email payload assembled: PDF Executive Audit + License JSON + Zero-Touch Azure Connector Activation sent to ${email}.`;
         out.style.color = '#A7F3D0';
       }
     }
