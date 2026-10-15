@@ -396,6 +396,13 @@
       color: var(--text-muted);
     }
 
+    .pricing-three-col-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
     .pricing-two-col-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -409,7 +416,7 @@
       .audience-grid, .steps-grid, .pricing-grid, .reviews-grid { grid-template-columns: 1fr; }
       .detection-grid { grid-template-columns: 1fr; }
       .report-stat-row { grid-template-columns: 1fr; }
-      .pricing-two-col-grid { grid-template-columns: 1fr; }
+      .pricing-two-col-grid, .pricing-three-col-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -852,45 +859,66 @@
     <div class="section-eyebrow">Access Models</div>
     <div class="section-headline">Transparent Access &amp; Engagement Models</div>
     <div class="section-desc">
-      Use our free, client-side community tool for instant self-service audits, or engage our engineering team for assisted enterprise remediation.
+      Use our free, client-side tool for instant waste discovery, or unlock verified production PowerShell remediation scripts and ongoing automation.
     </div>
 
-    <div class="pricing-two-col-grid">
-      <!-- Tier 1: Free Community Edition -->
-      <div class="pricing-card featured" style="border:2px solid #059669; padding:32px 28px;">
-        <span class="popular-tag" style="background:#059669;">100% Free Public Beta</span>
+    <div class="pricing-three-col-grid">
+      <!-- Tier 1: Free Community Discovery -->
+      <div class="pricing-card" style="padding:28px 22px;">
+        <span class="popular-tag" style="background:#475569;">100% Free Audit</span>
         <div>
-          <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">Community Edition</div>
+          <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">Discovery Assessment</div>
           <div class="price-num" style="color:#059669;">$0</div>
-          <div style="font-size:0.78rem; color:var(--text-muted);">Self-service &bull; No card or registration required</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Self-service &bull; No credit card required</div>
           <ul class="pricing-features">
-            <li>✓ <strong>100% Client-Side In-Memory Processing:</strong> Zero server transits.</li>
-            <li>✓ <strong>Full Unmasked Findings:</strong> M365 orphaned seats &amp; Azure idle assets.</li>
-            <li>✓ <strong>Production PowerShell Scripts:</strong> Exact Microsoft SkuId GUIDs.</li>
-            <li>✓ <strong>Preflight Safety:</strong> Safe <code>-WhatIf</code> dry-runs &amp; transcript logging.</li>
-            <li>✓ <strong>Audit Reports:</strong> Executive CFO PDF and Raw CSV export.</li>
+            <li>✓ <strong>100% Client-Side In-Memory Scan:</strong> Zero server transits.</li>
+            <li>✓ <strong>Complete Waste Discovery:</strong> M365 orphaned seats &amp; idle disks.</li>
+            <li>✓ <strong>Governance Score &amp; Review:</strong> Pinpoint unassigned SKUs.</li>
+            <li style="color:#DC2626; font-weight:600;">🔒 <strong>Remediation Scripts:</strong> Locked (Upgrade to Run).</li>
+            <li>✓ <strong>Sample &amp; Custom CSV Imports:</strong> Instant client analysis.</li>
           </ul>
         </div>
-        <a href="index.html" class="btn btn-primary" style="width:100%; justify-content:center; font-size:0.9rem; padding:12px; background:#059669; border-color:#059669;">
+        <a href="index.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.85rem; padding:10px; margin-top:16px;">
           Launch Free Audit Console →
         </a>
       </div>
 
-      <!-- Tier 2: Enterprise Advisory -->
-      <div class="pricing-card" style="padding:32px 28px;">
+      <!-- Tier 2: Single Tenant Remediation & Pro -->
+      <div class="pricing-card featured" style="border:2px solid var(--primary); padding:28px 22px; position:relative;">
+        <span class="popular-tag" style="background:var(--primary);">Recommended for IT Admins</span>
         <div>
-          <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">Enterprise Advisory</div>
-          <div class="price-num">Custom</div>
-          <div style="font-size:0.78rem; color:var(--text-muted);">Assisted consulting &bull; Statement of Work</div>
+          <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">Remediation &amp; Runbooks</div>
+          <div class="price-num" style="color:var(--primary);">$39 <span style="font-size:0.8rem; font-weight:400; color:var(--text-muted);">one-time / $19/mo</span></div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Instant cryptographic license token dispatch</div>
           <ul class="pricing-features">
-            <li>★ <strong>Assisted Tenant Remediation:</strong> Pre-execution dry-run validation.</li>
-            <li>★ <strong>Custom PowerShell Runbooks:</strong> Tailored for enterprise change windows.</li>
-            <li>★ <strong>Hold &amp; Retention Checks:</strong> Litigation Hold &amp; Purview validation.</li>
-            <li>★ <strong>Multi-Tenant MSP Architecture:</strong> Scaled scheduled governance.</li>
+            <li>★ <strong>Production PowerShell Scripts:</strong> Exact Microsoft SkuId GUIDs.</li>
+            <li>★ <strong>Fail-Closed Safety Preflights:</strong> Prevents accidental user deletions.</li>
+            <li>★ <strong>Windows Task Scheduler Runbooks:</strong> Automated monthly audits.</li>
+            <li>★ <strong>Audit-Ready CFO Reports:</strong> Executive PDF &amp; CSV export.</li>
+            <li>★ <strong>Direct Token Unlock:</strong> Self-service in audit console.</li>
+          </ul>
+        </div>
+        <a href="checkout.html" class="btn btn-primary" style="width:100%; justify-content:center; font-size:0.85rem; padding:10px; margin-top:16px; text-decoration:none;">
+          Get Remediation Key ($39) →
+        </a>
+      </div>
+
+      <!-- Tier 3: Enterprise Advisory & MSP -->
+      <div class="pricing-card" style="padding:28px 22px;">
+        <span class="popular-tag" style="background:#7C3AED;">Multi-Tenant &amp; Advisory</span>
+        <div>
+          <div style="font-weight:700; font-size:1.05rem; color:var(--text-main);">Enterprise Advisory</div>
+          <div class="price-num">Custom</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Assisted consulting &bull; Statement of Work</div>
+          <ul class="pricing-features">
+            <li>★ <strong>Assisted Tenant Remediation:</strong> Pre-execution dry-run review.</li>
+            <li>★ <strong>Custom Enterprise Runbooks:</strong> Tailored for change windows.</li>
+            <li>★ <strong>Litigation Hold Validation:</strong> Purview &amp; archive verification.</li>
+            <li>★ <strong>Multi-Tenant MSP Console:</strong> Continuous cross-tenant scans.</li>
             <li>★ <strong>Direct Engineering Guidance:</strong> Handled by Satya Pathak.</li>
           </ul>
         </div>
-        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.9rem; padding:12px;">
+        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.85rem; padding:10px; margin-top:16px; text-decoration:none;">
           Request Enterprise Advisory →
         </a>
       </div>

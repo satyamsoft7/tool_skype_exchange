@@ -380,7 +380,7 @@
                 </tr>
                 <tr>
                   <td>Production PowerShell Remediation Script</td>
-                  <td>✓ Dry-Run (-WhatIf)</td>
+                  <td>🔒 Locked (Discovery Only)</td>
                   <td><strong>✓ Full Production Script</strong></td>
                   <td><strong>✓ Automated Runbooks</strong></td>
                   <td><strong>✓ Batch MSP Runbooks</strong></td>
@@ -823,7 +823,7 @@
 
       if (scenario === 'success') {
         const token = 'CT-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
-        out.innerHTML = `✓ [200 SUCCESS] Captured ${totalText} (${curr.code}).<br>&bull; Cryptographic Token: <code>${token}</code><br>&bull; Bound Tenant: <code>${domain}</code><br>&bull; SMTP Dispatch: License confirmation delivered to ${email} (200 OK).`;
+        out.innerHTML = `✓ [200 SUCCESS] Captured ${totalText} (${curr.code}).<br>&bull; Cryptographic Token: <code>${token}</code><br>&bull; Bound Tenant: <code>${domain}</code><br>&bull; SMTP Dispatch: License confirmation delivered to ${email} (200 OK).<br><div style="margin-top:10px;"><a href="index.html?token=${encodeURIComponent(token)}#remediation" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">Return to Audit &amp; Run Unlocked Scripts →</a></div>`;
         out.style.color = '#A7F3D0';
 
         const planData = curr.plans[currentTier];
@@ -891,6 +891,8 @@
 
         ledger.unshift(newTx);
         localStorage.setItem('cloudtrim_revenue_ledger', JSON.stringify(ledger));
+        localStorage.setItem('cloudtrim_license_token', token);
+        localStorage.setItem('cloudtrim_active_license', JSON.stringify({ token: token, tier: tierKey, email: email, tenant: domain, issuedAt: new Date().toISOString() }));
 
         // Also ensure user is registered
         const usersRaw = localStorage.getItem('cloudtrim_registered_users');
