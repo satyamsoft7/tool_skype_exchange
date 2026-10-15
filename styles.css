@@ -263,6 +263,30 @@ body {
   width: 16px;
   height: 16px;
 }
+.header-whatsapp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  color: #25D366;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.header-whatsapp-icon-btn:hover {
+  background: #25D366;
+  color: #FFFFFF;
+  border-color: #20BA5A;
+  transform: translateY(-1px);
+}
+.header-whatsapp-icon-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
 .btn-header-secondary {
   font-size: 0.74rem;
   padding: 5px 10px;
@@ -1138,6 +1162,32 @@ tr:hover td { background: #FAFCFE; }
   height: 16px;
 }
 
+.footer-whatsapp-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: #25D366;
+  color: #FFFFFF !important;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(37, 211, 102, 0.3);
+}
+
+.footer-whatsapp-icon-link:hover {
+  background: #20BA5A;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
+}
+
+.footer-whatsapp-icon-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
 .footer-col-title {
   color: #F8FAFC;
   font-size: 0.82rem;
@@ -1370,6 +1420,72 @@ tr:hover td { background: #FAFCFE; }
 }
 
 /* ==========================================================================
+   FLOATING WHATSAPP SUPPORT BUTTON (EXECUTIVE HELP & SUPPORT)
+   ========================================================================== */
+.floating-whatsapp-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 990;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #25D366;
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  padding: 10px 16px 10px 12px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.floating-whatsapp-btn:hover {
+  background: #20BA5A;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5), 0 3px 8px rgba(0, 0, 0, 0.2);
+  color: #FFFFFF !important;
+}
+
+.floating-whatsapp-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-whatsapp-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.floating-whatsapp-label {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .floating-whatsapp-btn {
+    bottom: 20px;
+    right: 18px;
+    padding: 11px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+  }
+  .floating-whatsapp-label {
+    display: none;
+  }
+}
+
+/* ==========================================================================
    EXECUTIVE CORPORATE PRINT DELIVERABLE (BOARD & CFO STANDARD - NO CONSUMER PRICE)
    ========================================================================== */
 @media print {
@@ -1404,7 +1520,8 @@ tr:hover td { background: #FAFCFE; }
   .btn,
   .table-search-wrap,
   .filter-pills-group,
-  .modal-overlay {
+  .modal-overlay,
+  .floating-whatsapp-btn {
     display: none !important;
   }
 
