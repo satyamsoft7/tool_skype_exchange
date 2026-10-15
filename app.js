@@ -1397,6 +1397,120 @@ function updateConfirmedTotals() {
     if (scorePillEl && AppState.baseline.governanceScoreStatus) scorePillEl.textContent = AppState.baseline.governanceScoreStatus;
     if (scoreSubEl && AppState.baseline.governanceScoreDetails) scoreSubEl.textContent = AppState.baseline.governanceScoreDetails;
   }
+
+  // Update Month-over-Month (MoM) Comparative Audit Performance
+  updateMomReporting(totalMonthlyUSD, AppState.baseline?.governanceScore || 74, m365Waste, azureWaste);
+}
+
+function updateMomReporting(currentMonthlyWasteUSD, governanceScore, m365WasteUSD, azureWasteUSD) {
+  // Baseline prior month figures (September 2026)
+  const priorMonthWasteUSD = 869.30;
+  const priorScore = 68;
+  const priorM365USD = 285.00;
+  const priorAzureUSD = 584.30;
+
+  // Format Prior Elements in active currency
+  const elPriorWaste = document.getElementById('momPriorWasteUSD');
+  if (elPriorWaste) elPriorWaste.textContent = formatMoney(priorMonthWasteUSD);
+
+  const elPriorM365 = document.getElementById('momPriorM365');
+  if (elPriorM365) elPriorM365.textContent = formatMoney(priorM365USD);
+
+  const elPriorAzure = document.getElementById('momPriorAzure');
+  if (elPriorAzure) elPriorAzure.textContent = formatMoney(priorAzureUSD);
+
+  // Current Elements
+  const elCurrWaste = document.getElementById('momCurrentWasteUSD');
+  if (elCurrWaste) elCurrWaste.textContent = formatMoney(currentMonthlyWasteUSD);
+
+  const elCurrM365 = document.getElementById('momCurrentM365');
+  if (elCurrM365) elCurrM365.textContent = formatMoney(m365WasteUSD);
+
+  const elCurrAzure = document.getElementById('momCurrentAzure');
+  if (elCurrAzure) elCurrAzure.textContent = formatMoney(azureWasteUSD);
+
+  const elCurrScore = document.getElementById('momCurrentScore');
+  if (elCurrScore) elCurrScore.innerHTML = `${governanceScore} <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/100</span>`;
+
+  // Compute MoM Deltas
+  const wasteDiffUSD = currentMonthlyWasteUSD - priorMonthWasteUSD;
+  const wastePct = priorMonthWasteUSD > 0 ? Math.abs((wasteDiffUSD / priorMonthWasteUSD) * 100).toFixed(1) : 0;
+  const elWasteBadge = document.getElementById('momWasteDeltaBadge');
+  if (elWasteBadge) {
+    if (wasteDiffUSD <= 0) {
+      elWasteBadge.textContent = `▼ -${formatMoney(Math.abs(wasteDiffUSD))} (-${wastePct}%)`;
+      elWasteBadge.style.background = '#DCFCE7';
+      elWasteBadge.style.color = '#15803D';
+    } else {
+      elWasteBadge.textContent = `▲ +${formatMoney(wasteDiffUSD)} (+${wastePct}%)`;
+      elWasteBadge.style.background = '#FEE2E2';
+      elWasteBadge.style.color = '#B91C1C';
+    }
+  }
+
+  const scoreDiff = governanceScore - priorScore;
+  const elScoreBadge = document.getElementById('momScoreDeltaBadge');
+  if (elScoreBadge) {
+    if (scoreDiff >= 0) {
+      elScoreBadge.textContent = `▲ +${scoreDiff} pts`;
+      elScoreBadge.style.background = '#DCFCE7';
+      elScoreBadge.style.color = '#15803D';
+    } else {
+      elScoreBadge.textContent = `▼ ${scoreDiff} pts`;
+      elScoreBadge.style.background = '#FEE2E2';
+      elScoreBadge.style.color = '#B91C1C';
+    }
+  }
+
+  const m365DiffUSD = m365WasteUSD - priorM365USD;
+  const m365Pct = priorM365USD > 0 ? Math.abs((m365DiffUSD / priorM365USD) * 100).toFixed(1) : 0;
+  const elM365Badge = document.getElementById('momM365DeltaBadge');
+  if (elM365Badge) {
+    if (m365DiffUSD <= 0) {
+      elM365Badge.textContent = `▼ -${formatMoney(Math.abs(m365DiffUSD))} (-${m365Pct}%)`;
+      elM365Badge.style.background = '#DCFCE7';
+      elM365Badge.style.color = '#15803D';
+    } else {
+      elM365Badge.textContent = `▲ +${formatMoney(m365DiffUSD)} (+${m365Pct}%)`;
+      elM365Badge.style.background = '#FEE2E2';
+      elM365Badge.style.color = '#B91C1C';
+    }
+  }
+
+  const azureDiffUSD = azureWasteUSD - priorAzureUSD;
+  const azurePct = priorAzureUSD > 0 ? Math.abs((azureDiffUSD / priorAzureUSD) * 100).toFixed(1) : 0;
+  const elAzureBadge = document.getElementById('momAzureDeltaBadge');
+  if (elAzureBadge) {
+    if (azureDiffUSD <= 0) {
+      elAzureBadge.textContent = `▼ -${formatMoney(Math.abs(azureDiffUSD))} (-${azurePct}%)`;
+      elAzureBadge.style.background = '#DCFCE7';
+      elAzureBadge.style.color = '#15803D';
+    } else {
+      elAzureBadge.textContent = `▲ +${formatMoney(azureDiffUSD)} (+${azurePct}%)`;
+      elAzureBadge.style.background = '#FEE2E2';
+      elAzureBadge.style.color = '#B91C1C';
+    }
+  }
+
+  // Update dynamic narrative
+  const elNarrative = document.getElementById('momAuditTrailNarrative');
+  if (elNarrative) {
+    const totalDiscoveredStr = formatMoney(currentMonthlyWasteUSD);
+    const totalAnnualStr = formatMoney(currentMonthlyWasteUSD * 12);
+    if (wasteDiffUSD <= 0) {
+      const reclaimedStr = formatMoney(Math.abs(wasteDiffUSD));
+      const reclaimedAnnStr = formatMoney(Math.abs(wasteDiffUSD) * 12);
+      elNarrative.innerHTML = `<strong>MoM Governance Progress:</strong> Reclaimed <strong>${reclaimedStr}/mo (${reclaimedAnnStr}/yr)</strong> since September 2026 close after de-licensing offboarded staff and detaching legacy disks. Current audit identifies residual optimization candidates totaling <strong>${totalDiscoveredStr}/mo (${totalAnnualStr}/yr)</strong> ready for executive action.`;
+    } else {
+      elNarrative.innerHTML = `<strong>MoM Governance Progress:</strong> Current audit identifies optimization candidates totaling <strong>${totalDiscoveredStr}/mo (${totalAnnualStr}/yr)</strong> compared against September baseline. Prioritize reviewed remediations below to reclaim capacity.`;
+    }
+  }
+
+  // Update print metadata
+  const printTenant = document.getElementById('printTenantContext');
+  if (printTenant) printTenant.textContent = AppState.currentTenant || 'contoso.onmicrosoft.com';
+  const printDate = document.getElementById('printAssessmentDate');
+  if (printDate) printDate.textContent = AppState.assessmentDate || 'October 14, 2026';
 }
 
 function toggleEvidenceDrawer() {

@@ -81,21 +81,36 @@
   <header class="global-header">
     <div class="header-left">
       <a href="landing.html" class="brand-link" title="CloudTrim Enterprise - Home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-        </svg>
-        <span>CloudTrim Enterprise</span>
+        <div class="brand-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">CloudTrim</span>
+          <span class="brand-badge-tag">Enterprise FinOps</span>
+        </div>
       </a>
-      <div class="tenant-pill">
+      <div class="tenant-pill" title="Target Active Tenant Context">
         <span class="tenant-dot" style="background:#D97706;" id="tenantDot"></span>
-        <span id="tenantDisplay">Demo Workspace (contoso.onmicrosoft.com)</span>
+        <span id="tenantDisplay" class="tenant-name">Demo Workspace (contoso.onmicrosoft.com)</span>
+        <span class="tenant-secure-tag" title="Client-Side In-Memory Execution">RAM-Only</span>
       </div>
     </div>
 
     <div class="header-right">
-      <!-- Public Landing Page Link -->
-      <a href="landing.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;">
-        Product Tour &bull; Landing
+      <!-- Public Landing Page Tour Link -->
+      <a href="landing.html" class="btn btn-header-secondary" title="Product Tour &amp; Feature Overview">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        <span>Tour</span>
+      </a>
+
+      <!-- Single Email Contact Channel (Icon Only - No Exposed Raw Email Text) -->
+      <a href="mailto:support@skypeexchange4u.com" class="header-contact-icon-btn" aria-label="Contact Support" title="Contact Enterprise Support">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
       </a>
 
       <!-- Top MFA Status Badge (Hidden until user logs in and verifies Email OTP) -->
@@ -111,15 +126,15 @@
       </div>
 
       <!-- Demo Data Loader -->
-      <button class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;" onclick="loadSampleDataMode()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-        Load demo data
+      <button class="btn btn-header-secondary" onclick="loadSampleDataMode()" title="Load baseline demo scenario">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+        <span>Demo Data</span>
       </button>
 
       <!-- Header Sign In Button (When logged out) -->
-      <button class="btn btn-outline" id="btnHeaderSignIn" style="font-size:0.78rem; padding:5px 12px; color:#FFFFFF; border-color:#334155; background:#1E293B;" onclick="openAuthModal('signin')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        Sign In
+      <button class="btn btn-header-secondary" id="btnHeaderSignIn" onclick="openAuthModal('signin')">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Sign In</span>
       </button>
 
       <!-- User Profile Menu (When logged in) -->
@@ -156,7 +171,7 @@
       </div>
 
       <!-- Enterprise Advisory Link -->
-      <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem; padding:6px 14px;">
+      <a href="checkout.html" class="btn btn-primary btn-header-cta">
         Enterprise Advisory
       </a>
     </div>
@@ -215,6 +230,29 @@
 
     <!-- Main Content Workspace -->
     <main class="app-main" id="overviewWorkspace">
+
+      <!-- Executive Corporate PDF Print Cover Header (Visible only during PDF print generation) -->
+      <div class="executive-print-header" id="executivePrintHeader">
+        <div class="print-header-top">
+          <div class="print-brand-badge">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0F172A" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+            <span>CloudTrim Enterprise &bull; FinOps &amp; Governance Assessment</span>
+          </div>
+          <div class="print-meta-badge">
+            <span>Classification: <strong>Confidential Internal Audit</strong></span>
+          </div>
+        </div>
+        <div class="print-doc-title">
+          <h2>MICROSOFT 365 &amp; AZURE FINOPS GOVERNANCE ASSESSMENT</h2>
+          <div class="print-doc-sub">Executive Cost Optimization, Identity Hygiene &amp; MoM Comparative Audit Deliverable</div>
+        </div>
+        <div class="print-meta-grid">
+          <div><strong>Tenant Scope:</strong> <span id="printTenantContext">contoso.onmicrosoft.com</span></div>
+          <div><strong>Assessment Date:</strong> <span id="printAssessmentDate">October 14, 2026</span></div>
+          <div><strong>Methodology:</strong> Zero-Server In-Browser RAM Reconciliation</div>
+          <div><strong>Report Class:</strong> Board &amp; CFO Advisory Deliverable</div>
+        </div>
+      </div>
 
       <!-- Reachable Mobile Navigation for Small Viewports -->
       <nav class="mobile-nav-bar" id="mobileNavBar">
@@ -620,6 +658,110 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
             <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">12 items awaiting admin confirmation</span>
           </div>
         </div>
+
+        <!-- Month-over-Month (MoM) Governance & Spend Comparison Panel -->
+        <div class="mom-comparison-panel" id="momComparisonPanel">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <strong style="font-size:0.92rem; color:var(--text-main);">Month-over-Month (MoM) Comparative Audit Performance</strong>
+            </div>
+            <div style="font-size:0.76rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+              <span>Prior Baseline: <strong>September 2026</strong></span>
+              <span>&rarr;</span>
+              <span>Current Assessment: <strong id="momCurrentPeriodLabel">October 2026</strong></span>
+            </div>
+          </div>
+
+          <div class="mom-grid">
+            <!-- MoM Metric 1: Recurring Monthly Waste -->
+            <div class="mom-kpi-card">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Recurring Monthly Waste</div>
+              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorWasteUSD">$869.30</span>
+                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentWasteUSD">$556.90</span>
+              </div>
+              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+                <span class="mom-delta-badge positive" id="momWasteDeltaBadge">
+                  ▼ -$312.40 (-35.9%)
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Spend reclaimed</span>
+              </div>
+            </div>
+
+            <!-- MoM Metric 2: Tenant Governance Score -->
+            <div class="mom-kpi-card">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Governance Health Score</div>
+              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorScore">68</span>
+                <span style="font-size:1.25rem; font-weight:800; color:#B45309;" id="momCurrentScore">74 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/100</span></span>
+              </div>
+              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+                <span class="mom-delta-badge positive" id="momScoreDeltaBadge">
+                  ▲ +6 pts (+8.8%)
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">Health uplift</span>
+              </div>
+            </div>
+
+            <!-- MoM Metric 3: M365 Inefficient Seats -->
+            <div class="mom-kpi-card">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">M365 License Leak</div>
+              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorM365">$285.00</span>
+                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentM365">$171.00</span>
+              </div>
+              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+                <span class="mom-delta-badge positive" id="momM365DeltaBadge">
+                  ▼ -$114.00 (-40.0%)
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">2 seats revoked</span>
+              </div>
+            </div>
+
+            <!-- MoM Metric 4: Azure Idle Assets -->
+            <div class="mom-kpi-card">
+              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Azure Idle Capacity</div>
+              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorAzure">$584.30</span>
+                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentAzure">$385.90</span>
+              </div>
+              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+                <span class="mom-delta-badge positive" id="momAzureDeltaBadge">
+                  ▼ -$198.40 (-34.0%)
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">2 disks detached</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MoM Audit Trail Narrative -->
+          <div style="margin-top:12px; background:#F8FAFC; border-left:3px solid var(--savings-green); padding:8px 12px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.75rem; color:#334155; line-height:1.5;" id="momAuditTrailNarrative">
+            <strong>MoM Governance Progress:</strong> Reclaimed <strong>$312.40/mo ($3,748.80/yr)</strong> since September 2026 close after de-licensing offboarded staff and detaching legacy disks. Current audit identifies <strong>12 residual optimization candidates</strong> totaling <strong>$556.90/mo ($6,682.80/yr)</strong> awaiting remediation approval.
+          </div>
+        </div>
+
+        <!-- Corporate Audit Verification & Sign-off Block (Visible in executive print report) -->
+        <div class="executive-signoff-card" id="executiveSignoffCard">
+          <div class="signoff-title">Audit Governance &amp; Change Authorization</div>
+          <p class="signoff-note">
+            This assessment was generated locally via client-side metadata analysis. Before executing license de-allocations or resource deletions in Microsoft 365 or Azure, the administrative change owner must verify data retention and legal hold eligibility.
+          </p>
+          <div class="signoff-signatures-grid">
+            <div class="signoff-box">
+              <div class="signoff-role">FinOps / Cost Owner Sign-Off</div>
+              <div class="signoff-line">Name: ___________________________</div>
+              <div class="signoff-line">Signature: ______________________</div>
+              <div class="signoff-line">Date: ___________________________</div>
+            </div>
+            <div class="signoff-box">
+              <div class="signoff-role">M365 / Azure Global Admin Sign-Off</div>
+              <div class="signoff-line">Name: ___________________________</div>
+              <div class="signoff-line">Signature: ______________________</div>
+              <div class="signoff-line">Date: ___________________________</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ==================================================================== -->
@@ -828,25 +970,82 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
     </main>
   </div>
 
-  <!-- Corporate Footer -->
-  <footer class="enterprise-footer" style="padding: 24px 24px 32px; background: white; border-top: 1px solid var(--border);">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
-      <div>
-        <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.<br>
-        <span style="font-size:0.78rem; color:var(--text-muted);">
-          Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India &bull; Grievance Contact: <a href="mailto:grievance@skypeexchange4u.com" style="color:var(--primary);">grievance@skypeexchange4u.com</a> &bull; GST Exempt (Sec 22 CGST Act 2017).
-        </span>
+  <!-- Redesigned Corporate Enterprise Footer -->
+  <footer class="enterprise-footer">
+    <div class="footer-top-grid">
+      <!-- Col 1: Platform & Operator & Single Email Icon (No Exposed Text) -->
+      <div class="footer-col brand-col">
+        <div class="footer-brand">
+          <div class="footer-brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+          </div>
+          <span class="footer-brand-title">CloudTrim Enterprise</span>
+        </div>
+        <p class="footer-mission-text">
+          Zero-Server In-Memory Data Minimization Architecture for Microsoft 365 licensing and Azure cloud infrastructure optimization.
+        </p>
+        <div class="footer-operator-meta">
+          <div>Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India.</div>
+          <div>Statutory Status: GST Exempt under Section 22 CGST Act 2017.</div>
+        </div>
+        <!-- Single Email Contact Channel (Icon Only - Zero Exposed Raw Email Text) -->
+        <div class="footer-contact-block">
+          <span class="footer-contact-label">Enterprise Support &amp; Grievance:</span>
+          <a href="mailto:support@skypeexchange4u.com" class="footer-mail-icon-link" aria-label="Contact Support" title="Contact Enterprise Support">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </a>
+        </div>
       </div>
-      <div style="display:flex; gap:16px; font-size:0.82rem; flex-wrap:wrap;">
-        <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Public Landing Page</a>
-        <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
-        <a href="privacy.html" style="color:var(--text-muted); text-decoration:none;">DPDP Privacy Policy</a>
-        <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
-        <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Enterprise Advisory</a>
+
+      <!-- Col 2: FinOps Solutions -->
+      <div class="footer-col">
+        <div class="footer-col-title">FinOps Solutions</div>
+        <ul class="footer-links-list">
+          <li><a href="index.html" onclick="selectSidebar('overview'); return false;">Executive Overview</a></li>
+          <li><a href="index.html" onclick="selectSidebar('m365'); return false;">M365 License Reclamation</a></li>
+          <li><a href="index.html" onclick="selectSidebar('azure'); return false;">Azure Idle Capacity</a></li>
+          <li><a href="index.html" onclick="selectSidebar('remediation'); return false;">PowerShell -WhatIf Engine</a></li>
+          <li><a href="index.html" onclick="selectSidebar('automation'); return false;">Scheduled Task Audits</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Architecture & Security -->
+      <div class="footer-col">
+        <div class="footer-col-title">Security &amp; Privacy</div>
+        <ul class="footer-links-list">
+          <li><a href="security.html">Client RAM Data Model</a></li>
+          <li><a href="privacy.html">DPDP Act 2023 Alignment</a></li>
+          <li><a href="security.html#evidence">Litigation Hold Validation</a></li>
+          <li><a href="security.html#scenarios">Microsoft Graph Scopes</a></li>
+          <li><a href="checkout.html">Enterprise Advisory Scope</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Corporate & Governance -->
+      <div class="footer-col">
+        <div class="footer-col-title">Governance &amp; Trust</div>
+        <ul class="footer-links-list">
+          <li><a href="landing.html">Product Tour &amp; Specs</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service &amp; SLA</a></li>
+          <li><a href="admin.html">Auditor Administration</a></li>
+          <li><a href="checkout.html">Advisory Engagements</a></li>
+        </ul>
       </div>
     </div>
-    <div style="font-size:0.72rem; color:var(--text-subtle); line-height:1.5; border-top:1px solid var(--border-light); padding-top:12px;">
-      <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
+
+    <!-- Footer Bottom Legal & Disclaimer Bar -->
+    <div class="footer-bottom-bar">
+      <div class="footer-disclaimer-text">
+        <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
+      </div>
+      <div class="footer-copyright-row">
+        <span>&copy; 2026 SkypeExchange4U &bull; All rights reserved. Zero external network telemetry.</span>
+        <span>Standard: Client-Side In-Memory HTML5 Execution</span>
+      </div>
     </div>
   </footer>
 

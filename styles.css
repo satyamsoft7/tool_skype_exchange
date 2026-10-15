@@ -141,11 +141,11 @@ body {
 }
 
 /* ==========================================================================
-   GLOBAL ENTERPRISE HEADER (Robust cross-page consistency)
+   GLOBAL ENTERPRISE HEADER (Robust corporate design)
    ========================================================================== */
 .global-header {
-  background: #0F172A;
-  height: 56px;
+  background: #0B1120;
+  height: 58px;
   padding: 0 24px;
   display: flex;
   align-items: center;
@@ -154,6 +154,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 .header-left, .header-brand {
   display: flex;
@@ -166,23 +167,49 @@ body {
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none !important;
   letter-spacing: -0.01em;
 }
-.brand-link svg, .brand-title svg {
-  width: 20px;
-  height: 20px;
-  color: #38BDF8;
+.brand-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
   flex-shrink: 0;
 }
+.brand-icon-box svg {
+  width: 18px;
+  height: 18px;
+  color: #FFFFFF;
+}
+.brand-text-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-badge-tag {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7DD3FC;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
 .tenant-pill, .tenant-badge {
-  background: #1E293B;
-  border: 1px solid #334155;
+  background: #111C30;
+  border: 1px solid #1E293B;
   color: #CBD5E1;
   padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
+  border-radius: 9999px;
+  font-size: 0.76rem;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -194,10 +221,72 @@ body {
   border-radius: 50%;
   background: #22C55E;
 }
+.tenant-name {
+  color: #E2E8F0;
+  font-weight: 600;
+}
+.tenant-secure-tag {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #86EFAC;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
 .header-right, .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+/* Contact Support Icon-Only Button */
+.header-contact-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: #1E293B;
+  border: 1px solid #334155;
+  color: #CBD5E1;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.header-contact-icon-btn:hover {
+  background: #334155;
+  color: #38BDF8;
+  border-color: #0284C7;
+  transform: translateY(-1px);
+}
+.header-contact-icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.btn-header-secondary {
+  font-size: 0.74rem;
+  padding: 5px 10px;
+  color: #CBD5E1;
+  border: 1px solid #334155;
+  background: #1E293B;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+.btn-header-secondary:hover {
+  background: #334155;
+  color: #FFFFFF;
+  border-color: #475569;
+}
+.btn-header-cta {
+  font-size: 0.78rem !important;
+  padding: 6px 14px !important;
+  font-weight: 700 !important;
 }
 
 /* Top MFA Security Badge */
@@ -937,30 +1026,468 @@ tr:hover td { background: #FAFCFE; }
   border-radius: var(--radius-sm);
 }
 
-/* Footer */
+/* ==========================================================================
+   REDESIGNED ENTERPRISE FOOTER (4-COLUMN CORPORATE STANDARD)
+   ========================================================================== */
 .enterprise-footer {
   border-top: 1px solid var(--border);
-  padding: 20px 36px 36px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
+  background: #0B1120;
+  color: #94A3B8;
+  padding: 44px 32px 28px;
+  margin-top: auto;
+}
+
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto 32px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.footer-brand-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.footer-brand-logo svg {
+  width: 16px;
+  height: 16px;
+  color: #FFFFFF;
+}
+
+.footer-brand-title {
+  color: #F8FAFC;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.footer-mission-text {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #94A3B8;
+  margin-bottom: 12px;
+  max-width: 380px;
+}
+
+.footer-operator-meta {
+  font-size: 0.74rem;
+  color: #64748B;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.footer-operator-meta strong {
+  color: #CBD5E1;
+}
+
+/* Contact Channel: Icon only - NO exposed raw email */
+.footer-contact-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111C30;
+  border: 1px solid #1E293B;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.footer-contact-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #CBD5E1;
+}
+
+.footer-mail-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: #0284C7;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(2, 132, 199, 0.3);
+}
+
+.footer-mail-icon-link:hover {
+  background: #0369A1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(2, 132, 199, 0.4);
+}
+
+.footer-mail-icon-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.footer-col-title {
+  color: #F8FAFC;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footer-links-list a {
+  color: #94A3B8;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-links-list a:hover {
+  color: #38BDF8;
+}
+
+.footer-bottom-bar {
+  border-top: 1px solid #1E293B;
+  padding-top: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-disclaimer-text {
+  font-size: 0.72rem;
+  color: #64748B;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.footer-copyright-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 0.72rem;
+  color: #475569;
   flex-wrap: wrap;
-  gap: 12px;
-  background: #FFFFFF;
+  gap: 8px;
 }
 
+@media (max-width: 900px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .enterprise-footer {
+    padding: 30px 18px 24px;
+  }
+}
+
+/* ==========================================================================
+   MONTH-OVER-MONTH (MoM) COMPARISON PANEL STYLES
+   ========================================================================== */
+.mom-comparison-panel {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-top: 16px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.mom-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.mom-kpi-card {
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.mom-delta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.mom-delta-badge.positive {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.mom-delta-badge.negative {
+  background: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+}
+
+@media (max-width: 800px) {
+  .mom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .mom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Executive Print Deliverable Hidden on Screen */
+.executive-print-header {
+  display: none;
+}
+
+.executive-signoff-card {
+  display: none;
+}
+
+/* Print Meta & Header Layout */
+.print-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #0F172A;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.print-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.print-meta-badge {
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.print-doc-title h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+
+.print-doc-sub {
+  font-size: 0.82rem;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.print-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: #334155;
+  margin-bottom: 16px;
+}
+
+.signoff-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 4px;
+}
+
+.signoff-note {
+  font-size: 0.74rem;
+  color: #64748B;
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+.signoff-signatures-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.signoff-box {
+  border: 1px solid #CBD5E1;
+  border-radius: 4px;
+  padding: 12px;
+  background: #F8FAFC;
+}
+
+.signoff-role {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 4px;
+}
+
+.signoff-line {
+  font-size: 0.75rem;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+/* ==========================================================================
+   EXECUTIVE CORPORATE PRINT DELIVERABLE (BOARD & CFO STANDARD - NO CONSUMER PRICE)
+   ========================================================================== */
 @media print {
-  body { background: white; }
-  .global-header, .app-sidebar, .overview-header .header-actions-group, .upload-panel-card, .tabs-navigation-strip, #tab-pane-remediation, #tab-pane-automation, .enterprise-footer, .toast-box {
+  @page {
+    margin: 1.2cm 1cm;
+    size: auto;
+  }
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 10pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Strictly remove all marketing, freemium, checkout, pricing badges, and interactive controls */
+  .global-header,
+  .app-sidebar,
+  .mobile-nav-bar,
+  .journey-guide-card,
+  .demo-workspace-banner,
+  .evidence-security-bar,
+  .upload-panel-card,
+  .upload-collapsed,
+  .header-actions-group,
+  .upgrade-preview-card,
+  .tabs-navigation-strip,
+  #tab-pane-remediation,
+  #tab-pane-automation,
+  .enterprise-footer,
+  .toast-box,
+  .btn,
+  .table-search-wrap,
+  .filter-pills-group,
+  .modal-overlay {
     display: none !important;
   }
-  .app-layout { display: block; }
-  .app-main { padding: 0; max-width: 100%; }
-  .savings-cards-grid { grid-template-columns: repeat(4, 1fr); page-break-inside: avoid; }
-  .charts-grid-layout { grid-template-columns: 1fr 1fr; page-break-inside: avoid; }
-  .section-card { border: 1px solid #CBD5E1; box-shadow: none; page-break-inside: avoid; margin-bottom: 20px; }
+
+  /* Show executive deliverable components */
+  .executive-print-header {
+    display: block !important;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #0F172A;
+  }
+
+  .executive-signoff-card {
+    display: block !important;
+    margin-top: 24px;
+    page-break-inside: avoid;
+  }
+
+  .app-layout {
+    display: block !important;
+  }
+  .app-main {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Corporate Card Stacking */
+  .savings-cards-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 12px !important;
+    page-break-inside: avoid;
+    margin-bottom: 16px !important;
+  }
+
+  .metric-card {
+    border: 1px solid #CBD5E1 !important;
+    background: #F8FAFC !important;
+    box-shadow: none !important;
+    padding: 12px !important;
+  }
+
+  .methodology-bar {
+    border: 1px solid #CBD5E1 !important;
+    background: #FFFFFF !important;
+    padding: 8px 12px !important;
+    margin-bottom: 16px !important;
+    page-break-inside: avoid;
+  }
+
+  .section-card {
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 18px !important;
+  }
+
+  .selected-actions-summary-card {
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 18px !important;
+  }
+
+  .mom-comparison-panel {
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    margin-bottom: 18px !important;
+  }
+
+  .charts-grid-layout {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    page-break-inside: avoid;
+    margin-bottom: 18px !important;
+  }
+
+  .chart-panel-card {
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+  }
 }
 
 @media (max-width: 1050px) {
