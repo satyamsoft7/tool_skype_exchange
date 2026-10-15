@@ -396,37 +396,132 @@
       color: var(--text-muted);
     }
 
+    .pricing-two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
     @media (max-width: 960px) {
       .landing-hero h1 { font-size: 2.1rem; }
       .audience-grid, .steps-grid, .pricing-grid, .reviews-grid { grid-template-columns: 1fr; }
       .detection-grid { grid-template-columns: 1fr; }
       .report-stat-row { grid-template-columns: 1fr; }
+      .pricing-two-col-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .landing-hero {
+        padding: 44px 16px 36px;
+      }
+      .landing-hero h1 {
+        font-size: 1.85rem;
+        line-height: 1.22;
+      }
+      .landing-hero p {
+        font-size: 0.98rem;
+        margin-bottom: 24px;
+      }
+      .landing-section {
+        padding: 44px 16px;
+      }
+      .section-headline {
+        font-size: 1.5rem;
+      }
+      .hero-cta-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .hero-cta-group .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .reviews-summary-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .sample-report-card {
+        padding: 20px 16px;
+      }
+      .report-mock-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .landing-hero h1 {
+        font-size: 1.55rem;
+      }
+      .section-headline {
+        font-size: 1.35rem;
+      }
+      .hero-privacy-pill {
+        font-size: 0.74rem;
+        padding: 8px 10px;
+      }
+      .price-num {
+        font-size: 1.7rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Global Header -->
+  <!-- Global Header (Consistent with main index.html) -->
   <header class="global-header">
     <div class="header-left">
-      <a href="landing.html" class="brand-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-        <span>CloudTrim Enterprise</span>
+      <a href="landing.html" class="brand-link" title="CloudTrim Enterprise - Home">
+        <div class="brand-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">CloudTrim</span>
+          <span class="brand-badge-tag">Enterprise FinOps</span>
+        </div>
       </a>
-      <div class="tenant-pill">
-        <span class="tenant-dot"></span>
-        <span>FinOps &amp; License Governance</span>
+      <div class="tenant-pill" title="Target Active Tenant Context">
+        <span class="tenant-dot" style="background:#22C55E;"></span>
+        <span class="tenant-name">Zero-Server In-Browser RAM</span>
+        <span class="tenant-secure-tag" title="Client-Side In-Memory Execution">RAM-Only</span>
       </div>
     </div>
+
     <div class="header-right">
-      <a href="index.html?action=signin" class="btn btn-outline" style="font-size:0.78rem; color:#FFFFFF; border-color:#334155; background:#1E293B; display:inline-flex; align-items:center; gap:6px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        Sign In
+      <!-- Interactive Audit Console link -->
+      <a href="index.html" class="btn btn-header-secondary" title="Open Interactive Audit Console">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        <span>Audit Console</span>
       </a>
-      <a href="index.html" class="btn btn-outline" style="font-size:0.78rem; color:#FFFFFF; border-color:#334155; background:#1E293B;">
-        Explore Live Demo
+
+      <!-- Single Email Contact Channel (Icon Only - No Exposed Raw Email Text) -->
+      <a href="mailto:support@skypeexchange4u.com" class="header-contact-icon-btn" aria-label="Contact Support" title="Contact Enterprise Support">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
       </a>
-      <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">
+
+      <!-- Security Spec Link -->
+      <a href="security.html" class="btn btn-header-secondary" title="Security &amp; Architecture Specification">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Security Spec</span>
+      </a>
+
+      <!-- Sign In Button / Link -->
+      <a href="index.html?action=signin" class="btn btn-header-secondary" title="Sign In">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Sign In</span>
+      </a>
+
+      <!-- Enterprise Advisory Link -->
+      <a href="checkout.html" class="btn btn-primary btn-header-cta">
         Enterprise Advisory
       </a>
     </div>
@@ -755,7 +850,7 @@
       Use our free, client-side community tool for instant self-service audits, or engage our engineering team for assisted enterprise remediation.
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; max-width:880px; margin:0 auto;">
+    <div class="pricing-two-col-grid">
       <!-- Tier 1: Free Community Edition -->
       <div class="pricing-card featured" style="border:2px solid #059669; padding:32px 28px;">
         <span class="popular-tag" style="background:#059669;">100% Free Public Beta</span>
@@ -797,53 +892,81 @@
     </div>
   </section>
 
-  <!-- Support & Operator Disclosures -->
-  <section class="landing-section" style="padding-top:20px; padding-bottom:40px;">
-    <div style="background:white; border:1px solid var(--border); border-radius:var(--radius); padding:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
-      <div>
-        <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">Enterprise Operator &amp; Compliance Details</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
-          Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India &bull; GST Exempt (Sec 22 CGST Act 2017).<br>
-          <span style="display:inline-flex; align-items:center; gap:8px; margin-top:6px;">
-            <span>Contact Enterprise Support &amp; Grievance Channel:</span>
-            <a href="mailto:support@skypeexchange4u.com" class="footer-mail-icon-link" aria-label="Contact Support" title="Contact Support" style="width:26px; height:26px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </a>
-          </span>
+  <!-- Redesigned Corporate Enterprise Footer (Consistent with index.html) -->
+  <footer class="enterprise-footer">
+    <div class="footer-top-grid">
+      <!-- Col 1: Platform & Operator & Single Email Icon (No Exposed Text) -->
+      <div class="footer-col brand-col">
+        <div class="footer-brand">
+          <div class="footer-brand-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+          </div>
+          <span class="footer-brand-title">CloudTrim Enterprise</span>
+        </div>
+        <p class="footer-mission-text">
+          Zero-Server In-Memory Data Minimization Architecture for Microsoft 365 licensing and Azure cloud infrastructure optimization.
         </p>
+        <div class="footer-operator-meta">
+          <div>Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India.</div>
+          <div>Statutory Status: GST Exempt under Section 22 CGST Act 2017.</div>
+        </div>
+        <!-- Single Email Contact Channel (Icon Only - Zero Exposed Raw Email Text) -->
+        <div class="footer-contact-block">
+          <span class="footer-contact-label">Enterprise Support &amp; Grievance:</span>
+          <a href="mailto:support@skypeexchange4u.com" class="footer-mail-icon-link" aria-label="Contact Support" title="Contact Enterprise Support">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </a>
+        </div>
       </div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="security.html" class="btn btn-secondary" style="font-size:0.8rem;">Security Spec</a>
-        <a href="privacy.html" class="btn btn-secondary" style="font-size:0.8rem;">DPDP Privacy</a>
-        <a href="terms.html" class="btn btn-secondary" style="font-size:0.8rem;">Terms of Service</a>
+
+      <!-- Col 2: FinOps Solutions -->
+      <div class="footer-col">
+        <div class="footer-col-title">FinOps Solutions</div>
+        <ul class="footer-links-list">
+          <li><a href="index.html">Executive Overview</a></li>
+          <li><a href="index.html#m365">M365 License Reclamation</a></li>
+          <li><a href="index.html#azure">Azure Idle Capacity</a></li>
+          <li><a href="index.html#remediation">PowerShell -WhatIf Engine</a></li>
+          <li><a href="index.html#automation">Scheduled Task Audits</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Architecture & Security -->
+      <div class="footer-col">
+        <div class="footer-col-title">Security &amp; Privacy</div>
+        <ul class="footer-links-list">
+          <li><a href="security.html">Client RAM Data Model</a></li>
+          <li><a href="privacy.html">DPDP Act 2023 Alignment</a></li>
+          <li><a href="security.html#evidence">Litigation Hold Validation</a></li>
+          <li><a href="security.html#scenarios">Microsoft Graph Scopes</a></li>
+          <li><a href="checkout.html">Enterprise Advisory Scope</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Corporate & Governance -->
+      <div class="footer-col">
+        <div class="footer-col-title">Governance &amp; Trust</div>
+        <ul class="footer-links-list">
+          <li><a href="landing.html">Product Tour &amp; Specs</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service &amp; SLA</a></li>
+          <li><a href="admin.html">Auditor Administration</a></li>
+          <li><a href="checkout.html">Advisory Engagements</a></li>
+        </ul>
       </div>
     </div>
-  </section>
 
-  <!-- Corporate Footer -->
-  <footer class="enterprise-footer" style="padding: 28px 24px 36px; background: white; border-top: 1px solid var(--border);">
-    <div style="max-width:1160px; margin:0 auto;">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
-        <div>
-          <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.<br>
-          <span style="font-size:0.78rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:6px;">
-            Operated by Satya Pathak (SkypeExchange4U), New Delhi, India &bull; Support &amp; Grievance Channel:
-            <a href="mailto:support@skypeexchange4u.com" class="footer-mail-icon-link" aria-label="Contact Support" title="Contact Support" style="width:22px; height:22px;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px; height:12px;"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </a>
-          </span>
-        </div>
-        <div style="display:flex; gap:16px; font-size:0.82rem; flex-wrap:wrap;">
-          <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Overview</a>
-          <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Audit Console</a>
-          <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
-          <a href="privacy.html" style="color:var(--text-muted); text-decoration:none;">DPDP Privacy Policy</a>
-          <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
-          <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Enterprise Advisory</a>
-        </div>
-      </div>
-      <div style="font-size:0.72rem; color:var(--text-subtle); line-height:1.55; border-top:1px solid var(--border-light); padding-top:14px;">
+    <!-- Footer Bottom Legal & Disclaimer Bar -->
+    <div class="footer-bottom-bar">
+      <div class="footer-disclaimer-text">
         <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
+      </div>
+      <div class="footer-copyright-row">
+        <span>&copy; 2026 SkypeExchange4U &bull; All rights reserved. Zero external network telemetry.</span>
+        <span>Standard: Client-Side In-Memory HTML5 Execution</span>
       </div>
     </div>
   </footer>
