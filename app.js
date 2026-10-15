@@ -286,6 +286,25 @@ function loadSampleDataMode() {
   document.getElementById('datasetTypeBadge').style.borderColor = '#FDE68A';
   document.getElementById('activeFileSummary').textContent = 'Sample data loaded (contoso.onmicrosoft.com)';
 
+  const resetBtn = document.getElementById('btnResetDemo');
+  if (resetBtn) resetBtn.style.display = 'none';
+
+  const billingPeriodEl = document.getElementById('billingDataPeriodText');
+  const estimationMethodEl = document.getElementById('estimationMethodText');
+  if (billingPeriodEl) billingPeriodEl.textContent = 'Trailing 30 Days (September 15 – October 14, 2026)';
+  if (estimationMethodEl) estimationMethodEl.textContent = 'Microsoft published tier rate cards • 730 hrs/mo unattached compute & storage calculation';
+
+  const govScoreEl = document.getElementById('cardGovernanceScore');
+  const scorePillEl = document.getElementById('scorePillStatus');
+  const scoreSubEl = document.getElementById('scoreSubText');
+  if (govScoreEl) govScoreEl.innerHTML = `74 <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span>`;
+  if (scorePillEl) scorePillEl.textContent = 'Fair • Attention Required';
+  if (scoreSubEl) scoreSubEl.textContent = '26 pts lost to waste';
+
+  try {
+    sessionStorage.removeItem('cloudtrim_active_workspace');
+  } catch (e) {}
+
   toggleUploadPanel(false);
   toggleCsvGuide(false);
   resetM365Filters();
@@ -850,6 +869,135 @@ function toggleCsvGuide(show) {
   if (show) guide.scrollIntoView({ behavior: 'smooth' });
 }
 
+function saveWorkspaceSession(filename, rowCount, csvType) {
+  try {
+    const sessionPayload = {
+      isSampleData: false,
+      currentTenant: AppState.currentTenant,
+      assessmentDate: AppState.assessmentDate,
+      baseline: AppState.baseline,
+      decisionFindings: AppState.decisionFindings,
+      candidateReviews: AppState.candidateReviews,
+      m365Records: AppState.m365Records,
+      azureRecords: AppState.azureRecords,
+      exclusions: AppState.exclusions,
+      meta: {
+        filename: filename,
+        rowCount: rowCount,
+        csvType: csvType,
+        savedAt: new Date().toISOString()
+      }
+    };
+    sessionStorage.setItem('cloudtrim_active_workspace', JSON.stringify(sessionPayload));
+  } catch (err) {
+    console.warn('[SessionStorage] Failed to save workspace', err);
+  }
+}
+
+function applyCustomerDataUI(filename, rowCount, csvType) {
+  const banner = document.getElementById('persistentDemoBanner');
+  if (banner) banner.style.display = 'none';
+
+  const tenantDot = document.getElementById('tenantDot');
+  if (tenantDot) tenantDot.style.background = '#22C55E';
+
+  const tenantDisplay = document.getElementById('tenantDisplay');
+  if (tenantDisplay) tenantDisplay.textContent = AppState.currentTenant;
+
+  const sampleDataBadge = document.getElementById('sampleDataBadge');
+  if (sampleDataBadge) sampleDataBadge.style.display = 'none';
+
+  const tenantContextName = document.getElementById('tenantContextName');
+  if (tenantContextName) tenantContextName.textContent = filename || AppState.currentTenant;
+
+  const dataModeNotice = document.getElementById('dataModeNotice');
+  if (dataModeNotice) {
+    dataModeNotice.textContent = 'Schema-Valid Local Import (Client-Side Parsing)';
+    dataModeNotice.style.color = 'var(--savings-green)';
+  }
+
+  const sideDemoBadge = document.getElementById('sideDemoBadge');
+  if (sideDemoBadge) {
+    sideDemoBadge.textContent = 'Customer data';
+    sideDemoBadge.style.background = '#DCFCE7';
+    sideDemoBadge.style.color = '#15803D';
+  }
+
+  const datasetTypeBadge = document.getElementById('datasetTypeBadge');
+  if (datasetTypeBadge) {
+    datasetTypeBadge.textContent = 'Customer Data Active';
+    datasetTypeBadge.style.background = '#DCFCE7';
+    datasetTypeBadge.style.color = '#15803D';
+    datasetTypeBadge.style.borderColor = '#BBF7D0';
+  }
+
+  const activeFileSummary = document.getElementById('activeFileSummary');
+  if (activeFileSummary) {
+    activeFileSummary.textContent = `${filename} (${rowCount} rows parsed in local RAM)`;
+  }
+
+  const resetBtn = document.getElementById('btnResetDemo');
+  if (resetBtn) resetBtn.style.display = 'inline-flex';
+
+  const billingPeriodEl = document.getElementById('billingDataPeriodText');
+  const estimationMethodEl = document.getElementById('estimationMethodText');
+  if (billingPeriodEl) {
+    billingPeriodEl.textContent = 'Not Assessed (No billing dates present in uploaded CSV)';
+  }
+  if (estimationMethodEl) {
+    if (csvType === 'm365') {
+      estimationMethodEl.textContent = 'Standard Microsoft 365 list price heuristics (Usage activity & Azure unattached compute not evaluated)';
+    } else {
+      estimationMethodEl.textContent = 'Azure unattached resource heuristics (M365 user licenses not evaluated)';
+    }
+  }
+
+  if (AppState.baseline && AppState.baseline.governanceScore !== undefined) {
+    const govScoreEl = document.getElementById('cardGovernanceScore');
+    const scorePillEl = document.getElementById('scorePillStatus');
+    const scoreSubEl = document.getElementById('scoreSubText');
+    if (govScoreEl) govScoreEl.innerHTML = `${AppState.baseline.governanceScore} <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span>`;
+    if (scorePillEl && AppState.baseline.governanceScoreStatus) scorePillEl.textContent = AppState.baseline.governanceScoreStatus;
+    if (scoreSubEl && AppState.baseline.governanceScoreDetails) scoreSubEl.textContent = AppState.baseline.governanceScoreDetails;
+  }
+}
+
+function restoreWorkspaceSession() {
+  try {
+    const raw = sessionStorage.getItem('cloudtrim_active_workspace');
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || data.isSampleData) return false;
+
+    AppState.isSampleData = false;
+    AppState.isDataLoaded = true;
+    AppState.currentTenant = data.currentTenant;
+    AppState.assessmentDate = data.assessmentDate || 'October 14, 2026';
+    AppState.baseline = data.baseline;
+    AppState.decisionFindings = data.decisionFindings;
+    AppState.candidateReviews = data.candidateReviews;
+    AppState.m365Records = data.m365Records;
+    AppState.azureRecords = data.azureRecords;
+    AppState.exclusions = data.exclusions || [];
+
+    applyCustomerDataUI(data.meta.filename, data.meta.rowCount, data.meta.csvType);
+    toggleUploadPanel(false);
+    toggleCsvGuide(false);
+    resetM365Filters();
+    updateCharts();
+    renderDecisionFindings();
+    renderSupportingTables();
+    renderReviewChecklist();
+    renderExclusions();
+    updateConfirmedTotals();
+    generateRemediationScript();
+    return true;
+  } catch (err) {
+    console.warn('[SessionStorage] Restore failed', err);
+    return false;
+  }
+}
+
 function processUploadedFile(file) {
   if (!file) return;
 
@@ -914,29 +1062,57 @@ function processUploadedFile(file) {
     if (csvType === 'm365') {
       const m365Analysis = analyzeM365Dataset(parsed.rows);
       AppState.m365Records = m365Analysis.m365Records;
+      // Evaluated inventory count and candidate finding count tracked separately
       AppState.baseline.m365SeatCount = m365Analysis.totalUsers;
+      AppState.baseline.m365CandidateCount = m365Analysis.m365Records.length;
+      AppState.baseline.m365InventoryCount = m365Analysis.totalUsers;
       AppState.baseline.m365WasteUSD = m365Analysis.totalWasteUSD;
 
       // DEMO ISOLATION: Clear sample Azure records
       AppState.azureRecords = [];
       AppState.baseline.azureAssetCount = 0;
+      AppState.baseline.azureCandidateCount = 0;
+      AppState.baseline.azureInventoryCount = 0;
       AppState.baseline.azureWasteUSD = 0.00;
 
       newFindings = m365Analysis.findings;
       newReviews = m365Analysis.candidateReviews;
+
+      // Derive governance score strictly from evaluated M365 evidence
+      const candidateCount = m365Analysis.m365Records.length;
+      const totalEvaluated = m365Analysis.totalUsers;
+      const wasteRatio = totalEvaluated > 0 ? (candidateCount / totalEvaluated) : 0;
+      const calculatedScore = Math.max(35, Math.min(95, Math.round(100 - (wasteRatio * 50))));
+      AppState.baseline.governanceScore = calculatedScore;
+      AppState.baseline.governanceScoreStatus = calculatedScore >= 80 ? 'Good • Low Waste' : calculatedScore >= 60 ? 'Fair • Attention Required' : 'Critical • High License Waste';
+      AppState.baseline.governanceScoreDetails = `${100 - calculatedScore} pts lost • Calculated from ${candidateCount} licensed candidate(s) of ${totalEvaluated} accounts evaluated. Azure unassessed.`;
     } else if (csvType === 'azure') {
       const azureAnalysis = analyzeAzureDataset(parsed.rows);
       AppState.azureRecords = azureAnalysis.azureRecords;
+      // Evaluated inventory count and candidate finding count tracked separately
       AppState.baseline.azureAssetCount = azureAnalysis.totalAssets;
+      AppState.baseline.azureCandidateCount = azureAnalysis.azureRecords.length;
+      AppState.baseline.azureInventoryCount = azureAnalysis.totalAssets;
       AppState.baseline.azureWasteUSD = azureAnalysis.totalWasteUSD;
 
       // DEMO ISOLATION: Clear sample M365 records
       AppState.m365Records = [];
       AppState.baseline.m365SeatCount = 0;
+      AppState.baseline.m365CandidateCount = 0;
+      AppState.baseline.m365InventoryCount = 0;
       AppState.baseline.m365WasteUSD = 0.00;
 
       newFindings = azureAnalysis.findings;
       newReviews = azureAnalysis.candidateReviews;
+
+      // Derive governance score strictly from evaluated Azure evidence
+      const candidateCount = azureAnalysis.azureRecords.length;
+      const totalEvaluated = azureAnalysis.totalAssets;
+      const wasteRatio = totalEvaluated > 0 ? (candidateCount / totalEvaluated) : 0;
+      const calculatedScore = Math.max(40, Math.min(95, Math.round(100 - (wasteRatio * 45))));
+      AppState.baseline.governanceScore = calculatedScore;
+      AppState.baseline.governanceScoreStatus = calculatedScore >= 80 ? 'Good • Low Idle Waste' : calculatedScore >= 60 ? 'Fair • Attention Required' : 'Critical • High Idle Capacity';
+      AppState.baseline.governanceScoreDetails = `${100 - calculatedScore} pts lost • Calculated from ${candidateCount} orphaned candidate(s) of ${totalEvaluated} resources evaluated. M365 unassessed.`;
     }
 
     AppState.decisionFindings = newFindings;
@@ -945,49 +1121,9 @@ function processUploadedFile(file) {
     // Recompute Financial Baselines Reconciled with Analysis
     AppState.baseline.monthlyWasteUSD = AppState.baseline.m365WasteUSD + AppState.baseline.azureWasteUSD;
     AppState.baseline.annualWasteUSD = AppState.baseline.monthlyWasteUSD * 12;
-    AppState.baseline.governanceScore = Math.max(45, Math.min(95, Math.round(100 - (AppState.baseline.monthlyWasteUSD / (AppState.baseline.monthlyWasteUSD + 3500)) * 55)));
 
-    // Update Banner & Workspace Indicators
-    const banner = document.getElementById('persistentDemoBanner');
-    if (banner) banner.style.display = 'none';
-
-    const tenantDot = document.getElementById('tenantDot');
-    if (tenantDot) tenantDot.style.background = '#22C55E';
-
-    const tenantDisplay = document.getElementById('tenantDisplay');
-    if (tenantDisplay) tenantDisplay.textContent = AppState.currentTenant;
-
-    const sampleDataBadge = document.getElementById('sampleDataBadge');
-    if (sampleDataBadge) sampleDataBadge.style.display = 'none';
-
-    const tenantContextName = document.getElementById('tenantContextName');
-    if (tenantContextName) tenantContextName.textContent = file.name;
-
-    const dataModeNotice = document.getElementById('dataModeNotice');
-    if (dataModeNotice) {
-      dataModeNotice.textContent = 'Verified Customer Dataset';
-      dataModeNotice.style.color = 'var(--savings-green)';
-    }
-
-    const sideDemoBadge = document.getElementById('sideDemoBadge');
-    if (sideDemoBadge) {
-      sideDemoBadge.textContent = 'Customer data';
-      sideDemoBadge.style.background = '#DCFCE7';
-      sideDemoBadge.style.color = '#15803D';
-    }
-
-    const datasetTypeBadge = document.getElementById('datasetTypeBadge');
-    if (datasetTypeBadge) {
-      datasetTypeBadge.textContent = 'Customer Data Active';
-      datasetTypeBadge.style.background = '#DCFCE7';
-      datasetTypeBadge.style.color = '#15803D';
-      datasetTypeBadge.style.borderColor = '#BBF7D0';
-    }
-
-    const activeFileSummary = document.getElementById('activeFileSummary');
-    if (activeFileSummary) {
-      activeFileSummary.textContent = `${file.name} (${parsed.rows.length} rows parsed in local RAM)`;
-    }
+    // Update UI elements for customer data
+    applyCustomerDataUI(file.name, parsed.rows.length, csvType);
 
     toggleUploadPanel(false);
     toggleCsvGuide(false);
@@ -999,6 +1135,9 @@ function processUploadedFile(file) {
     renderExclusions();
     updateConfirmedTotals();
     generateRemediationScript();
+
+    // Preserve active workspace in browser tab session storage
+    saveWorkspaceSession(file.name, parsed.rows.length, csvType);
 
     Telemetry.track('csv_imported', { filename: file.name, rowCount: parsed.rows.length, csvType });
     showToast(`✓ Ingested ${file.name} (${parsed.rows.length} rows) — Zero bytes sent to cloud`);
@@ -1161,6 +1300,11 @@ function updateConfirmedTotals() {
   const totalMonthlyUSD = activeFindings.reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
   const totalAnnualUSD = totalMonthlyUSD * 12;
 
+  // Sum approved findings (reviewed) - initialized to $0.00 before user review
+  const reviewedFindings = activeFindings.filter(f => f.reviewed);
+  const approvedMonthlyUSD = reviewedFindings.reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
+  const approvedAnnualUSD = approvedMonthlyUSD * 12;
+
   const reviewedCount = AppState.decisionFindings.filter(f => f.reviewed).length;
   const totalFindings = AppState.decisionFindings.length;
 
@@ -1170,43 +1314,88 @@ function updateConfirmedTotals() {
   if (leadMonthlyEl) leadMonthlyEl.textContent = formatMoney(totalMonthlyUSD);
   if (leadAnnualEl) leadAnnualEl.textContent = `${formatMoney(totalAnnualUSD)} potential annual savings`;
 
-  // Update M365 and Azure Opportunity cards
+  // Update M365 Opportunity card: Candidate findings vs total inventory evaluated
   const m365Waste = activeFindings.filter(f => f.category === 'M365 Licenses').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
-  const azureWaste = activeFindings.filter(f => f.category === 'Azure Infrastructure').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
-
   const m365WasteEl = document.getElementById('cardM365Waste');
   const m365SeatsEl = document.getElementById('cardM365SeatVal');
-  if (m365WasteEl) m365WasteEl.textContent = `${formatMoney(m365Waste)}/mo potential recovery`;
-  if (m365SeatsEl) m365SeatsEl.textContent = `${AppState.baseline.m365SeatCount} Seats`;
+  const m365InvEl = document.getElementById('cardM365InventorySub');
 
+  const m365Candidates = AppState.m365Records.length;
+  const m365Inventory = AppState.baseline.m365InventoryCount || AppState.baseline.m365SeatCount || m365Candidates;
+
+  if (m365WasteEl) m365WasteEl.textContent = `${formatMoney(m365Waste)}/mo potential recovery`;
+  if (m365SeatsEl) m365SeatsEl.textContent = `${m365Candidates} Seat${m365Candidates === 1 ? '' : 's'}`;
+  if (m365InvEl) {
+    if (m365Candidates === 0 && !AppState.isSampleData) {
+      m365InvEl.textContent = 'Not assessed in this import';
+    } else {
+      m365InvEl.textContent = `${m365Inventory} account${m365Inventory === 1 ? '' : 's'} evaluated`;
+    }
+  }
+
+  // Update Azure Opportunity card: Candidate findings vs total inventory evaluated
+  const azureWaste = activeFindings.filter(f => f.category === 'Azure Infrastructure').reduce((sum, f) => sum + f.estimatedSavingUSD, 0);
   const azureWasteEl = document.getElementById('cardAzureWaste');
   const azureAssetsEl = document.getElementById('cardAzureAssetVal');
+  const azureInvEl = document.getElementById('cardAzureInventorySub');
+
+  const azureCandidates = AppState.azureRecords.length;
+  const azureInventory = AppState.baseline.azureInventoryCount || AppState.baseline.azureAssetCount || azureCandidates;
+
   if (azureWasteEl) azureWasteEl.textContent = `${formatMoney(azureWaste)}/mo idle capacity`;
-  if (azureAssetsEl) azureAssetsEl.textContent = `${AppState.baseline.azureAssetCount} Assets`;
+  if (azureAssetsEl) azureAssetsEl.textContent = `${azureCandidates} Asset${azureCandidates === 1 ? '' : 's'}`;
+  if (azureInvEl) {
+    if (azureCandidates === 0 && !AppState.isSampleData) {
+      azureInvEl.textContent = 'Not assessed in this import';
+    } else {
+      azureInvEl.textContent = `${azureInventory} resource${azureInventory === 1 ? '' : 's'} evaluated`;
+    }
+  }
 
   // Update Navigation & Sub-tab Badges
   const badgeM365 = document.getElementById('badgeM365Count');
-  if (badgeM365) badgeM365.textContent = AppState.baseline.m365SeatCount;
+  if (badgeM365) badgeM365.textContent = m365Candidates;
   const badgeAzure = document.getElementById('badgeAzureCount');
-  if (badgeAzure) badgeAzure.textContent = AppState.baseline.azureAssetCount;
+  if (badgeAzure) badgeAzure.textContent = azureCandidates;
   const subtabBadgeM365 = document.getElementById('subtabBadgeM365');
   if (subtabBadgeM365) subtabBadgeM365.textContent = AppState.m365Records.length;
   const subtabBadgeAzure = document.getElementById('subtabBadgeAzure');
   if (subtabBadgeAzure) subtabBadgeAzure.textContent = AppState.azureRecords.length;
 
-  // Update Section 4 Preview
+  // Update Section 4: Separate Estimated Gross Potential vs Reviewed & Approved Monthly Recovery
+  const estMonthlyEl = document.getElementById('estimatedGrossMonthly');
+  const estAnnualEl = document.getElementById('estimatedGrossAnnual');
+  if (estMonthlyEl) estMonthlyEl.textContent = formatMoney(totalMonthlyUSD);
+  if (estAnnualEl) estAnnualEl.textContent = `${formatMoney(totalAnnualUSD)} / year discovered`;
+
   const confMonthlyEl = document.getElementById('confirmedMonthlySavings');
   const confAnnualEl = document.getElementById('confirmedAnnualSavings');
+  if (confMonthlyEl) confMonthlyEl.textContent = formatMoney(approvedMonthlyUSD);
+  if (confAnnualEl) confAnnualEl.textContent = `${formatMoney(approvedAnnualUSD)} / year approved`;
+
   const ratioEl = document.getElementById('reviewedItemsRatio');
   const pendingEl = document.getElementById('pendingReviewCount');
 
-  if (confMonthlyEl) confMonthlyEl.textContent = formatMoney(totalMonthlyUSD);
-  if (confAnnualEl) confAnnualEl.textContent = `${formatMoney(totalAnnualUSD)} / year projected`;
   if (ratioEl) ratioEl.textContent = `${reviewedCount} / ${totalFindings} Reviewed`;
   if (pendingEl) {
     const pending = totalFindings - reviewedCount;
-    pendingEl.textContent = pending > 0 ? `${pending} items awaiting admin confirmation` : `All items reviewed & confirmed safe`;
-    pendingEl.style.color = pending > 0 ? '#B45309' : '#15803D';
+    if (pending > 0) {
+      pendingEl.textContent = `${pending} item${pending === 1 ? '' : 's'} awaiting admin confirmation`;
+      pendingEl.style.color = '#B45309';
+    } else {
+      pendingEl.textContent = `All items reviewed & confirmed safe`;
+      pendingEl.style.color = '#15803D';
+    }
+  }
+
+  // Update Governance score elements if dynamic score is set
+  if (AppState.baseline && AppState.baseline.governanceScore !== undefined) {
+    const govScoreEl = document.getElementById('cardGovernanceScore');
+    const scorePillEl = document.getElementById('scorePillStatus');
+    const scoreSubEl = document.getElementById('scoreSubText');
+    if (govScoreEl) govScoreEl.innerHTML = `${AppState.baseline.governanceScore} <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span>`;
+    if (scorePillEl && AppState.baseline.governanceScoreStatus) scorePillEl.textContent = AppState.baseline.governanceScoreStatus;
+    if (scoreSubEl && AppState.baseline.governanceScoreDetails) scoreSubEl.textContent = AppState.baseline.governanceScoreDetails;
   }
 }
 
@@ -1254,12 +1443,22 @@ function toggleReviewItem(id, isChecked) {
   const target = AppState.candidateReviews.find(r => r.id === id);
   if (target) target.reviewed = isChecked;
 
+  // Sync with matching decision findings if all items in that category are checked
+  if (target) {
+    const finding = AppState.decisionFindings.find(f => (f.resourceLabel && f.resourceLabel.includes(target.name)) || (f.id && f.id.includes('m365') && target.type && target.type.includes('Entra')) || (f.id && f.id.includes('shared') && target.type && target.type.includes('Shared')));
+    if (finding) {
+      finding.reviewed = isChecked;
+      renderDecisionFindings();
+    }
+  }
+
   const badge = document.getElementById(`status-badge-${id}`);
   if (badge) {
     badge.className = `badge ${isChecked ? 'badge-neutral' : 'badge-warning'}`;
     badge.textContent = isChecked ? 'Confirmed Safe' : 'Review Needed';
   }
   updateReviewLockState();
+  updateConfirmedTotals();
 }
 
 function markAllReviewed() {
@@ -1403,26 +1602,74 @@ ${licenseCandidatesCode}
     }
 
     <span class="syn-comment"># ==========================================================================</span>
-    <span class="syn-comment"># SHARED MAILBOX RECONCILIATION &amp; MANDATORY HOLD PREREQUISITES</span>
-    <span class="syn-comment"># Microsoft Guidance: Mailboxes &lt;50GB qualify for zero-cost tier ONLY IF</span>
-    <span class="syn-comment"># Litigation Hold, In-Place Hold, or Purview retention policies are NOT active.</span>
+    <span class="syn-comment"># SHARED MAILBOX RECONCILIATION &amp; MANDATORY FAIL-CLOSED SAFETY CHECKS</span>
+    <span class="syn-comment"># Microsoft Guidance: Mailboxes &lt;50GB qualify for zero-cost tier ONLY IF:</span>
+    <span class="syn-comment"># 1. Exchange tooling is available (Fail-Closed: skips if module/session missing)</span>
+    <span class="syn-comment"># 2. RecipientTypeDetails is confirmed as 'SharedMailbox' (Not user mailbox)</span>
+    <span class="syn-comment"># 3. Litigation Hold, In-Place Hold &amp; Purview retention policies are confirmed OFF</span>
+    <span class="syn-comment"># 4. TotalItemSize is confirmed &lt;50GB</span>
+    <span class="syn-comment"># 5. Online Archive is confirmed Inactive (unlicensed cannot retain archives)</span>
+    <span class="syn-comment"># If any prerequisite cannot be verified at runtime, license removal is aborted.</span>
     <span class="syn-comment"># ==========================================================================</span>
     $SharedMailboxCandidates = @(
 ${sharedCandidatesCode}
     )
 
-    foreach ($sm in $SharedMailboxCandidates) {
-        if (-not $sm.UPN) { continue }
-        if (Get-Command Get-Mailbox -ErrorAction SilentlyContinue) {
+    $exAvailable = <span class="syn-cmd">Get-Command</span> Get-Mailbox <span class="syn-param">-ErrorAction</span> SilentlyContinue
+    if (-not $exAvailable) {
+        <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[PREFLIGHT ABORT] ExchangeOnlineManagement module not detected or session inactive."</span>
+        <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"Cannot safely verify shared mailbox holds, sizes, or archives. Skipping all shared mailboxes."</span>
+    } else {
+        foreach ($sm in $SharedMailboxCandidates) {
+            if (-not $sm.UPN) { continue }
+            
+            <span class="syn-comment"># Runtime Check 1: Mailbox Lookup (Fail-Closed on error or null)</span>
             $mbx = <span class="syn-cmd">Get-Mailbox</span> <span class="syn-param">-Identity</span> $sm.UPN <span class="syn-param">-ErrorAction</span> SilentlyContinue
-            if ($mbx -and ($mbx.LitigationHoldEnabled -eq $true -or $mbx.InPlaceHolds.Count -gt 0)) {
-                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[HOLD ACTIVE] Mailbox $($sm.UPN) has active Litigation Hold. License must NOT be removed. Skipping."</span>
+            if ($null -eq $mbx) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[LOOKUP ERROR] Mailbox $($sm.UPN) not found in Exchange Online. Skipping license modification."</span>
                 continue
             }
-        }
 
-        <span class="syn-cmd">Write-Host</span> <span class="syn-str">"[ACTION] Reclassifying shared mailbox $($sm.UPN) to native zero-cost shared tier..."</span> -ForegroundColor Cyan
-        <span class="syn-cmd">Set-MgUserLicense</span> <span class="syn-param">-UserId</span> $sm.UPN <span class="syn-param">-RemoveLicenses</span> @($sm.SkuId) <span class="syn-param">-AddLicenses</span> @()${whatIfFlag}
+            <span class="syn-comment"># Runtime Check 2: Recipient Type Verification</span>
+            if ($mbx.RecipientTypeDetails -ne <span class="syn-str">"SharedMailbox"</span>) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[TYPE MISMATCH] Mailbox $($sm.UPN) has RecipientTypeDetails '$($mbx.RecipientTypeDetails)' (not 'SharedMailbox'). Skipping."</span>
+                continue
+            }
+
+            <span class="syn-comment"># Runtime Check 3: Litigation, In-Place &amp; Retention Hold Verification</span>
+            if ($mbx.LitigationHoldEnabled -eq $true -or ($mbx.InPlaceHolds -and $mbx.InPlaceHolds.Count -gt 0) -or $mbx.RetentionHoldEnabled -eq $true) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[HOLD ACTIVE] Mailbox $($sm.UPN) has active Litigation or Retention Hold. License removal aborted to prevent data loss."</span>
+                continue
+            }
+
+            <span class="syn-comment"># Runtime Check 4: Storage Quota Verification (&lt;50GB)</span>
+            $mbxStats = <span class="syn-cmd">Get-MailboxStatistics</span> <span class="syn-param">-Identity</span> $sm.UPN <span class="syn-param">-ErrorAction</span> SilentlyContinue
+            if ($null -eq $mbxStats) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[PREFLIGHT SKIP] Could not retrieve mailbox statistics for $($sm.UPN). Storage size unverified. Skipping for safety."</span>
+                continue
+            }
+            $sizeBytes = 0
+            if ($mbxStats.TotalItemSize.Value -is [Microsoft.Exchange.Data.ByteQuantifiedSize]) {
+                $sizeBytes = $mbxStats.TotalItemSize.Value.ToBytes()
+            } elseif ($mbxStats.TotalItemSize.Value) {
+                $sizeBytes = [int64]$mbxStats.TotalItemSize.Value.ToBytes()
+            }
+            $sizeGB = [math]::Round($sizeBytes / 1GB, 2)
+            if ($sizeGB -ge 50) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[QUOTA LIMIT] Shared mailbox $($sm.UPN) size is $sizeGB GB (&gt;= 50 GB threshold). Paid Exchange Online Plan 2 required. Skipping."</span>
+                continue
+            }
+
+            <span class="syn-comment"># Runtime Check 5: Archive Status Check</span>
+            if ($mbx.ArchiveStatus -eq <span class="syn-str">"Active"</span>) {
+                <span class="syn-cmd">Write-Warning</span> <span class="syn-str">"[ARCHIVE ACTIVE] Shared mailbox $($sm.UPN) has an active Online Archive. Unlicensed shared mailboxes cannot hold archives. Skipping."</span>
+                continue
+            }
+
+            <span class="syn-comment"># All Preflights Passed -&gt; Safe to Reclassify</span>
+            <span class="syn-cmd">Write-Host</span> <span class="syn-str">"[ACTION] Confirmed safe: Shared mailbox $($sm.UPN) ($sizeGB GB, No Holds, No Archive). De-licensing to native free shared tier..."</span> -ForegroundColor Cyan
+            <span class="syn-cmd">Set-MgUserLicense</span> <span class="syn-param">-UserId</span> $sm.UPN <span class="syn-param">-RemoveLicenses</span> @($sm.SkuId) <span class="syn-param">-AddLicenses</span> @()${whatIfFlag}
+        }
     }
 }
 catch {
@@ -1967,14 +2214,17 @@ function showToast(msg) {
 
 // Global Initialization
 window.addEventListener('DOMContentLoaded', () => {
-  Telemetry.track('demo_viewed', { initialLoad: true });
   initCharts();
-  renderDecisionFindings();
-  renderSupportingTables();
-  renderReviewChecklist();
-  renderExclusions();
-  updateConfirmedTotals();
-  generateRemediationScript();
+  const restored = restoreWorkspaceSession();
+  if (!restored) {
+    Telemetry.track('demo_viewed', { initialLoad: true });
+    renderDecisionFindings();
+    renderSupportingTables();
+    renderReviewChecklist();
+    renderExclusions();
+    updateConfirmedTotals();
+    generateRemediationScript();
+  }
 
   // If visitor arrived via header Sign In link (?action=signin), open authentication modal
   if (window.location && window.location.search && window.location.search.includes('action=signin')) {

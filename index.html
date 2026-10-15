@@ -216,6 +216,16 @@
     <!-- Main Content Workspace -->
     <main class="app-main" id="overviewWorkspace">
 
+      <!-- Reachable Mobile Navigation for Small Viewports -->
+      <nav class="mobile-nav-bar" id="mobileNavBar">
+        <button class="mobile-nav-btn active" id="mob-overview" onclick="selectSidebar('overview')">Overview</button>
+        <button class="mobile-nav-btn" id="mob-decisions" onclick="selectSidebar('decisions')">Decisions</button>
+        <button class="mobile-nav-btn" id="mob-m365" onclick="selectSidebar('m365')">M365</button>
+        <button class="mobile-nav-btn" id="mob-azure" onclick="selectSidebar('azure')">Azure</button>
+        <button class="mobile-nav-btn" id="mob-remediation" onclick="selectSidebar('remediation')">Remediation</button>
+        <button class="mobile-nav-btn" id="mob-automation" onclick="selectSidebar('automation')">Audits</button>
+      </nav>
+
       <!-- Guided First-Use Journey Stepper -->
       <div class="journey-guide-card" id="journeyStepper">
         <div class="journey-header">
@@ -299,34 +309,51 @@
       <!-- CSV Preparation Guidance Drawer (Hidden by default) -->
       <div class="csv-guide-box" id="csvPreparationGuide" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="font-size:0.95rem; color:var(--text-main);">CSV Preparation &amp; Downloadable Sample Files</strong>
+          <strong style="font-size:0.95rem; color:var(--text-main);">CSV Preparation, Field Requirements &amp; Tested Collectors</strong>
           <button style="background:none; border:none; font-size:1.1rem; cursor:pointer;" onclick="toggleCsvGuide(false)">&times;</button>
         </div>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">
-          CloudTrim natively accepts official exports from Microsoft 365 Admin Center, Azure Cost Management, or our local PowerShell collector.
+          CloudTrim parses standard CSV exports entirely within your browser memory. Below are the tested export procedures and column classifications:
         </p>
 
         <div class="csv-guide-grid">
+          <!-- M365 Guidance -->
           <div class="csv-guide-col">
             <h4>Microsoft 365 ActiveUsers.csv</h4>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">
-              <strong>How to obtain:</strong> M365 Admin Center &gt; Users &gt; Active users &gt; Export users. Or run: <code>Get-MgUser -All | Export-Csv</code>
-            </p>
-            <div style="font-size:0.76rem; color:#334155; margin-bottom:10px;">
-              <strong>Required Columns:</strong> <code>UserPrincipalName</code>, <code>AccountEnabled</code> (or Block credential), <code>AssignedLicenses</code>, <code>LastSignInDateTime</code>
+            <div style="font-size:0.78rem; color:#334155; margin-bottom:8px; line-height:1.5;">
+              <strong>Method 1 (GUI):</strong> M365 Admin Center &gt; <strong>Users</strong> &gt; <strong>Active users</strong> &gt; click <strong>Export users</strong>.<br>
+              <strong>Method 2 (PowerShell):</strong> Run the tested collector below to expand nested licenses &amp; sign-ins:
+            </div>
+            <pre class="terminal-code-body" style="background:#0F172A; padding:8px 10px; border-radius:4px; font-size:0.7rem; margin-bottom:8px; overflow-x:auto;">Connect-MgGraph -Scopes "User.Read.All","AuditLog.Read.All"
+Get-MgUser -All -Property Id,DisplayName,UserPrincipalName,AccountEnabled,AssignedLicenses,SignInActivity |
+  Select-Object DisplayName, UserPrincipalName, AccountEnabled,
+    @{N="AssignedLicenses";E={($_.AssignedLicenses | ForEach-Object { $_.SkuId }) -join ";"}},
+    @{N="LastSignInDateTime";E={$_.SignInActivity.LastSignInDateTime}} |
+  Export-Csv -Path "ActiveUsers.csv" -NoTypeInformation -Encoding utf8</pre>
+            <div style="font-size:0.75rem; color:#334155; margin-bottom:8px;">
+              • <strong>Mandatory Required:</strong> <code>UserPrincipalName</code> (or <code>User principal name</code>), <code>AccountEnabled</code> (or <code>Block credential</code>), and <code>AssignedLicenses</code> (or <code>Licenses</code> / SKU).<br>
+              • <strong>Optional:</strong> <code>LastSignInDateTime</code> (enables 90-day inactivity analysis; if absent, inactive check is marked unassessed), <code>DisplayName</code>, <code>Department</code>.
             </div>
             <a href="sample-m365-activeusers.csv" download="sample-m365-activeusers.csv" class="btn btn-outline" style="font-size:0.74rem;">
               ⬇ Download Sample M365 CSV
             </a>
           </div>
 
+          <!-- Azure Guidance -->
           <div class="csv-guide-col">
             <h4>Azure Cost &amp; Resource CSV</h4>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px;">
-              <strong>How to obtain:</strong> Azure Portal &gt; Cost Management &gt; Cost analysis &gt; Export. Or run <code>Export-CloudTrimData.ps1</code>
-            </p>
-            <div style="font-size:0.76rem; color:#334155; margin-bottom:10px;">
-              <strong>Required Columns:</strong> <code>ResourceId</code>, <code>ResourceType</code>, <code>ResourceGroup</code>, <code>PreTaxCostUSD</code>, <code>DiskState</code> / <code>ManagedBy</code>
+            <div style="font-size:0.78rem; color:#334155; margin-bottom:8px; line-height:1.5;">
+              <strong>Method 1 (Portal):</strong> Azure Portal &gt; <strong>Cost Management</strong> &gt; <strong>Cost analysis</strong> &gt; <strong>Export</strong>.<br>
+              <strong>Method 2 (PowerShell):</strong> Run our unattached disk and idle compute collector:
+            </div>
+            <pre class="terminal-code-body" style="background:#0F172A; padding:8px 10px; border-radius:4px; font-size:0.7rem; margin-bottom:8px; overflow-x:auto;">Connect-AzAccount
+Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
+  Select-Object @{N="ResourceId";E={$_.Id}}, @{N="ResourceType";E={"Microsoft.Compute/disks"}},
+    ResourceGroupName, Name, DiskSizeGB, Sku, DiskState |
+  Export-Csv -Path "AzureDisks.csv" -NoTypeInformation -Encoding utf8</pre>
+            <div style="font-size:0.75rem; color:#334155; margin-bottom:8px;">
+              • <strong>Mandatory Required:</strong> <code>ResourceId</code> (or <code>ResourceName</code>/<code>Name</code>), <code>ResourceType</code> (or <code>MeterCategory</code>), <code>ResourceGroup</code>, <code>PreTaxCostUSD</code> (or <code>Cost</code> / SKU).<br>
+              • <strong>Optional:</strong> <code>DiskState</code>, <code>ManagedBy</code>, <code>Tags</code>.
             </div>
             <a href="sample-azure-resources.csv" download="sample-azure-resources.csv" class="btn btn-outline" style="font-size:0.74rem;">
               ⬇ Download Sample Azure CSV
@@ -360,7 +387,10 @@
             <span>Active Dataset: <strong id="activeFileSummary">Sample data loaded (contoso.onmicrosoft.com)</strong></span>
             <span class="file-active-badge" id="datasetTypeBadge" style="background:#FEF3C7; color:#92400E; border-color:#FDE68A;">Sample Demo Mode</span>
           </div>
-          <div style="display:flex; gap:10px;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-outline" id="btnResetDemo" style="font-size:0.75rem; padding:4px 10px; display:none;" onclick="loadSampleDataMode()">
+              ↺ Reset to Demo
+            </button>
             <button class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px;" onclick="toggleCsvGuide(true)">
               CSV Guide &amp; Samples
             </button>
@@ -383,12 +413,12 @@
         </div>
 
         <!-- Card 2: Governance Score (Visual Polish: Amber Fair score, no misleading green ring) -->
-        <div class="metric-card lead-amber">
+        <div class="metric-card lead-amber" id="governanceScoreCard">
           <div class="metric-label">Governance Score</div>
-          <div class="metric-main-value" style="color:#B45309;">74 <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span></div>
+          <div class="metric-main-value" id="cardGovernanceScore" style="color:#B45309;">74 <span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/ 100</span></div>
           <div class="score-pill-row">
-            <span class="score-pill-amber">Fair &bull; Attention Required</span>
-            <span class="metric-sub-value">26 pts lost to waste</span>
+            <span class="score-pill-amber" id="scorePillStatus">Fair &bull; Attention Required</span>
+            <span class="metric-sub-value" id="scoreSubText">26 pts lost to waste</span>
           </div>
         </div>
 
@@ -397,6 +427,7 @@
           <div class="metric-label">M365 Opportunities</div>
           <div class="metric-main-value" id="cardM365SeatVal">7 Seats</div>
           <div class="metric-sub-value" id="cardM365Waste">$171.00/mo potential recovery</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:3px;" id="cardM365InventorySub">7 accounts evaluated</div>
         </div>
 
         <!-- Card 4: Azure Opportunities -->
@@ -404,16 +435,17 @@
           <div class="metric-label">Azure Opportunities</div>
           <div class="metric-main-value" id="cardAzureAssetVal">5 Assets</div>
           <div class="metric-sub-value" id="cardAzureWaste">$385.90/mo idle capacity</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:3px;" id="cardAzureInventorySub">5 resources evaluated</div>
         </div>
       </div>
 
       <!-- Data Period and Estimation Method Bar -->
       <div class="methodology-bar">
         <div>
-          <strong>Billing Data Period:</strong> <span>Trailing 30 Days (September 15 – October 14, 2026)</span>
+          <strong>Billing Data Period:</strong> <span id="billingDataPeriodText">Trailing 30 Days (September 15 – October 14, 2026)</span>
         </div>
         <div>
-          <strong>Estimation Method:</strong> <span>Microsoft published tier rate cards &bull; 730 hrs/mo unattached compute &amp; storage calculation</span>
+          <strong>Estimation Method:</strong> <span id="estimationMethodText">Microsoft published tier rate cards &bull; 730 hrs/mo unattached compute &amp; storage calculation</span>
         </div>
       </div>
 
@@ -431,20 +463,22 @@
           </div>
         </div>
 
-        <table class="decision-table">
-          <thead>
-            <tr>
-              <th style="width:26%;">Finding</th>
-              <th style="width:16%;">Estimated Saving</th>
-              <th style="width:30%;">Evidence</th>
-              <th style="width:12%;">Confidence</th>
-              <th style="width:16%;">Next Action &amp; Decisions</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyDecisionFindings">
-            <!-- Rendered dynamically by app.js (Sorted by potential savings) -->
-          </tbody>
-        </table>
+        <div class="table-scroll-container">
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th style="width:26%;">Finding</th>
+                <th style="width:16%;">Estimated Saving</th>
+                <th style="width:30%;">Evidence</th>
+                <th style="width:12%;">Confidence</th>
+                <th style="width:16%;">Next Action &amp; Decisions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyDecisionFindings">
+              <!-- Rendered dynamically by app.js (Sorted by potential savings) -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Community Beta: 100% Free Findings & Script Export -->
@@ -564,23 +598,26 @@
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:16px;">
+        <div class="remediation-summary-grid">
+          <!-- Card 1: Estimated Potential Monthly Recovery (Discovered Waste) -->
           <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Confirmed Potential Monthly Recovery</div>
-            <div style="font-size:1.45rem; font-weight:800; color:var(--savings-green); margin-top:4px;" id="confirmedMonthlySavings">$556.90</div>
-            <span style="font-size:0.74rem; color:var(--text-muted);" id="confirmedAnnualSavings">$6,682.80 / year projected</span>
+            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Estimated Potential Monthly Recovery</div>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="estimatedGrossMonthly">$556.90</div>
+            <span style="font-size:0.74rem; color:var(--text-muted);" id="estimatedGrossAnnual">$6,682.80 / year discovered</span>
           </div>
 
+          <!-- Card 2: Reviewed & Approved Monthly Recovery (Starts at $0.00 before approval) -->
+          <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-sm); padding:14px;">
+            <div style="font-size:0.74rem; font-weight:700; color:#15803D; text-transform:uppercase;">Reviewed &amp; Approved Monthly Recovery</div>
+            <div style="font-size:1.45rem; font-weight:800; color:var(--savings-green); margin-top:4px;" id="confirmedMonthlySavings">$0.00</div>
+            <span style="font-size:0.74rem; color:#166534;" id="confirmedAnnualSavings">$0.00 / year approved</span>
+          </div>
+
+          <!-- Card 3: Decisions Status & Safety Gate -->
           <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Decisions Status</div>
-            <div style="font-size:1.45rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="reviewedItemsRatio">0 / 12 Reviewed</div>
+            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Decisions &amp; Safety Gate</div>
+            <div style="font-size:1.35rem; font-weight:800; color:var(--text-main); margin-top:4px;" id="reviewedItemsRatio">0 / 12 Reviewed</div>
             <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">12 items awaiting admin confirmation</span>
-          </div>
-
-          <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-            <div style="font-size:0.74rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Remediation Safety Gate</div>
-            <div style="font-size:1.15rem; font-weight:800; color:var(--primary); margin-top:6px;" id="scriptUnlockStatus">Safety Dry-Run Active</div>
-            <span style="font-size:0.74rem; color:var(--text-muted);">Mandatory review locks production script</span>
           </div>
         </div>
       </div>
@@ -654,67 +691,73 @@
                 <button class="table-search-clear" id="m365SearchClear" onclick="resetM365Filters()" style="display:none;" title="Clear search">&times;</button>
               </div>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>User Principal Name</th>
-                  <th>Account State</th>
-                  <th>Assigned Plan / SKU</th>
-                  <th>Governance Finding</th>
-                  <th>Financial Impact</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyM365Supporting"></tbody>
-            </table>
+            <div class="table-scroll-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>User Principal Name</th>
+                    <th>Account State</th>
+                    <th>Assigned Plan / SKU</th>
+                    <th>Governance Finding</th>
+                    <th>Financial Impact</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyM365Supporting"></tbody>
+              </table>
+            </div>
           </div>
 
           <!-- Tab Pane 2: Azure Table -->
           <div id="tab-pane-azure" style="display:none;">
-            <table>
-              <thead>
-                <tr>
-                  <th>Exact Azure Resource ID / Name</th>
-                  <th>Classification</th>
-                  <th>Resource Group</th>
-                  <th>State Condition</th>
-                  <th>Verification Status</th>
-                  <th>Monthly Impact</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyAzureSupporting"></tbody>
-            </table>
+            <div class="table-scroll-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Exact Azure Resource ID / Name</th>
+                    <th>Classification</th>
+                    <th>Resource Group</th>
+                    <th>State Condition</th>
+                    <th>Verification Status</th>
+                    <th>Monthly Impact</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyAzureSupporting"></tbody>
+              </table>
+            </div>
           </div>
 
           <!-- Tab Pane 3: Remediation Console with Mandatory Review Checklist -->
           <div id="tab-pane-remediation" style="display:none;">
             <div class="mandatory-review-card">
-              <div class="review-card-header">
+              <div class="review-card-header checklist-header-bar">
                 <div>
                   <div class="review-card-title">Mandatory Resource Review Checklist</div>
                   <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
                     Microsoft guidance requires manual verification of mailbox holds and disk attachments prior to script generation.
                   </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:12px;">
+                <div class="checklist-header-controls" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                   <span class="review-progress-badge" id="reviewProgressBadge">Review Progress: 0 of 6 confirmed safe</span>
-                  <button class="btn btn-outline" style="font-size:0.72rem; padding:4px 10px;" onclick="markAllReviewed()">
+                  <button class="btn btn-outline" style="font-size:0.72rem; padding:5px 12px;" onclick="markAllReviewed()">
                     Mark All as Reviewed (Safe)
                   </button>
                 </div>
               </div>
 
-              <table class="review-checklist-table">
-                <thead>
-                  <tr>
-                    <th style="width:40px;">Check</th>
-                    <th>Candidate Resource</th>
-                    <th>Classification</th>
-                    <th>Mandatory Safety Verification</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="tbodyReviewChecklist"></tbody>
-              </table>
+              <div class="table-scroll-container">
+                <table class="review-checklist-table">
+                  <thead>
+                    <tr>
+                      <th style="width:40px;">Check</th>
+                      <th>Candidate Resource</th>
+                      <th>Classification</th>
+                      <th>Mandatory Safety Verification</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyReviewChecklist"></tbody>
+                </table>
+              </div>
 
               <div class="review-lock-notice" id="reviewLockNotice">
                 <span>⚠️ <strong>Review Mandatory:</strong> You must review and check all candidate resources above to unlock live script generation.</span>
