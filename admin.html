@@ -10,35 +10,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+    }
     .admin-container {
-      max-width: 1280px;
-      margin: 24px auto 60px;
-      padding: 0 24px;
+      max-width: 1360px;
+      width: 100%;
+      margin: 16px auto 40px;
+      padding: 0 16px;
       box-sizing: border-box;
     }
     .admin-grid {
       display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 24px;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
     }
     .admin-menu {
       background: white;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 0;
+      padding: 10px 0;
       box-shadow: var(--shadow-subtle);
     }
     .admin-menu-item {
-      padding: 12px 20px;
-      font-size: 0.85rem;
+      padding: 9px 12px;
+      font-size: 0.77rem;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 6px;
       border-left: 3px solid transparent;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
     .admin-menu-item:hover {
       background: var(--bg-app);
@@ -53,33 +64,46 @@
       background: white;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 18px 20px;
       box-shadow: var(--shadow-subtle);
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
     .panel-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
     .panel-title {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
+      line-height: 1.3;
+    }
+    .panel-header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      flex-shrink: 0;
     }
     .action-btn-sm {
-      padding: 5px 10px;
-      font-size: 0.75rem;
+      padding: 4px 8px;
+      font-size: 0.72rem;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: white;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
     .action-btn-sm:hover { background: #F1F5F9; border-color: #CBD5E1; }
     .action-btn-primary {
@@ -92,111 +116,189 @@
     /* Stats Bar */
     .stat-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
     }
     .stat-strip-box {
       background: white;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px 20px;
+      padding: 12px 14px;
       box-shadow: var(--shadow-subtle);
+      min-width: 0;
     }
     .stat-strip-label {
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.03em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .stat-strip-num {
-      font-size: 1.6rem;
+      font-size: 1.35rem;
       font-weight: 800;
       color: var(--text-main);
-      margin-top: 4px;
+      margin-top: 2px;
+      white-space: nowrap;
     }
     .table-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
-      margin-bottom: 14px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
       background: #F8FAFC;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
     .table-search {
-      padding: 6px 12px;
+      padding: 5px 9px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       outline: none;
-      min-width: 240px;
+      min-width: 180px;
+      flex: 1 1 180px;
+      max-width: 280px;
     }
     .table-search:focus {
       border-color: var(--primary);
     }
+    .table-filters {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.74rem;
+    }
+    .table-filters select {
+      padding: 4px 6px;
+      font-size: 0.74rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: white;
+    }
     .nav-badge {
-      font-size: 0.72rem;
-      padding: 2px 7px;
+      font-size: 0.68rem;
+      padding: 1px 6px;
       border-radius: 9999px;
       background: #E2E8F0;
       color: #334155;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     /* Revenue & Exports KPI & Cards */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
     }
     .kpi-card {
       background: #F8FAFC;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 14px 16px;
+      padding: 10px 12px;
+      min-width: 0;
     }
     .kpi-title {
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .kpi-value {
-      font-size: 1.45rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-main);
-      margin: 4px 0 2px;
+      margin: 3px 0 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .kpi-sub {
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .export-control-card {
       background: #F8FAFC;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 20px;
-      margin-bottom: 24px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
     }
     .export-form-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
-    @media (max-width: 900px) {
-      .admin-grid { grid-template-columns: 1fr; }
-      .stat-strip { grid-template-columns: 1fr 1fr; }
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    /* Constrained, high-density admin table styles */
+    .admin-panel .table-scroll-container {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      margin-bottom: 12px;
+    }
+    .admin-panel table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.74rem;
+    }
+    .admin-panel th {
+      background: #F8FAFC;
+      padding: 7px 9px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .admin-panel td {
+      padding: 7px 9px;
+      font-size: 0.74rem;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+      line-height: 1.35;
+    }
+    .admin-panel tr:last-child td {
+      border-bottom: none;
+    }
+    .admin-panel tr:hover td {
+      background: #F8FAFC;
+    }
+
+    @media (max-width: 1100px) {
+      .stat-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .export-form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px) {
+      .admin-grid { grid-template-columns: 1fr; }
+      .stat-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .admin-menu { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; }
+      .admin-menu-item { border-left: none; border-bottom: 2px solid transparent; padding: 6px 10px; }
+      .admin-menu-item.active { border-bottom-color: var(--primary); }
     }
     @media (max-width: 480px) {
       .stat-strip { grid-template-columns: 1fr; }
@@ -272,8 +374,8 @@
           <span class="nav-badge" id="badgeRevenueCount" style="background:#DCFCE7; color:#15803D;">6</span>
         </div>
         <div class="admin-menu-item" id="tab-exports" onclick="switchAdminTab('exports')">
-          <span>📁 Monthly Audit Data Export</span>
-          <span class="nav-badge" style="background:#FEF3C7; color:#92400E;">Admin Only</span>
+          <span>📁 Monthly Audit Export</span>
+          <span class="nav-badge" style="background:#FEF3C7; color:#92400E; font-size:0.65rem; padding:1px 5px;">Admin</span>
         </div>
         <div class="admin-menu-item" id="tab-queries" onclick="switchAdminTab('queries')">
           <span>📩 User Inquiries &amp; Tickets</span>
@@ -410,15 +512,15 @@
         <div id="view-revenue" style="display:none;">
           <div class="panel-header">
             <div>
-              <div class="panel-title">Revenue &amp; Subscription Ledger by Registered Customer</div>
-              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
-                Financial performance tracking, assigned commercial tiers, recurring billing, and payment transaction logs linked to customer tenant accounts.
+              <div class="panel-title">Revenue &amp; Subscription Ledger by Customer</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">
+                Commercial performance tracking, assigned tiers, billing, and payment transaction logs linked to customer tenant accounts.
               </div>
             </div>
-            <div style="display:flex; gap:8px;">
-              <button class="action-btn-sm" onclick="exportRevenueCsv()">⬇️ Export Ledger CSV</button>
+            <div class="panel-header-actions">
+              <button class="action-btn-sm" onclick="exportRevenueCsv()">⬇️ Export Ledger</button>
               <button class="action-btn-sm" onclick="showAddRevenueModal()">+ Record Payment</button>
-              <button class="btn btn-primary" onclick="loadRevenueLedger()">🔄 Refresh Ledger</button>
+              <button class="btn btn-primary" style="padding:4px 9px; font-size:0.72rem;" onclick="loadRevenueLedger()">🔄 Refresh</button>
             </div>
           </div>
 
@@ -432,37 +534,37 @@
             <div class="kpi-card">
               <div class="kpi-title">Annual Run Rate (ARR)</div>
               <div class="kpi-value" id="revenueKpiArr" style="color:var(--savings-green);">$2,112.00</div>
-              <div class="kpi-sub">Projected 12-month recurring baseline</div>
+              <div class="kpi-sub">Projected 12-month baseline</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-title">Total Billed LTV (All-Time)</div>
               <div class="kpi-value" id="revenueKpiTotalBilled" style="color:#0F172A;">$1,095.00</div>
-              <div class="kpi-sub">Cumulative gross customer revenue</div>
+              <div class="kpi-sub">Cumulative customer revenue</div>
             </div>
             <div class="kpi-card">
               <div class="kpi-title">Active Paying Tenants</div>
               <div class="kpi-value" id="revenueKpiPaidTenants" style="color:#7C3AED;">5 Accounts</div>
-              <div class="kpi-sub">Subscribed MSP, Pro &amp; Single Audits</div>
+              <div class="kpi-sub">Subscribed MSP &amp; Pro accounts</div>
             </div>
           </div>
 
           <div class="table-toolbar">
-            <input type="text" id="revenueSearchInput" class="table-search" placeholder="Search by customer email, tenant, tier, or transaction ID..." oninput="filterRevenueLedger(this.value)">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-size:0.75rem; color:var(--text-muted);">Tier:</span>
-              <select id="revenueTierSelect" onchange="filterRevenueByTier(this.value)" style="padding:4px 8px; font-size:0.75rem; border:1px solid var(--border); border-radius:4px;">
-                <option value="all">All Plan Tiers</option>
+            <input type="text" id="revenueSearchInput" class="table-search" placeholder="Search customer, tenant, tier, or TxID..." oninput="filterRevenueLedger(this.value)">
+            <div class="table-filters">
+              <span style="font-size:0.72rem; color:var(--text-muted);">Tier:</span>
+              <select id="revenueTierSelect" onchange="filterRevenueByTier(this.value)">
+                <option value="all">All Tiers</option>
                 <option value="single">Single Audit ($39)</option>
                 <option value="pro">Pro Monitoring ($19/mo)</option>
                 <option value="msp">MSP Partner ($69/mo)</option>
                 <option value="enterprise">Enterprise Custom</option>
               </select>
-              <span style="font-size:0.75rem; color:var(--text-muted); margin-left:6px;">Status:</span>
-              <select id="revenueStatusSelect" onchange="filterRevenueByStatus(this.value)" style="padding:4px 8px; font-size:0.75rem; border:1px solid var(--border); border-radius:4px;">
-                <option value="all">All Payment Statuses</option>
-                <option value="Active Subscription">Active Subscription</option>
-                <option value="Paid">Paid (One-Time)</option>
-                <option value="Staff / Internal">Staff / Internal</option>
+              <span style="font-size:0.72rem; color:var(--text-muted); margin-left:4px;">Status:</span>
+              <select id="revenueStatusSelect" onchange="filterRevenueByStatus(this.value)">
+                <option value="all">All Statuses</option>
+                <option value="Active Subscription">Active</option>
+                <option value="Paid">Paid (1-Time)</option>
+                <option value="Staff / Internal">Staff</option>
               </select>
             </div>
           </div>
@@ -471,16 +573,16 @@
             <table>
               <thead>
                 <tr>
-                  <th>Customer / Work Email</th>
-                  <th>Company / Tenant Domain</th>
-                  <th>Assigned Plan Tier</th>
-                  <th>Cadence</th>
-                  <th>Rate (USD)</th>
-                  <th>Total Billed</th>
-                  <th>Payment Status</th>
-                  <th>Transaction ID / Token</th>
-                  <th>Next Renewal</th>
-                  <th>Actions</th>
+                  <th style="min-width:140px;">Customer Email</th>
+                  <th style="min-width:140px;">Company / Tenant</th>
+                  <th style="min-width:130px;">Plan Tier</th>
+                  <th style="min-width:75px;">Billing</th>
+                  <th style="min-width:70px;">Rate</th>
+                  <th style="min-width:75px;">Billed LTV</th>
+                  <th style="min-width:85px;">Status</th>
+                  <th style="min-width:105px;">Tx Reference</th>
+                  <th style="min-width:85px;">Renewal</th>
+                  <th style="min-width:65px;">Action</th>
                 </tr>
               </thead>
               <tbody id="revenueTbody">
@@ -1302,26 +1404,27 @@
       tbody.innerHTML = items.map(r => {
         const statusBadge = getPaymentStatusBadge(r.paymentStatus);
         const rateDisplay = r.rateUSD > 0 ? `$${r.rateUSD}/mo` : '—';
+        const cadenceDisplay = (r.frequency || '').replace(' Recurring', '').replace(' Audit', '');
         
         return `
           <tr>
             <td>
-              <strong>${r.email}</strong>
-              <div style="font-size:0.7rem; color:var(--text-muted);">${r.mfaStatus || 'MFA Active'}</div>
+              <div style="font-weight:600; font-size:0.75rem;">${r.email}</div>
+              <div style="font-size:0.67rem; color:var(--text-muted);">${r.mfaStatus || 'MFA Active'}</div>
             </td>
             <td>
-              <div><strong>${r.orgName}</strong></div>
-              <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">${r.tenant}</div>
+              <div style="font-weight:600; font-size:0.75rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.orgName}">${r.orgName}</div>
+              <div style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono); white-space:nowrap;">${r.tenant}</div>
             </td>
-            <td><span class="badge badge-neutral">${r.tier}</span></td>
-            <td style="font-size:0.8rem; color:var(--text-muted);">${r.frequency}</td>
-            <td style="font-weight:600; color:var(--text-main); font-family:var(--font-mono);">${rateDisplay}</td>
-            <td style="font-weight:700; color:#0F172A; font-family:var(--font-mono);">${r.totalBilledFormatted || '$' + (r.totalBilledUSD || 0).toFixed(2)}</td>
+            <td><span class="badge badge-neutral" style="font-size:0.68rem; padding:2px 5px; white-space:nowrap;">${r.tier}</span></td>
+            <td style="font-size:0.73rem; color:var(--text-muted); white-space:nowrap;">${cadenceDisplay}</td>
+            <td style="font-weight:700; color:var(--text-main); font-family:var(--font-mono); font-size:0.74rem; white-space:nowrap;">${rateDisplay}</td>
+            <td style="font-weight:700; color:#0F172A; font-family:var(--font-mono); font-size:0.74rem; white-space:nowrap;">${r.totalBilledFormatted || '$' + (r.totalBilledUSD || 0).toFixed(2)}</td>
             <td>${statusBadge}</td>
-            <td><code style="font-size:0.72rem; color:#475569;">${r.txId}</code></td>
-            <td style="font-size:0.78rem; color:var(--text-muted);">${r.nextRenewal}</td>
+            <td><code style="font-size:0.69rem; color:#475569; white-space:nowrap;">${r.txId}</code></td>
+            <td style="font-size:0.72rem; color:var(--text-muted); white-space:nowrap;">${r.nextRenewal}</td>
             <td>
-              <button class="action-btn-sm" onclick="viewCustomerReceipt('${r.id}')">Receipt</button>
+              <button class="action-btn-sm" style="padding:2px 6px; font-size:0.68rem;" onclick="viewCustomerReceipt('${r.id}')">Receipt</button>
             </td>
           </tr>
         `;
@@ -1329,11 +1432,11 @@
     }
 
     function getPaymentStatusBadge(status) {
-      if (status === 'Active Subscription') return `<span class="badge" style="background:#DCFCE7; color:#15803D; font-weight:700;">Active Subscription</span>`;
-      if (status === 'Paid (One-Time)') return `<span class="badge" style="background:#DBEAFE; color:#1D4ED8; font-weight:700;">Paid (One-Time)</span>`;
-      if (status === 'Staff / Internal') return `<span class="badge" style="background:#F1F5F9; color:#475569; font-weight:700;">Staff / Internal</span>`;
-      if (status === 'Pilot Evaluation') return `<span class="badge" style="background:#FEF3C7; color:#92400E; font-weight:700;">Free Pilot</span>`;
-      return `<span class="badge badge-neutral">${status}</span>`;
+      if (status === 'Active Subscription') return `<span class="badge" style="background:#DCFCE7; color:#15803D; font-weight:700; font-size:0.68rem; padding:2px 5px; white-space:nowrap;">Active</span>`;
+      if (status === 'Paid (One-Time)') return `<span class="badge" style="background:#DBEAFE; color:#1D4ED8; font-weight:700; font-size:0.68rem; padding:2px 5px; white-space:nowrap;">Paid (1-Time)</span>`;
+      if (status === 'Staff / Internal') return `<span class="badge" style="background:#F1F5F9; color:#475569; font-weight:700; font-size:0.68rem; padding:2px 5px; white-space:nowrap;">Staff</span>`;
+      if (status === 'Pilot Evaluation') return `<span class="badge" style="background:#FEF3C7; color:#92400E; font-weight:700; font-size:0.68rem; padding:2px 5px; white-space:nowrap;">Pilot</span>`;
+      return `<span class="badge badge-neutral" style="font-size:0.68rem; padding:2px 5px; white-space:nowrap;">${status}</span>`;
     }
 
     function filterRevenueLedger(term) {
