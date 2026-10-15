@@ -2236,7 +2236,7 @@ function handleMfaVerify(e) {
 }
 
 function completeLogin(email) {
-  const isBackendAdmin = (email.toLowerCase() === 'satya@skypeexchange4u.com');
+  const isBackendAdmin = (email.toLowerCase() === 'support@skypeexchange4u.com');
   AppState.currentUser = { email: email, role: isBackendAdmin ? 'Super Administrator' : 'Tenant Administrator' };
   AppState.mfaActive = true;
   closeAuthModal();

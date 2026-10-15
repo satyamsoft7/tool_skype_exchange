@@ -872,7 +872,7 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
             <div class="field-group">
               <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">Sender Address ("From"):</label>
-              <input type="text" value="security@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
+              <input type="text" value="support@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
             </div>
             <div class="field-group">
               <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">Support Reply-To Address:</label>
@@ -904,7 +904,7 @@
                 <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">
                   PayPal Merchant Business Email (Funds Destination):
                 </label>
-                <input type="email" id="paypalMerchantEmailInput" placeholder="e.g. payments@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
+                <input type="email" id="paypalMerchantEmailInput" placeholder="e.g. support@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
                 <div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
                   Enter the primary email address registered to your PayPal Premier or Business account.
                 </div>
@@ -1715,7 +1715,7 @@
             reportingPeriod: period,
             scope: scope,
             exportedAt: new Date().toISOString(),
-            exportedBy: "satya@skypeexchange4u.com",
+            exportedBy: "support@skypeexchange4u.com",
             classification: "CONFIDENTIAL_ADMINISTRATIVE_AUDIT_ARCHIVE",
             recordCount: dataset.length,
             disclaimer: "Strictly for administrative reference, internal FinOps audits, and tax compliance records."
@@ -1829,7 +1829,7 @@
       const emailInput = document.getElementById('paypalMerchantEmailInput');
       const modeSelect = document.getElementById('paymentGatewayMode');
       if (emailInput) {
-        emailInput.value = localStorage.getItem('cloudtrim_paypal_merchant_email') || 'payments@skypeexchange4u.com';
+        emailInput.value = localStorage.getItem('cloudtrim_paypal_merchant_email') || 'support@skypeexchange4u.com';
       }
       if (modeSelect) {
         modeSelect.value = localStorage.getItem('cloudtrim_payment_mode') || 'live';
