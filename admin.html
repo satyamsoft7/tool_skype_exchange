@@ -3,35 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CloudTrim Enterprise | Administrative Console</title>
+  <title>CloudTrim Enterprise | Internal Administrative & Activity Console</title>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     .admin-container {
       max-width: 1280px;
-      margin: 24px auto;
+      margin: 24px auto 60px;
       padding: 0 24px;
+      box-sizing: border-box;
     }
     .admin-grid {
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 260px 1fr;
       gap: 24px;
     }
     .admin-menu {
       background: white;
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 16px 0;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-subtle);
     }
     .admin-menu-item {
-      padding: 10px 20px;
+      padding: 12px 20px;
       font-size: 0.85rem;
       font-weight: 600;
-      color: var(--slate-600);
+      color: var(--text-muted);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -40,20 +41,20 @@
       transition: all 0.15s ease;
     }
     .admin-menu-item:hover {
-      background: var(--slate-50);
-      color: var(--slate-900);
+      background: var(--bg-app);
+      color: var(--text-main);
     }
     .admin-menu-item.active {
-      background: var(--ms-blue-50);
-      color: var(--ms-blue-700);
-      border-left-color: var(--ms-blue-600);
+      background: #EFF6FF;
+      color: var(--primary);
+      border-left-color: var(--primary);
     }
     .admin-panel {
       background: white;
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       padding: 24px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-subtle);
     }
     .panel-header {
       display: flex;
@@ -61,29 +62,32 @@
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 14px;
-      border-bottom: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
     }
     .panel-title {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      color: var(--slate-900);
+      color: var(--text-main);
     }
     .action-btn-sm {
-      padding: 4px 8px;
+      padding: 5px 10px;
       font-size: 0.75rem;
-      border-radius: 4px;
-      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
       background: white;
       cursor: pointer;
       font-weight: 600;
+      transition: all 0.15s ease;
     }
-    .action-btn-sm:hover { background: var(--slate-100); }
+    .action-btn-sm:hover { background: #F1F5F9; border-color: #CBD5E1; }
     .action-btn-primary {
-      background: var(--ms-blue-600);
+      background: var(--primary);
       color: white;
-      border-color: var(--ms-blue-600);
+      border-color: var(--primary);
     }
-    .action-btn-primary:hover { background: var(--ms-blue-700); }
+    .action-btn-primary:hover { background: var(--primary-hover); }
     
     /* Stats Bar */
     .stat-strip {
@@ -93,45 +97,63 @@
       margin-bottom: 24px;
     }
     .stat-strip-box {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-sm);
-      padding: 14px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-subtle);
     }
     .stat-strip-label {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: var(--slate-500);
+      color: var(--text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
     .stat-strip-num {
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       font-weight: 800;
-      color: var(--slate-900);
+      color: var(--text-main);
       margin-top: 4px;
     }
-
-    /* Modal / Drawer */
-    .otp-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .modal-box {
-      background: white;
-      border-radius: 8px;
-      width: 440px;
-      padding: 24px;
-      box-shadow: var(--shadow-lg);
+    .table-search {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      outline: none;
+      min-width: 240px;
+    }
+    .table-search:focus {
+      border-color: var(--primary);
+    }
+    .nav-badge {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: #E2E8F0;
+      color: #334155;
+      font-weight: 700;
     }
 
     @media (max-width: 900px) {
       .admin-grid { grid-template-columns: 1fr; }
       .stat-strip { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stat-strip { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -144,246 +166,311 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
         <span>CloudTrim Enterprise</span>
       </a>
-      <div class="tenant-badge" style="background:#7f1d1d; border-color:#991b1b; color:#fecaca;">
-        <span class="tenant-dot" style="background:#ef4444;"></span>
-        <span>Internal Administrative Console (Super Admin)</span>
+      <div class="tenant-badge" style="background:#7F1D1D; border-color:#991B1B; color:#FECACA;">
+        <span class="tenant-dot" style="background:#EF4444;"></span>
+        <span>Backend Management &bull; Super Admin Console</span>
       </div>
     </div>
     <div class="header-actions">
-      <span style="font-size:0.8rem; color:#cbd5e1;">Logged in as: <strong>satya@skypeexchange4u.com</strong></span>
-      <a href="index.html" class="btn btn-secondary" style="font-size:0.75rem;">Exit Console</a>
+      <span style="font-size:0.8rem; color:#CBD5E1;">Authenticated: <strong>satya@skypeexchange4u.com</strong></span>
+      <a href="index.html" class="btn btn-secondary" style="font-size:0.75rem;">← Return to App</a>
     </div>
   </header>
 
   <div class="admin-container">
     
-    <!-- Top Summary Strip -->
+    <!-- Top Summary Metrics Strip -->
     <div class="stat-strip">
       <div class="stat-strip-box">
-        <div class="stat-strip-label">Total Users</div>
-        <div class="stat-strip-num">142</div>
+        <div class="stat-strip-label">Tracked Activity Events</div>
+        <div class="stat-strip-num" id="statTotalEvents">0</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Local RAM funnel telemetry</div>
       </div>
       <div class="stat-strip-box">
-        <div class="stat-strip-label">MFA Enabled Users</div>
-        <div class="stat-strip-num" style="color:var(--success-600);">138 (97%)</div>
+        <div class="stat-strip-label">CSV Assessments Ingested</div>
+        <div class="stat-strip-num" id="statCsvImports" style="color:var(--savings-green);">0</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Evaluated in browser RAM</div>
+      </div>
+      <div class="stat-strip-box">
+        <div class="stat-strip-label">Checkout / Pilot Funnel</div>
+        <div class="stat-strip-num" id="statCheckouts" style="color:var(--primary);">0</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Plan activations initiated</div>
       </div>
       <div class="stat-strip-box">
         <div class="stat-strip-label">Pending Inquiries</div>
-        <div class="stat-strip-num" style="color:var(--warning-600);">3 Open</div>
-      </div>
-      <div class="stat-strip-box">
-        <div class="stat-strip-label">Email OTPs Sent (24h)</div>
-        <div class="stat-strip-num">89 Sent</div>
+        <div class="stat-strip-num" style="color:#B45309;">3 Open</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Enterprise advisory tickets</div>
       </div>
     </div>
 
     <div class="admin-grid">
       
-      <!-- Left Menu -->
+      <!-- Left Menu Navigation -->
       <div class="admin-menu">
-        <div class="admin-menu-item active" id="tab-users" onclick="switchAdminTab('users')">
-          <span>👥 User Accounts & MFA</span>
+        <div class="admin-menu-item active" id="tab-activity" onclick="switchAdminTab('activity')">
+          <span>📊 Live Activity &amp; Funnel</span>
+          <span class="nav-badge" id="badgeActivityCount">0</span>
+        </div>
+        <div class="admin-menu-item" id="tab-users" onclick="switchAdminTab('users')">
+          <span>👥 User Accounts &amp; MFA</span>
           <span class="nav-badge">142</span>
         </div>
         <div class="admin-menu-item" id="tab-queries" onclick="switchAdminTab('queries')">
-          <span>📩 User Inquiries & Support</span>
-          <span class="nav-badge" style="background:#fee2e2; color:#b91c1c;">3</span>
+          <span>📩 User Inquiries &amp; Tickets</span>
+          <span class="nav-badge" style="background:#FEE2E2; color:#B91C1C;">3</span>
         </div>
         <div class="admin-menu-item" id="tab-otp" onclick="switchAdminTab('otp')">
-          <span>🔐 Email OTP & Auth Logs</span>
+          <span>🔐 OTP &amp; Auth Logs</span>
         </div>
         <div class="admin-menu-item" id="tab-settings" onclick="switchAdminTab('settings')">
-          <span>⚙️ Notification & SMTP Setup</span>
+          <span>⚙️ SMTP Gateway Setup</span>
         </div>
       </div>
 
       <!-- Right Main Panel -->
       <div class="admin-panel">
         
-        <!-- View 1: User Accounts & MFA -->
-        <div id="view-users">
+        <!-- View 1: Live User Activity & Telemetry Stream (Active Default) -->
+        <div id="view-activity">
           <div class="panel-header">
             <div>
-              <div class="panel-title">User Accounts, Authentication & MFA Management</div>
-              <div style="font-size:0.8rem; color:var(--slate-500); margin-top:2px;">Manage customer tenant access, reset authentication, and enforce MFA.</div>
+              <div class="panel-title">Real-Time User Activity &amp; Product Funnel Telemetry</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">
+                Privacy-first operational telemetry captured during customer assessments (Zero tenant identifiers or CSV payloads transmitted).
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="action-btn-sm" onclick="exportTelemetryJson()">Export JSON</button>
+              <button class="action-btn-sm" onclick="clearTelemetry()">Clear Logs</button>
+              <button class="btn btn-primary" onclick="loadTelemetryEvents()">🔄 Refresh Stream</button>
+            </div>
+          </div>
+
+          <div class="table-toolbar">
+            <input type="text" id="telemetryFilterInput" class="table-search" placeholder="Filter by event name or property..." oninput="filterTelemetry(this.value)">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.75rem; color:var(--text-muted);">Event Type:</span>
+              <select id="telemetryTypeSelect" onchange="filterTelemetryByType(this.value)" style="padding:4px 8px; font-size:0.75rem; border:1px solid var(--border); border-radius:4px;">
+                <option value="all">All Events</option>
+                <option value="csv_imported">csv_imported (Assessments)</option>
+                <option value="checkout_started">checkout_started (Purchases)</option>
+                <option value="demo_viewed">demo_viewed (Visits)</option>
+                <option value="findings_reviewed">findings_reviewed (Checklist)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:170px;">Timestamp</th>
+                  <th style="width:160px;">Event Name</th>
+                  <th>Sanitized Context &amp; Payload</th>
+                  <th style="width:120px;">Session Channel</th>
+                </tr>
+              </thead>
+              <tbody id="telemetryTbody">
+                <tr>
+                  <td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);">
+                    Loading live operational telemetry stream...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- View 2: User Accounts & MFA -->
+        <div id="view-users" style="display:none;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">User Accounts, Authentication &amp; MFA Management</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Manage customer tenant access, reset authentication, and enforce MFA.</div>
             </div>
             <button class="btn btn-primary" onclick="showAddUserModal()">+ Invite Administrative User</button>
           </div>
 
-          <div class="table-toolbar" style="margin-bottom:14px; background:var(--slate-50); border:1px solid var(--slate-200); border-radius:4px;">
+          <div class="table-toolbar">
             <input type="text" class="table-search" placeholder="Search user by email or tenant..." oninput="filterAdminUsers(this.value)">
-            <span style="font-size:0.78rem; color:var(--slate-500);">Security Policy: Mandatory TOTP/Email MFA</span>
+            <span style="font-size:0.78rem; color:var(--text-muted);">Security Policy: Mandatory TOTP/Email MFA</span>
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>User / Work Email</th>
-                <th>Target Tenant</th>
-                <th>Role</th>
-                <th>MFA Status</th>
-                <th>Last Login</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="adminUsersTbody">
-              <tr>
-                <td><strong>admin@contoso.com</strong></td>
-                <td>contoso.onmicrosoft.com</td>
-                <td><span class="badge badge-neutral">Tenant Admin</span></td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">MFA Active (TOTP)</span></td>
-                <td>Today, 14:22</td>
-                <td>
-                  <button class="action-btn-sm" onclick="sendOtpTrigger('admin@contoso.com')">Send OTP</button>
-                  <button class="action-btn-sm" onclick="resetMfa('admin@contoso.com')">Reset MFA</button>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>david.miller@fabrikam.com</strong></td>
-                <td>fabrikam.onmicrosoft.com</td>
-                <td><span class="badge badge-neutral">MSP Lead</span></td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">MFA Active (Email)</span></td>
-                <td>Yesterday</td>
-                <td>
-                  <button class="action-btn-sm" onclick="sendOtpTrigger('david.miller@fabrikam.com')">Send OTP</button>
-                  <button class="action-btn-sm" onclick="resetMfa('david.miller@fabrikam.com')">Reset MFA</button>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>finance@adatum.com</strong></td>
-                <td>adatum.onmicrosoft.com</td>
-                <td><span class="badge badge-neutral">Auditor</span></td>
-                <td><span class="badge" style="background:#fee2e2; color:#b91c1c;">MFA Pending</span></td>
-                <td>3 days ago</td>
-                <td>
-                  <button class="action-btn-sm action-btn-primary" onclick="sendOtpTrigger('finance@adatum.com')">Send Activation OTP</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>User / Work Email</th>
+                  <th>Target Tenant</th>
+                  <th>Role</th>
+                  <th>MFA Status</th>
+                  <th>Last Login</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTbody">
+                <tr>
+                  <td><strong>admin@contoso.com</strong></td>
+                  <td>contoso.onmicrosoft.com</td>
+                  <td><span class="badge badge-neutral">Tenant Admin</span></td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">MFA Active (TOTP)</span></td>
+                  <td>Today, 14:22</td>
+                  <td>
+                    <button class="action-btn-sm" onclick="sendOtpTrigger('admin@contoso.com')">Send OTP</button>
+                    <button class="action-btn-sm" onclick="resetMfa('admin@contoso.com')">Reset MFA</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>david.miller@fabrikam.com</strong></td>
+                  <td>fabrikam.onmicrosoft.com</td>
+                  <td><span class="badge badge-neutral">MSP Lead</span></td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">MFA Active (Email)</span></td>
+                  <td>Yesterday</td>
+                  <td>
+                    <button class="action-btn-sm" onclick="sendOtpTrigger('david.miller@fabrikam.com')">Send OTP</button>
+                    <button class="action-btn-sm" onclick="resetMfa('david.miller@fabrikam.com')">Reset MFA</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>finance@adatum.com</strong></td>
+                  <td>adatum.onmicrosoft.com</td>
+                  <td><span class="badge badge-neutral">Auditor</span></td>
+                  <td><span class="badge" style="background:#FEE2E2; color:#B91C1C;">MFA Pending</span></td>
+                  <td>3 days ago</td>
+                  <td>
+                    <button class="action-btn-sm action-btn-primary" onclick="sendOtpTrigger('finance@adatum.com')">Send Activation OTP</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- View 2: User Queries & Support -->
+        <!-- View 3: User Inquiries & Support -->
         <div id="view-queries" style="display:none;">
           <div class="panel-header">
             <div>
-              <div class="panel-title">Customer Inquiries & Support Tickets</div>
-              <div style="font-size:0.8rem; color:var(--slate-500); margin-top:2px;">Questions submitted via the dashboard or support@skypeexchange4u.com.</div>
+              <div class="panel-title">Customer Inquiries &amp; Advisory Submissions</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Submitted via advisory forms or dispatched to support@skypeexchange4u.com.</div>
             </div>
             <button class="btn btn-secondary" onclick="alert('Checking mailbox support@skypeexchange4u.com for new emails...')">🔄 Check Inbound Mail</button>
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Ticket ID</th>
-                <th>Sender</th>
-                <th>Subject</th>
-                <th>Received</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>#TICK-892</code></td>
-                <td><strong>admin@contoso.com</strong></td>
-                <td>Question regarding unattached disk cleanup script</td>
-                <td>2 hours ago</td>
-                <td><span class="badge badge-warning">Needs Reply</span></td>
-                <td><button class="action-btn-sm action-btn-primary" onclick="replyTicket('#TICK-892')">Reply via Email</button></td>
-              </tr>
-              <tr>
-                <td><code>#TICK-891</code></td>
-                <td><strong>john@cloudpartners.co.uk</strong></td>
-                <td>Inquiring about MSP white-label PDF tier</td>
-                <td>5 hours ago</td>
-                <td><span class="badge badge-warning">Needs Reply</span></td>
-                <td><button class="action-btn-sm action-btn-primary" onclick="replyTicket('#TICK-891')">Reply via Email</button></td>
-              </tr>
-              <tr>
-                <td><code>#TICK-889</code></td>
-                <td><strong>sarah@techops.io</strong></td>
-                <td>Invoice receipt request for PayPal transaction</td>
-                <td>1 day ago</td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">Resolved</span></td>
-                <td><button class="action-btn-sm" onclick="alert('Ticket is resolved.')">View History</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Sender</th>
+                  <th>Subject</th>
+                  <th>Received</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>#TICK-892</code></td>
+                  <td><strong>admin@contoso.com</strong></td>
+                  <td>Question regarding unattached disk cleanup script</td>
+                  <td>2 hours ago</td>
+                  <td><span class="badge badge-warning">Needs Reply</span></td>
+                  <td><button class="action-btn-sm action-btn-primary" onclick="replyTicket('#TICK-892')">Reply via Email</button></td>
+                </tr>
+                <tr>
+                  <td><code>#TICK-891</code></td>
+                  <td><strong>john@cloudpartners.co.uk</strong></td>
+                  <td>Inquiring about MSP multi-tenant automation</td>
+                  <td>5 hours ago</td>
+                  <td><span class="badge badge-warning">Needs Reply</span></td>
+                  <td><button class="action-btn-sm action-btn-primary" onclick="replyTicket('#TICK-891')">Reply via Email</button></td>
+                </tr>
+                <tr>
+                  <td><code>#TICK-889</code></td>
+                  <td><strong>sarah@techops.io</strong></td>
+                  <td>Invoice receipt request for corporate deduction</td>
+                  <td>1 day ago</td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">Resolved</span></td>
+                  <td><button class="action-btn-sm" onclick="alert('Ticket is resolved.')">View History</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- View 3: Email OTP & Auth Logs -->
+        <!-- View 4: Email OTP & Auth Logs -->
         <div id="view-otp" style="display:none;">
           <div class="panel-header">
             <div>
-              <div class="panel-title">Email OTP & Authentication Audit Logs</div>
-              <div style="font-size:0.8rem; color:var(--slate-500); margin-top:2px;">Live delivery logs for 6-digit one-time passcodes and security notifications.</div>
+              <div class="panel-title">Email OTP &amp; Authentication Audit Logs</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Live delivery logs for 6-digit one-time passcodes and security notifications.</div>
             </div>
             <button class="btn btn-secondary" onclick="alert('Exporting authentication log CSV...')">Export Security Log</button>
           </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Recipient Email</th>
-                <th>Event Type</th>
-                <th>Status</th>
-                <th>Delivery Provider</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2026-10-14 18:48:12</td>
-                <td>admin@contoso.com</td>
-                <td>Login One-Time Passcode (OTP)</td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">Delivered (200 OK)</span></td>
-                <td>Resend / Postmark SMTP</td>
-              </tr>
-              <tr>
-                <td>2026-10-14 18:14:05</td>
-                <td>david.miller@fabrikam.com</td>
-                <td>MFA Challenge Verification</td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">Verified</span></td>
-                <td>Resend / Postmark SMTP</td>
-              </tr>
-              <tr>
-                <td>2026-10-14 17:30:44</td>
-                <td>finance@adatum.com</td>
-                <td>Account Invitation Email</td>
-                <td><span class="badge" style="background:#dcfce7; color:#15803d;">Delivered</span></td>
-                <td>Resend / Postmark SMTP</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-scroll-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Recipient Email</th>
+                  <th>Event Type</th>
+                  <th>Status</th>
+                  <th>Delivery Provider</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026-10-14 18:48:12</td>
+                  <td>admin@contoso.com</td>
+                  <td>Login One-Time Passcode (OTP)</td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">Delivered (200 OK)</span></td>
+                  <td>Resend / Postmark SMTP</td>
+                </tr>
+                <tr>
+                  <td>2026-10-14 18:14:05</td>
+                  <td>david.miller@fabrikam.com</td>
+                  <td>MFA Challenge Verification</td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">Verified</span></td>
+                  <td>Resend / Postmark SMTP</td>
+                </tr>
+                <tr>
+                  <td>2026-10-14 17:30:44</td>
+                  <td>finance@adatum.com</td>
+                  <td>Account Invitation Email</td>
+                  <td><span class="badge" style="background:#DCFCE7; color:#15803D;">Delivered</span></td>
+                  <td>Resend / Postmark SMTP</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- View 4: Notification & SMTP Setup -->
+        <!-- View 5: Notification & SMTP Setup -->
         <div id="view-settings" style="display:none;">
           <div class="panel-header">
             <div>
-              <div class="panel-title">SMTP Gateway & Transactional Email Settings</div>
-              <div style="font-size:0.8rem; color:var(--slate-500); margin-top:2px;">Configure the email service provider used to send OTPs and customer reports.</div>
+              <div class="panel-title">SMTP Gateway &amp; Transactional Email Settings</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Configure the email service provider used to send OTPs and customer reports.</div>
             </div>
             <button class="btn btn-primary" onclick="alert('Configuration saved successfully.')">Save Settings</button>
           </div>
 
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
             <div class="field-group">
-              <label>Sender Address ("From"):</label>
-              <input type="text" value="security@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--slate-300); border-radius:4px;">
+              <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">Sender Address ("From"):</label>
+              <input type="text" value="security@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
             </div>
             <div class="field-group">
-              <label>Support Reply-To Address:</label>
-              <input type="text" value="support@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--slate-300); border-radius:4px;">
+              <label style="display:block; font-size:0.75rem; font-weight:700; color:var(--text-main); margin-bottom:4px; text-transform:uppercase;">Support Reply-To Address:</label>
+              <input type="text" value="support@skypeexchange4u.com" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px; box-sizing:border-box;">
             </div>
           </div>
 
-          <div style="margin-top:14px; background:var(--slate-50); border:1px solid var(--slate-200); border-radius:6px; padding:16px;">
-            <strong style="font-size:0.88rem; color:var(--slate-900);">Recommended Free Email Gateway for Solo Founders:</strong>
-            <p style="font-size:0.82rem; color:var(--slate-600); margin-top:4px; line-height:1.5;">
-              Use <strong>Resend</strong> or <strong>Postmark</strong>. They give you 3,000 free transactional emails every month with automatic SPF/DKIM authentication so your OTP emails land directly in the inbox, not the spam folder.
+          <div style="margin-top:16px; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px;">
+            <strong style="font-size:0.88rem; color:var(--text-main);">Transactional Email Gateway Configuration:</strong>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px; line-height:1.5;">
+              Outbound emails are dispatched via <strong>Resend</strong> or <strong>Postmark</strong> using authenticated SPF, DKIM, and DMARC DNS records aligned with <code>skypeexchange4u.com</code>.
             </p>
           </div>
         </div>
@@ -395,19 +482,125 @@
   </div>
 
   <script>
+    let telemetryEvents = [];
+
     function switchAdminTab(tabKey) {
-      document.getElementById('view-users').style.display = (tabKey === 'users') ? 'block' : 'none';
-      document.getElementById('view-queries').style.display = (tabKey === 'queries') ? 'block' : 'none';
-      document.getElementById('view-otp').style.display = (tabKey === 'otp') ? 'block' : 'none';
-      document.getElementById('view-settings').style.display = (tabKey === 'settings') ? 'block' : 'none';
+      const views = ['activity', 'users', 'queries', 'otp', 'settings'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.style.display = (v === tabKey) ? 'block' : 'none';
+      });
 
       document.querySelectorAll('.admin-menu-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(`tab-${tabKey}`).classList.add('active');
+      const activeTab = document.getElementById(`tab-${tabKey}`);
+      if (activeTab) activeTab.classList.add('active');
+
+      if (tabKey === 'activity') {
+        loadTelemetryEvents();
+      }
+    }
+
+    function loadTelemetryEvents() {
+      try {
+        const raw = localStorage.getItem('cloudtrim_telemetry_events');
+        telemetryEvents = raw ? JSON.parse(raw) : [];
+      } catch (err) {
+        telemetryEvents = [];
+      }
+
+      // Compute top strip counters
+      document.getElementById('statTotalEvents').textContent = telemetryEvents.length;
+      document.getElementById('badgeActivityCount').textContent = telemetryEvents.length;
+
+      const csvCount = telemetryEvents.filter(e => e.event === 'csv_imported').length;
+      const checkoutCount = telemetryEvents.filter(e => e.event === 'checkout_started').length;
+
+      document.getElementById('statCsvImports').textContent = csvCount;
+      document.getElementById('statCheckouts').textContent = checkoutCount;
+
+      renderTelemetryTable(telemetryEvents);
+    }
+
+    function renderTelemetryTable(events) {
+      const tbody = document.getElementById('telemetryTbody');
+      if (!tbody) return;
+
+      if (!events || events.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align:center; padding:28px; color:var(--text-muted);">
+              <strong>Zero Activity Events Logged Yet.</strong><br>
+              <span style="font-size:0.75rem;">Events will automatically log here as visitors browse the console, import CSVs, and initiate plan activations.</span>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Display descending by timestamp (newest first)
+      const sorted = [...events].reverse();
+
+      tbody.innerHTML = sorted.map(e => {
+        const dateStr = e.timestamp ? new Date(e.timestamp).toLocaleString() : 'N/A';
+        const badgeColor = getEventBadgeStyle(e.event);
+        const propsStr = e.properties ? Object.entries(e.properties).map(([k, v]) => `<strong>${k}</strong>: ${v}`).join(' &bull; ') : '—';
+
+        return `
+          <tr>
+            <td style="font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono);">${dateStr}</td>
+            <td><span class="badge" style="${badgeColor}">${e.event}</span></td>
+            <td style="font-size:0.8rem; color:var(--text-main);">${propsStr}</td>
+            <td style="font-size:0.75rem; color:var(--text-muted);">Local RAM / Client</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getEventBadgeStyle(eventName) {
+      if (eventName === 'csv_imported') return 'background:#DCFCE7; color:#15803D; font-weight:700;';
+      if (eventName === 'checkout_started') return 'background:#DBEAFE; color:#1D4ED8; font-weight:700;';
+      if (eventName === 'findings_reviewed') return 'background:#FEF3C7; color:#92400E; font-weight:700;';
+      return 'background:#F1F5F9; color:#475569;';
+    }
+
+    function filterTelemetry(query) {
+      const q = (query || '').toLowerCase();
+      const filtered = telemetryEvents.filter(e => {
+        return (e.event && e.event.toLowerCase().includes(q)) ||
+               (e.properties && JSON.stringify(e.properties).toLowerCase().includes(q));
+      });
+      renderTelemetryTable(filtered);
+    }
+
+    function filterTelemetryByType(eventType) {
+      if (eventType === 'all') {
+        renderTelemetryTable(telemetryEvents);
+      } else {
+        const filtered = telemetryEvents.filter(e => e.event === eventType);
+        renderTelemetryTable(filtered);
+      }
+    }
+
+    function clearTelemetry() {
+      if (confirm('Clear all telemetry events from local storage?')) {
+        try {
+          localStorage.removeItem('cloudtrim_telemetry_events');
+        } catch (err) {}
+        loadTelemetryEvents();
+      }
+    }
+
+    function exportTelemetryJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(telemetryEvents, null, 2));
+      const dl = document.createElement('a');
+      dl.setAttribute("href", dataStr);
+      dl.setAttribute("download", `cloudtrim_telemetry_${Date.now()}.json`);
+      dl.click();
     }
 
     function sendOtpTrigger(email) {
       const otpCode = Math.floor(100000 + Math.random() * 900000);
-      alert(`[DEMO TRIGGER]\nGenerated 6-Digit Email OTP: ${otpCode}\nDispatched via SMTP to: ${email}\nStatus: Delivered.`);
+      alert(`[OTP TRIGGER]\nGenerated 6-Digit Email OTP: ${otpCode}\nDispatched via SMTP to: ${email}\nStatus: Delivered (200 OK).`);
     }
 
     function resetMfa(email) {
@@ -436,6 +629,11 @@
         alert(`Invitation link and temporary OTP dispatched to: ${email}`);
       }
     }
+
+    // Auto-load on page initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTelemetryEvents();
+    });
   </script>
 
 </body>
