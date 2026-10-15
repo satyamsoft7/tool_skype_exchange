@@ -162,14 +162,17 @@
       <a href="landing.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;">
         Product Tour
       </a>
+      <a href="privacy.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;">
+        DPDP Privacy
+      </a>
       <a href="terms.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#CBD5E1; border-color:#334155; background:#1E293B;">
-        Terms &amp; Privacy
+        Terms of Service
       </a>
       <a href="index.html" class="btn btn-outline" style="font-size:0.75rem; padding:4px 10px; color:#FFFFFF; border-color:#334155; background:#1E293B;">
         Audit Console
       </a>
       <a href="checkout.html" class="btn btn-primary" style="font-size:0.75rem; padding:5px 12px;">
-        Activate License ($39)
+        Enterprise Advisory
       </a>
     </div>
   </header>
@@ -284,15 +287,22 @@
         <li><strong>Right to Erasure (Article 17):</strong> Closing the browser tab or clicking "Clear Session" instantly zeroes all memory structures containing parsed records.</li>
       </ul>
 
-      <h3>3.2 SOC-2 Trust Services Criteria Alignment (Security &amp; Confidentiality)</h3>
+      <h3>3.2 Zero-Server Data Minimization &amp; Perimeter Boundary Isolation</h3>
       <ul>
-        <li><strong>CC6.1 (Logical Access Controls):</strong> No service accounts or privileged tenant roles are granted to CloudTrim. Access remains governed by your organization's Conditional Access, MFA, and Entra ID PIM policies.</li>
-        <li><strong>CC6.6 &amp; CC6.7 (Boundary Protection &amp; Transmission):</strong> Data remains behind your corporate firewall and inside your administrative perimeter. No external ingestion endpoints are exposed.</li>
+        <li><strong>Local Ingestion Boundary:</strong> No service accounts, app registrations, or privileged tenant roles are granted to CloudTrim. Access remains entirely governed by your organization's native Conditional Access, MFA, and Entra ID PIM policies on the administrator's workstation.</li>
+        <li><strong>Elimination of Third-Party SaaS Exposure:</strong> Because all directory processing is confined to local browser RAM, your tenant data is never exposed to third-party multi-tenant databases or external breach perimeters.</li>
       </ul>
 
-      <h3>3.3 HIPAA &amp; PCI-DSS Non-Applicability</h3>
+      <h3>3.3 Digital Personal Data Protection (DPDP) Act, 2023 Alignment</h3>
+      <ul>
+        <li><strong>Data Fiduciary Identification:</strong> CloudTrim is operated by Satya Pathak (SkypeExchange4U), New Delhi, India.</li>
+        <li><strong>Purpose Limitation &amp; Local Processing:</strong> CSV files uploaded by the user are parsed exclusively in temporary browser heap memory to compute licensing metrics. No personal identifiers (names, emails, UPNs) are transmitted or persisted externally.</li>
+        <li><strong>Statutory Grievance Redressal:</strong> Inquiries or statutory notices under the DPDP Act 2023 may be directed to our designated Grievance Redressal Officer at <code>grievance@skypeexchange4u.com</code> (acknowledged within 48 hours and resolved within 30 days).</li>
+      </ul>
+
+      <h3>3.4 PCI-DSS Non-Applicability</h3>
       <p>
-        CloudTrim does not store, transmit, or process protected health information (PHI) or credit card primary account numbers (PANs). All commercial licensing transactions are routed through PayPal’s PCI-DSS Level 1 certified payment infrastructure.
+        CloudTrim Community Edition is 100% free for in-browser use. Online credit card and payment processing are disabled. CloudTrim does not process, store, or transmit cardholder or payment data.
       </p>
 
       <!-- Section 4: Enterprise Vendor Assessment FAQ -->
@@ -317,11 +327,22 @@
         <p style="font-size:0.84rem; color:#475569; margin-top:2px;">All CSV files, execution logs, and PDF exports are saved to your local filesystem (e.g., <code>C:\CloudTrim\History\</code> or your local Downloads directory).</p>
       </div>
 
-      <div style="margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-        <span style="font-size:0.8rem; color:var(--text-muted);">&copy; 2026 CloudTrim Enterprise &bull; Operated by Satya Pathak in partnership with skypeexchange4u.com</span>
+      <!-- Statutory Seller & Legal Disclosures -->
+      <div style="margin-top: 32px; padding: 18px 20px; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.8rem; color: #475569; line-height: 1.55;">
+        <strong>Operator &amp; Compliance Details:</strong> Operated by Satya Pathak (Sole Proprietorship / SkypeExchange4U), New Delhi, India &bull; DPDP Grievance Contact: <code>grievance@skypeexchange4u.com</code> &bull; Direct Support: <code>support@skypeexchange4u.com</code> &bull; GST Status: Exempt under Section 22 CGST Act 2017.
+      </div>
+
+      <!-- Mandatory Trademark & Non-Affiliation Disclaimer -->
+      <div style="margin-top: 14px; padding: 16px 20px; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.74rem; color: var(--text-muted); line-height: 1.55;">
+        <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
+      </div>
+
+      <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <span style="font-size:0.8rem; color:var(--text-muted);">&copy; 2026 CloudTrim Enterprise &bull; Operated by Satya Pathak (SkypeExchange4U)</span>
         <div style="display:flex; gap:12px;">
+          <a href="privacy.html" class="btn btn-secondary" style="font-size:0.78rem;">Privacy Policy</a>
           <a href="terms.html" class="btn btn-secondary" style="font-size:0.78rem;">Terms of Service</a>
-          <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">Activate License</a>
+          <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">Enterprise Advisory</a>
         </div>
       </div>
 

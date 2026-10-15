@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CloudTrim Enterprise | Secure Activation & Checkout</title>
+  <title>CloudTrim Enterprise | Free Community Edition & Enterprise Advisory</title>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
     }
     .checkout-layout {
       display: grid;
-      grid-template-columns: 1fr 410px;
+      grid-template-columns: 1fr 380px;
       gap: 32px;
       align-items: flex-start;
     }
@@ -27,80 +27,17 @@
       border-radius: var(--radius);
       padding: 28px;
       box-shadow: var(--shadow-subtle);
-    }
-    .step-header {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .step-badge {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .plan-selector-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
       margin-bottom: 24px;
     }
-    .plan-card {
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 16px 12px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.15s ease;
-      background: var(--bg-app);
-      position: relative;
-    }
-    .plan-card:hover {
-      border-color: var(--primary);
-      background: white;
-    }
-    .plan-card.active {
-      border-color: var(--primary);
-      background: var(--primary-subtle);
-    }
-    .plan-badge-rec {
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary);
-      color: white;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .plan-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .plan-price {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 6px 0 2px;
-    }
-    .plan-sub {
-      font-size: 0.72rem;
-      color: var(--text-muted);
+    .banner-free-beta {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
     }
     .form-row {
       display: grid;
@@ -126,7 +63,7 @@
       margin-top: 4px;
       line-height: 1.4;
     }
-    .field-group input, .field-group select {
+    .field-group input, .field-group select, .field-group textarea {
       width: 100%;
       padding: 9px 12px;
       border: 1px solid var(--border);
@@ -134,41 +71,13 @@
       font-size: 0.85rem;
       font-family: var(--font-sans);
       color: var(--text-main);
+      background: #FFFFFF;
+      box-sizing: border-box;
     }
-    .field-group input:focus, .field-group select:focus {
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
       outline: none;
       border-color: var(--primary);
     }
-
-    /* Comparison Table */
-    .comparison-table-wrap {
-      margin: 24px 0;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow-x: auto;
-    }
-    .comparison-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.76rem;
-    }
-    .comparison-table th {
-      background: #F1F5F9;
-      padding: 9px 12px;
-      font-weight: 700;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-main);
-    }
-    .comparison-table td {
-      padding: 9px 12px;
-      border-bottom: 1px solid var(--border-light);
-      color: #334155;
-    }
-    .comparison-table tr:last-child td { border-bottom: none; }
-
-    /* Order Summary Sidebar */
     .summary-card {
       background: white;
       border: 1px solid var(--border);
@@ -184,94 +93,63 @@
       margin-bottom: 16px;
       color: var(--text-main);
     }
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
+    .feature-check-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0;
       font-size: 0.84rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+      color: #334155;
     }
-    .summary-line.total {
-      font-size: 1.15rem;
-      font-weight: 800;
+    .feature-check-list li {
+      padding: 6px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+    .feature-check-list li strong {
       color: var(--text-main);
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
-      margin-top: 14px;
     }
-    .paypal-btn {
-      background: #ffc439;
-      color: #111;
+    .check-icon {
+      color: #059669;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .disclosure-box {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-top: 18px;
+    }
+    .disclosure-box strong {
+      color: var(--text-main);
+    }
+    .btn-submit-inquiry {
+      background: var(--primary);
+      color: white;
       border: none;
       width: 100%;
       padding: 12px;
       border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-top: 18px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
       transition: background 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
-    .paypal-btn:hover { background: #f4b41a; }
-    
-    .delivery-spec-box {
-      margin-top: 18px;
-      background: #F8FAFC;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      line-height: 1.5;
+    .btn-submit-inquiry:hover {
+      background: var(--primary-hover);
     }
-    .delivery-spec-box strong { color: var(--text-main); }
-
-    .plain-refund-box {
-      margin-top: 16px;
-      background: #EFF6FF;
-      border: 1px solid #BFDBFE;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.76rem;
-      color: #1E3A8A;
-      line-height: 1.45;
-    }
-
-    /* Sandbox Simulator */
-    .sandbox-simulator-box {
-      margin-top: 24px;
-      padding: 16px;
-      background: #0F172A;
-      border-radius: var(--radius-sm);
-      color: #E2E8F0;
-      font-size: 0.76rem;
-    }
-    .sandbox-btn-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    .btn-sandbox {
-      background: #1E293B;
-      color: #38BDF8;
-      border: 1px solid #334155;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-sandbox:hover { background: #334155; }
-
     @media (max-width: 900px) {
       .checkout-layout { grid-template-columns: 1fr; }
-      .plan-selector-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
     }
   </style>
@@ -287,7 +165,7 @@
       </a>
       <div class="tenant-pill">
         <span class="tenant-dot"></span>
-        <span>Secure 256-Bit SSL Activation</span>
+        <span>Free Community Pilot &amp; Advisory</span>
       </div>
     </div>
     <div class="header-right">
@@ -298,332 +176,189 @@
   <div class="checkout-container">
     
     <div style="margin-bottom: 24px;">
-      <h1 style="font-size:1.55rem; font-weight:800; color:var(--text-main); letter-spacing:-0.02em;">Commercial License Activation</h1>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">
-        Unlock full unmasked findings, executive CFO reports, and validated PowerShell remediation scripts.
+      <h1 style="font-size:1.6rem; font-weight:800; color:var(--text-main); letter-spacing:-0.02em;">Community Edition &amp; Enterprise Advisory</h1>
+      <p style="font-size:0.88rem; color:var(--text-muted); margin-top:4px;">
+        CloudTrim is 100% free and open-access for in-browser tenant analysis, calculations, and remediation scripts.
       </p>
+    </div>
+
+    <!-- Free Public Beta Banner -->
+    <div class="banner-free-beta">
+      <div style="font-size:1.8rem; line-height:1;">🚀</div>
+      <div>
+        <strong style="color:var(--primary); font-size:0.96rem;">100% Free Public Beta Notice</strong>
+        <p style="font-size:0.84rem; color:#1E3A8A; margin-top:4px; line-height:1.5;">
+          Online payment processing is intentionally disabled. All core optimization tools—including in-browser CSV parsing, M365 license recovery, Azure idle resource discovery, exact Microsoft SkuId PowerShell generation, and Executive CFO PDF exports—are completely free for public use with zero registration or credit card required.
+        </p>
+      </div>
     </div>
 
     <div class="checkout-layout">
       
-      <!-- Checkout Form Column -->
-      <div class="checkout-card">
+      <!-- Main Content Column -->
+      <div>
         
-        <!-- Step 1: Select Plan -->
-        <div class="step-header">
-          <div class="step-badge">1</div>
-          <span>Select License Tier</span>
-        </div>
-
-        <div class="plan-selector-grid">
-          <!-- Plan 1: Single Tenant Audit (Primary Launch Package) -->
-          <div class="plan-card active" id="plan-single" onclick="choosePlan('single', 39, 'Single Tenant Audit &amp; Remediation Package', '1 Tenant &bull; 1-Time Payment (Perpetual Package)')">
-            <span class="plan-badge-rec">Primary</span>
-            <div class="plan-name">Single Audit Package</div>
-            <div class="plan-price" id="price-single">$39</div>
-            <div class="plan-sub">1 tenant &bull; 1-time run</div>
+        <!-- Section 1: Free Community Access -->
+        <div class="checkout-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+            <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">1. Free Community Edition Entitlements</div>
+            <span style="background:#DCFCE7; color:#166534; font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:9999px; text-transform:uppercase;">No Cost &bull; Free ($0)</span>
           </div>
 
-          <!-- Plan 2: Continuous Governance Pro -->
-          <div class="plan-card" id="plan-pro" onclick="choosePlan('pro', 19, 'Continuous Governance Pro (Monthly Subscription)', '1 Tenant &bull; $19/mo (Cancel anytime)')">
-            <div class="plan-name">Continuous Pro</div>
-            <div class="plan-price" id="price-pro">$19<span style="font-size:0.8rem; font-weight:normal;">/mo</span></div>
-            <div class="plan-sub">Monthly drift engine</div>
-          </div>
-
-          <!-- Plan 3: MSP Multi-Tenant Partner -->
-          <div class="plan-card" id="plan-msp" onclick="choosePlan('msp', 69, 'MSP Multi-Tenant Partner (Monthly Subscription)', 'Client Workspaces &bull; $69/mo (Cancel anytime)')">
-            <div class="plan-name">MSP Partner</div>
-            <div class="plan-price" id="price-msp">$69<span style="font-size:0.8rem; font-weight:normal;">/mo</span></div>
-            <div class="plan-sub">Co-branded reports</div>
-          </div>
-        </div>
-
-        <!-- Side-by-Side Feature Comparison Table -->
-        <div class="comparison-table-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>Feature / Entitlement</th>
-                <th>Free Assessment</th>
-                <th>Single Audit ($39)</th>
-                <th>Continuous Pro ($19/mo)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Findings Discovery</strong></td>
-                <td>Top 3 findings preview</td>
-                <td><strong>Full 9+ findings unmasked</strong></td>
-                <td>Full findings + monthly drift</td>
-              </tr>
-              <tr>
-                <td><strong>Remediation Script Export</strong></td>
-                <td>Dry-run sample preview</td>
-                <td><strong>Production Graph SkuId script</strong></td>
-                <td>Updated monthly SKU scripts</td>
-              </tr>
-              <tr>
-                <td><strong>Executive CFO PDF</strong></td>
-                <td>Watermarked summary</td>
-                <td><strong>Audit-ready presentation PDF</strong></td>
-                <td>Monthly trend comparison PDF</td>
-              </tr>
-              <tr>
-                <td><strong>Renewal Terms</strong></td>
-                <td>Always free ($0)</td>
-                <td><strong>1-Time payment (No recurring fee)</strong></td>
-                <td>$19/month (Cancel anytime in 1 click)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Step 2: Customer & Organization Information -->
-        <div class="step-header">
-          <div class="step-badge">2</div>
-          <span>Licensing &amp; Billing Details</span>
-        </div>
-
-        <div class="form-row">
-          <div class="field-group">
-            <label>Administrative Work Email (For License Key &amp; Receipt)</label>
-            <input type="email" id="billingEmail" placeholder="admin@yourcompany.com" required value="admin@contoso.com">
-            <div class="field-help-text">Your license token and download bundle will be dispatched to this address.</div>
-          </div>
-          <div class="field-group">
-            <label>Organization / Company Name</label>
-            <input type="text" id="billingOrg" placeholder="Your Organization Ltd." value="Contoso Enterprises">
-            <div class="field-help-text">Used on formal B2B invoice receipts.</div>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="field-group">
-            <label>Primary Tenant Domain / UPN</label>
-            <input type="text" id="targetDomain" placeholder="e.g. contoso.onmicrosoft.com" value="contoso.onmicrosoft.com" required>
-            <!-- Explicit explanation of why tenant domain is required -->
-            <div class="field-help-text" style="color:var(--primary); font-weight:500;">
-              ℹ️ <strong>Why this is needed:</strong> Your primary tenant domain is cryptographically bound to your generated license key to ensure secure, tenant-scoped script execution.
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Country / Billing Region</label>
-            <select id="billingCountry" onchange="updateTaxAndCurrency(this.value)">
-              <option value="US" selected>United States (USD)</option>
-              <option value="IN">India (INR &bull; 18% GST Credit)</option>
-              <option value="GB">United Kingdom (GBP &bull; Reverse Charge)</option>
-              <option value="EU">European Union (EUR &bull; Reverse Charge)</option>
-              <option value="GLOBAL">Other International (USD)</option>
-            </select>
-            <div class="field-help-text" id="taxHelpNotice">Sales tax calculated based on buyer jurisdiction.</div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label>Tax ID / GSTIN / VAT Number (Optional for B2B Invoice Credit)</label>
-          <input type="text" id="taxId" placeholder="e.g. 07AAAAA0000A1Z5 (GSTIN) or VAT Registration Number">
-          <div class="field-help-text">Optional. If provided, included on your official tax invoice for business expense deduction.</div>
-        </div>
-
-        <!-- Step 3: Payment Method -->
-        <div class="step-header" style="margin-top:24px;">
-          <div class="step-badge">3</div>
-          <span>Payment Gateway (PayPal Smart Checkout)</span>
-        </div>
-
-        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-          Transactions are processed securely via PayPal. Complete your order using corporate cards, business debit, or PayPal balance.
-        </p>
-
-        <!-- PayPal Button Integration -->
-        <button class="paypal-btn" onclick="executePayPalCheckout()">
-          <svg style="width:20px;height:20px;" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.789.789 0 0 1 .778-.662h6.885c3.272 0 5.496 1.48 5.176 4.904-.265 2.83-2.023 4.88-4.707 4.88h-2.31a.789.789 0 0 0-.778.662l-1.077 6.84c-.035.22-.224.393-.445.393h-1.39z"/>
-          </svg>
-          Pay with PayPal / Corporate Card
-        </button>
-
-        <!-- Plainly Stated Refund Policy (Replacing "100% Zero-Risk") -->
-        <div class="plain-refund-box">
-          🛡️ <strong>14-Day Refund Policy &amp; Eligibility Conditions:</strong><br>
-          If CloudTrim does not identify verified potential savings exceeding the $39 purchase price on your assessed tenant, email <strong>support@skypeexchange4u.com</strong> within 14 days with your anonymized audit export for a prompt, complete refund.
-        </div>
-
-        <!-- Pre-Launch Sandbox Checkout Simulator for Testing -->
-        <div class="sandbox-simulator-box">
-          <div style="font-weight:700; color:#38BDF8; margin-bottom:4px;">🧪 Pre-Launch Gateway Simulator (Test All Checkout States)</div>
-          <p style="font-size:0.72rem; color:#94A3B8; margin-bottom:8px;">
-            Simulate and verify payment outcomes, failure handling, cancellation, and license key dispatch before taking live customer traffic.
+          <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5;">
+            You can immediately run tenant health checks using the interactive web console. No account or payment is needed:
           </p>
-          <div class="sandbox-btn-group">
-            <button class="btn-sandbox" onclick="simulateCheckout('success')">Simulate Success</button>
-            <button class="btn-sandbox" onclick="simulateCheckout('cancel')">Simulate Cancel</button>
-            <button class="btn-sandbox" onclick="simulateCheckout('failure')">Simulate Payment Failure</button>
-            <button class="btn-sandbox" onclick="simulateCheckout('duplicate')">Simulate Duplicate Purchase</button>
-            <button class="btn-sandbox" onclick="simulateCheckout('delivery')">Verify Key Dispatch</button>
-          </div>
-          <div id="simOutput" style="margin-top:8px; font-size:0.72rem; color:#A7F3D0; font-family:var(--font-mono);"></div>
-        </div>
 
-      </div>
-
-      <!-- Order Summary Column -->
-      <div class="summary-card">
-        <div class="summary-title">Order Summary</div>
-        
-        <div class="summary-line">
-          <span id="summaryPlanName">Single Tenant Audit &amp; Remediation Package</span>
-          <span id="summaryPlanPrice">$39.00</span>
-        </div>
-
-        <div class="summary-line">
-          <span>License Scope</span>
-          <span id="summaryTerm" style="font-weight:600; color:var(--text-main);">1 Tenant &bull; 1-Time Payment</span>
-        </div>
-
-        <div class="summary-line">
-          <span>Renewal Terms</span>
-          <span id="summaryRenewal" style="font-weight:600; color:var(--text-main);">Non-Recurring (No auto-renew)</span>
-        </div>
-
-        <!-- Verified Tax Treatment Breakdown -->
-        <div class="summary-line">
-          <span id="taxLabel">Estimated Tax (US Jurisdiction)</span>
-          <span id="taxAmount">$0.00</span>
-        </div>
-
-        <div class="summary-line total">
-          <span>Total Due Now</span>
-          <span id="summaryTotal">$39.00</span>
-        </div>
-
-        <!-- Fulfillment & Support Expectations -->
-        <div class="delivery-spec-box">
-          <strong>Fulfillment &amp; Support SLA:</strong>
-          <ul style="padding-left:16px; margin-top:6px; font-size:0.74rem;">
-            <li><strong>Delivery:</strong> Instant license token dispatched to email within 60 seconds.</li>
-            <li><strong>Activation:</strong> Paste token in console header or CLI to unlock full report &amp; scripts.</li>
-            <li><strong>License Recovery:</strong> Self-service key recovery via registered work email.</li>
-            <li><strong>Engineering SLA:</strong> 24-hour response via support@skypeexchange4u.com.</li>
+          <ul class="feature-check-list">
+            <li>
+              <span class="check-icon">✓</span>
+              <div><strong>Client-Side Zero-Transit Processing:</strong> Ingest CSV exports locally via HTML5 File API into browser RAM. No directory or billing data leaves your workstation.</div>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <div><strong>Unmasked Optimization Findings:</strong> Full itemized analysis of disabled accounts with paid licenses, over-licensed shared mailboxes, unattached Azure disks, and empty App Service plans.</div>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <div><strong>Production PowerShell Scripts:</strong> Copy or export validated PowerShell remediation scripts featuring exact Microsoft SkuId GUIDs, safe <code>-WhatIf</code> dry-runs, and transcript logging.</div>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <div><strong>Executive CFO Summary &amp; CSV Exports:</strong> Generate an audit-ready executive PDF report and raw data CSV directly from your browser.</div>
+            </li>
           </ul>
+
+          <div style="margin-top:20px;">
+            <a href="index.html" class="btn btn-primary" style="padding:12px 24px; font-size:0.9rem; text-decoration:none;">
+              Launch Free Audit Console Now →
+            </a>
+          </div>
         </div>
 
-        <div style="margin-top:16px; font-size:0.72rem; color:var(--text-subtle); text-align:center;">
-          By proceeding, you agree to our <a href="terms.html" target="_blank" style="color:var(--primary); text-decoration:underline;">Terms of Service</a>, <a href="security.html" target="_blank" style="color:var(--primary); text-decoration:underline;">Security Spec</a>, and <a href="terms.html#compliance" target="_blank" style="color:var(--primary); text-decoration:underline;">Data Minimization Policy</a>.
+        <!-- Section 2: Assisted Enterprise Advisory Form -->
+        <div class="checkout-card">
+          <div style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">
+            2. Request Assisted Enterprise Advisory &amp; Custom Engineering
+          </div>
+          <p style="font-size:0.83rem; color:var(--text-muted); line-height:1.5; margin-bottom:18px;">
+            Need hands-on technical guidance, custom PowerShell runbooks, tenant-wide change governance, or multi-tenant MSP automation? Connect directly with our lead infrastructure engineer, <strong>Satya Pathak</strong>.
+          </p>
+
+          <form id="advisoryForm" onsubmit="handleInquirySubmit(event)">
+            <div class="form-row">
+              <div class="field-group">
+                <label>Administrative Contact Name</label>
+                <input type="text" id="advName" placeholder="e.g. Satya Pathak" required>
+              </div>
+              <div class="field-group">
+                <label>Corporate Work Email</label>
+                <input type="email" id="advEmail" placeholder="admin@yourcompany.com" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field-group">
+                <label>Organization / Company Name</label>
+                <input type="text" id="advOrg" placeholder="e.g. Acme Corporation" required>
+              </div>
+              <div class="field-group">
+                <label>Primary Tenant Domain</label>
+                <input type="text" id="advDomain" placeholder="e.g. acme.onmicrosoft.com" required>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>Advisory Scope / Requirements</label>
+              <textarea id="advNotes" rows="4" placeholder="Briefly describe your environment (seat count, Azure spend) and what assistance you require (e.g., assisted dry-run remediation, Litigation Hold verification, or multi-tenant MSP automation)..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit-inquiry">
+              <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>Submit Enterprise Advisory Inquiry</span>
+            </button>
+            <div id="inquirySuccessNotice" style="display:none; margin-top:12px; padding:10px 14px; background:#DCFCE7; border:1px solid #86EFAC; border-radius:var(--radius-sm); color:#166534; font-size:0.8rem;">
+              ✓ Inquiry created! Opening your default email client to dispatch to <strong>support@skypeexchange4u.com</strong>.
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Column -->
+      <div class="summary-card">
+        <div class="summary-title">Operator &amp; Governance Details</div>
+        
+        <div style="font-size:0.82rem; color:#334155; line-height:1.6;">
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Data Fiduciary &amp; Operator</div>
+            <strong style="color:var(--text-main);">Satya Pathak</strong><br>
+            Sole Proprietorship operating under <strong>SkypeExchange4U</strong><br>
+            New Delhi, India
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Direct Engineering Support</div>
+            <a href="mailto:support@skypeexchange4u.com" style="color:var(--primary); font-weight:600; text-decoration:none;">support@skypeexchange4u.com</a>
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">DPDP Grievance Redressal Officer</div>
+            <a href="mailto:grievance@skypeexchange4u.com" style="color:var(--primary); font-weight:600; text-decoration:none;">grievance@skypeexchange4u.com</a><br>
+            <span style="font-size:0.74rem; color:var(--text-muted);">Statutory response acknowledged within 48h and resolved within 30 days under India DPDP Act 2023.</span>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Tax &amp; GST Status</div>
+            <span style="font-size:0.76rem; color:var(--text-muted);">
+              Exempt under Section 22 of the Central Goods and Services Tax (CGST) Act, 2017 (Aggregate annual turnover below the mandatory threshold).
+            </span>
+          </div>
+        </div>
+
+        <div class="disclosure-box">
+          <strong>Zero-Transit Privacy Architecture:</strong><br>
+          CloudTrim is architected so that all CSV parsing, mathematical calculations, and PowerShell script assembly execute inside your local browser memory (RAM). We do not operate external database servers for tenant data ingestion.
+        </div>
+
+        <div style="margin-top:20px; font-size:0.75rem; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+          <a href="privacy.html" style="color:var(--primary); text-decoration:underline;">DPDP Privacy Policy</a>
+          <a href="terms.html" style="color:var(--primary); text-decoration:underline;">Terms of Service</a>
+          <a href="security.html" style="color:var(--primary); text-decoration:underline;">Security &amp; Architecture Specification</a>
         </div>
       </div>
 
+    </div>
+
+    <!-- Mandatory Microsoft Trademark & Non-Affiliation Disclaimer -->
+    <div style="margin-top:40px; padding:20px; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.74rem; color:var(--text-muted); line-height:1.55;">
+      <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
     </div>
 
   </div>
 
   <script>
-    let selectedTier = 'single';
-    let baseCostUSD = 39;
-    let selectedTierName = 'Single Tenant Audit & Remediation Package';
-    let selectedTerm = '1 Tenant &bull; 1-Time Payment';
-    let currentCountry = 'US';
+    function handleInquirySubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('advName').value.trim();
+      const email = document.getElementById('advEmail').value.trim();
+      const org = document.getElementById('advOrg').value.trim();
+      const domain = document.getElementById('advDomain').value.trim();
+      const notes = document.getElementById('advNotes').value.trim();
 
-    function choosePlan(tier, costUSD, name, term) {
-      selectedTier = tier;
-      baseCostUSD = costUSD;
-      selectedTierName = name;
-      selectedTerm = term;
+      const subject = encodeURIComponent(`Enterprise Advisory Inquiry: ${org} (${domain})`);
+      const body = encodeURIComponent(
+        `Hello Satya / SkypeExchange4U Team,\n\n` +
+        `I would like to request assisted advisory or custom engineering for CloudTrim.\n\n` +
+        `Contact Name: ${name}\n` +
+        `Work Email: ${email}\n` +
+        `Organization: ${org}\n` +
+        `Tenant Domain: ${domain}\n\n` +
+        `Scope of Inquiry:\n${notes}\n\n` +
+        `Regards,\n${name}`
+      );
 
-      document.getElementById('plan-single').classList.toggle('active', tier === 'single');
-      document.getElementById('plan-pro').classList.toggle('active', tier === 'pro');
-      document.getElementById('plan-msp').classList.toggle('active', tier === 'msp');
-
-      document.getElementById('summaryPlanName').innerHTML = name;
-      document.getElementById('summaryTerm').innerHTML = term;
-      
-      const renewalEl = document.getElementById('summaryRenewal');
-      if (tier === 'single') {
-        renewalEl.textContent = 'Non-Recurring (No auto-renew)';
-      } else if (tier === 'pro') {
-        renewalEl.textContent = '$19/mo auto-renew (Cancel anytime)';
-      } else if (tier === 'msp') {
-        renewalEl.textContent = '$69/mo auto-renew (Cancel anytime)';
-      }
-
-      updateTaxAndCurrency(currentCountry);
-    }
-
-    function updateTaxAndCurrency(countryCode) {
-      currentCountry = countryCode;
-      const taxLabel = document.getElementById('taxLabel');
-      const taxAmount = document.getElementById('taxAmount');
-      const planPrice = document.getElementById('summaryPlanPrice');
-      const totalEl = document.getElementById('summaryTotal');
-      const taxNotice = document.getElementById('taxHelpNotice');
-
-      if (countryCode === 'IN') {
-        const rate = 83.25;
-        const subtotalINR = Math.round(baseCostUSD * rate);
-        const gstINR = Math.round(subtotalINR * 0.18); // Verified 18% GST for India
-        const totalINR = subtotalINR + gstINR;
-
-        planPrice.textContent = '₹' + subtotalINR.toLocaleString();
-        taxLabel.textContent = 'Integrated GST (18% IGST)';
-        taxAmount.textContent = '₹' + gstINR.toLocaleString();
-        totalEl.textContent = '₹' + totalINR.toLocaleString();
-        taxNotice.textContent = '18% GST added for domestic billing. Provide GSTIN above for tax input credit.';
-      } else if (countryCode === 'GB' || countryCode === 'EU') {
-        planPrice.textContent = '$' + baseCostUSD.toFixed(2);
-        taxLabel.textContent = 'B2B Reverse Charge / VAT';
-        taxAmount.textContent = '$0.00 (Exempt with VAT ID)';
-        totalEl.textContent = '$' + baseCostUSD.toFixed(2);
-        taxNotice.textContent = 'B2B Reverse Charge applies. Provide company VAT ID above for zero-rating.';
-      } else {
-        planPrice.textContent = '$' + baseCostUSD.toFixed(2);
-        taxLabel.textContent = 'Estimated State Tax';
-        taxAmount.textContent = 'Calculated at PayPal gateway';
-        totalEl.textContent = '$' + baseCostUSD.toFixed(2);
-        taxNotice.textContent = 'US state sales tax determined by billing address at PayPal checkout.';
-      }
-    }
-
-    function executePayPalCheckout() {
-      const email = document.getElementById('billingEmail').value;
-      const domain = document.getElementById('targetDomain').value;
-      if (!email || !email.includes('@')) {
-        alert('Please enter a valid administrative work email address for license token delivery.');
-        document.getElementById('billingEmail').focus();
-        return;
-      }
-      if (!domain) {
-        alert('Please enter your primary tenant domain (e.g. contoso.onmicrosoft.com) to lock license generation.');
-        document.getElementById('targetDomain').focus();
-        return;
-      }
-
-      alert('Initiating PayPal Smart Checkout for ' + selectedTierName + ' (' + document.getElementById('summaryTotal').textContent + ')...\nTenant bound: ' + domain + '\nLicense credentials dispatched to: ' + email);
-    }
-
-    // Pre-Launch Sandbox Checkout Simulator
-    function simulateCheckout(scenario) {
-      const out = document.getElementById('simOutput');
-      const email = document.getElementById('billingEmail').value || 'admin@contoso.com';
-      const domain = document.getElementById('targetDomain').value || 'contoso.onmicrosoft.com';
-
-      if (scenario === 'success') {
-        const token = 'CT-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
-        out.innerHTML = `✓ [200 SUCCESS] Payment Captured ($39.00 USD).<br>&bull; Token Generated: <code>${token}</code><br>&bull; Bound Tenant: <code>${domain}</code><br>&bull; SMTP Dispatch: License email delivered to ${email} (200 OK).`;
-        out.style.color = '#A7F3D0';
-      } else if (scenario === 'cancel') {
-        out.innerHTML = `⚠️ [CHECKOUT_CANCELLED] Buyer exited PayPal window without completing order. Session preserved. No charges incurred.`;
-        out.style.color = '#FDE68A';
-      } else if (scenario === 'failure') {
-        out.innerHTML = `❌ [PAYMENT_FAILED] Gateway error: Card authorization declined by issuing bank (Insufficient funds / 3DS timeout). Remediation prompt shown to user.`;
-        out.style.color = '#FECACA';
-      } else if (scenario === 'duplicate') {
-        out.innerHTML = `ℹ️ [DUPLICATE_GUARD] Active license CT-8841 already exists for tenant ${domain}. Idempotency key verified: Re-dispatching existing token to ${email} without re-billing.`;
-        out.style.color = '#BAE6FD';
-      } else if (scenario === 'delivery') {
-        out.innerHTML = `📨 [DELIVERY_VERIFIED] Test webhook trigger verified. Payload delivered in 1.4s with signed receipt & PowerShell script package attached.`;
-        out.style.color = '#C7D2FE';
-      }
+      document.getElementById('inquirySuccessNotice').style.display = 'block';
+      window.location.href = `mailto:support@skypeexchange4u.com?subject=${subject}&body=${body}`;
     }
   </script>
 

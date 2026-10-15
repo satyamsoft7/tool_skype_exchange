@@ -155,9 +155,9 @@
         </div>
       </div>
 
-      <!-- Commercial License Link -->
+      <!-- Enterprise Advisory Link -->
       <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem; padding:6px 14px;">
-        Activate License ($39)
+        Enterprise Advisory
       </a>
     </div>
   </header>
@@ -246,9 +246,9 @@
             <div class="journey-step-num">Step 5</div>
             <div class="journey-step-label">Review Findings</div>
           </div>
-          <div class="journey-step" id="jStep6" onclick="location.href='checkout.html'">
+          <div class="journey-step" id="jStep6" onclick="document.getElementById('sectionPowerShell').scrollIntoView({behavior:'smooth'})">
             <div class="journey-step-num">Step 6</div>
-            <div class="journey-step-label">Unlock &amp; Remediate</div>
+            <div class="journey-step-label">Export &amp; Remediate</div>
           </div>
         </div>
       </div>
@@ -447,49 +447,50 @@
         </table>
       </div>
 
-      <!-- Paid Deliverable Unlock Preview (Why to Upgrade for $39) -->
-      <div class="upgrade-preview-card" style="background:linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%); border:2px solid var(--primary); border-radius:var(--radius); padding:24px 28px; margin-bottom:28px; box-shadow:var(--shadow-card);">
+      <!-- Community Beta: 100% Free Findings & Script Export -->
+      <div class="upgrade-preview-card" style="background:linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%); border:2px solid #3B82F6; border-radius:var(--radius); padding:24px 28px; margin-bottom:28px; box-shadow:var(--shadow-card);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
           <div style="max-width:640px;">
             <div style="display:inline-flex; align-items:center; gap:6px; background:#EFF6FF; border:1px solid #BFDBFE; color:var(--primary); font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:9999px; text-transform:uppercase; margin-bottom:8px;">
-              Single Tenant Audit &bull; Paid Deliverable Preview
+              Community Edition &bull; 100% Free Public Beta
             </div>
             <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-main); margin-bottom:6px;">
-              Ready to act on these findings? Unlock the Full Production Package
+              All Findings &amp; PowerShell Remediation Scripts are 100% Free &amp; Unlocked
             </h3>
             <p style="font-size:0.83rem; color:var(--text-muted); line-height:1.5; margin-bottom:14px;">
-              Free mode gives you import validation and summary metrics. Unlocking the $39 Single Audit package delivers verified execution scripts, unmasked tenant findings, and an executive CFO presentation deck.
+              All optimization findings above are fully unmasked. Validated PowerShell remediation scripts with exact Microsoft SkuId GUIDs and safe <code>-WhatIf</code> dry-runs are completely free to inspect and copy below.
             </p>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.78rem;">
               <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 14px;">
-                <div style="font-weight:700; color:var(--text-muted); margin-bottom:4px;">Free Assessment ($0)</div>
+                <div style="font-weight:700; color:#059669; margin-bottom:4px;">✓ In-Browser Free Access</div>
                 <ul style="padding-left:16px; color:#475569; line-height:1.45;">
-                  <li>✓ In-browser CSV validation</li>
-                  <li>✓ Top 3 findings preview</li>
-                  <li>✓ General savings estimate</li>
+                  <li>✓ Zero-transit client RAM processing</li>
+                  <li>✓ Full findings unmasked &amp; scored</li>
+                  <li>✓ Validated PowerShell script generation</li>
+                  <li>✓ Executive PDF &amp; CSV export</li>
                 </ul>
               </div>
               <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-sm); padding:10px 14px;">
-                <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">Single Audit Package ($39)</div>
+                <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">★ Enterprise Advisory Support</div>
                 <ul style="padding-left:16px; color:#1E3A8A; line-height:1.45;">
-                  <li>★ <strong>Full 9+ findings unmasked</strong></li>
-                  <li>★ <strong>Production PowerShell scripts</strong> (Graph SkuIds)</li>
-                  <li>★ <strong>Audit-ready Executive CFO PDF</strong></li>
-                  <li>★ <strong>14-day technical email support</strong></li>
+                  <li>★ Assisted dry-run &amp; tenant remediation</li>
+                  <li>★ Custom PowerShell runbooks</li>
+                  <li>★ Litigation Hold &amp; Purview review</li>
+                  <li>★ Direct guidance from Satya Pathak</li>
                 </ul>
               </div>
             </div>
           </div>
 
           <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-sm); padding:20px; text-align:center; min-width:240px; box-shadow:var(--shadow-subtle);">
-            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">License Scope</div>
-            <div style="font-size:0.85rem; font-weight:700; color:var(--text-main); margin-top:2px;">1 Verified Tenant Domain</div>
-            <div style="font-size:2.2rem; font-weight:800; color:var(--text-main); margin:10px 0 2px;">$39</div>
-            <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:14px;">1-time payment &bull; Non-recurring</div>
-            <a href="checkout.html?plan=single" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px; font-size:0.85rem;">
-              Unlock Full Package ($39) →
+            <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Community Status</div>
+            <div style="font-size:0.85rem; font-weight:700; color:#059669; margin-top:2px;">100% Free &amp; Open Access</div>
+            <div style="font-size:2.2rem; font-weight:800; color:var(--text-main); margin:10px 0 2px;">$0</div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:14px;">No credit card or registration required</div>
+            <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; padding:10px; font-size:0.85rem;">
+              Request Enterprise Advisory →
             </a>
-            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:8px;">14-day money-back guarantee</div>
+            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:8px;">Custom scoping &amp; engineering guidance</div>
           </div>
         </div>
       </div>
@@ -785,16 +786,24 @@
   </div>
 
   <!-- Corporate Footer -->
-  <footer class="enterprise-footer">
-    <div>
-      <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.
+  <footer class="enterprise-footer" style="padding: 24px 24px 32px; background: white; border-top: 1px solid var(--border);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
+      <div>
+        <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.<br>
+        <span style="font-size:0.78rem; color:var(--text-muted);">
+          Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India &bull; Grievance Contact: <a href="mailto:grievance@skypeexchange4u.com" style="color:var(--primary);">grievance@skypeexchange4u.com</a> &bull; GST Exempt (Sec 22 CGST Act 2017).
+        </span>
+      </div>
+      <div style="display:flex; gap:16px; font-size:0.82rem; flex-wrap:wrap;">
+        <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Public Landing Page</a>
+        <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
+        <a href="privacy.html" style="color:var(--text-muted); text-decoration:none;">DPDP Privacy Policy</a>
+        <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
+        <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Enterprise Advisory</a>
+      </div>
     </div>
-    <div style="display:flex; gap:16px;">
-      <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Public Landing Page</a>
-      <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
-      <a href="terms.html#terms" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
-      <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Privacy Policy</a>
-      <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Activate License ($39)</a>
+    <div style="font-size:0.72rem; color:var(--text-subtle); line-height:1.5; border-top:1px solid var(--border-light); padding-top:12px;">
+      <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
     </div>
   </footer>
 

@@ -427,7 +427,7 @@
         Explore Live Demo
       </a>
       <a href="checkout.html" class="btn btn-primary" style="font-size:0.78rem;">
-        Activate License ($39)
+        Enterprise Advisory
       </a>
     </div>
   </header>
@@ -612,88 +612,89 @@
   </section>
 
   <!-- Customer Reviews & Social Proof Section -->
-  <section class="landing-section" id="reviews" style="background:#F8FAFC; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
-    <div class="section-eyebrow">Peer Reviews &amp; Social Proof</div>
-    <div class="section-headline">Trusted by Microsoft 365 Consultants &amp; FinOps Leads</div>
+  <!-- Engineering Use Cases & Scenarios Section -->
+  <section class="landing-section" id="use-cases" style="background:#F8FAFC; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Practical Applications</div>
+    <div class="section-headline">Architected for Microsoft 365 Administrators &amp; FinOps Teams</div>
     <div class="section-desc">
-      Independent Microsoft consultants and infrastructure teams use CloudTrim to deliver rapid, audit-ready cost recovery without third-party security exposure.
+      Solve the most common recurring cloud cost drivers without granting third-party OAuth apps persistent access to your directory.
     </div>
 
-    <!-- Summary Bar -->
+    <!-- Architectural Guarantees Bar -->
     <div class="reviews-summary-bar">
-      <div class="reviews-summary-rating">
-        <div class="stars-large">★★★★★</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.2rem;">🛡️</span>
         <div>
-          <strong style="font-size:1rem; color:var(--text-main);">4.9 / 5.0 Rating</strong>
-          <span style="font-size:0.78rem; color:var(--text-muted); margin-left:6px;">from 40+ Verified Assessments</span>
+          <strong style="font-size:0.95rem; color:var(--text-main);">Zero-Server Privacy Guarantee</strong>
+          <span style="font-size:0.78rem; color:var(--text-muted); margin-left:6px;">All processing executed in client RAM</span>
         </div>
       </div>
-      <div style="display:flex; gap:16px; font-size:0.76rem; color:var(--text-muted);">
-        <span>🛡️ <strong>100% Client-Side RAM</strong></span>
-        <span>•</span>
+      <div style="display:flex; gap:16px; font-size:0.76rem; color:var(--text-muted); flex-wrap:wrap;">
         <span>🔒 <strong>No Global Admin Grants</strong></span>
         <span>•</span>
-        <span>⚡ <strong>Under 60s Discovery</strong></span>
+        <span>⚡ <strong>Instant HTML5 Ingestion</strong></span>
+        <span>•</span>
+        <span>📑 <strong>Safe -WhatIf Scripts</strong></span>
       </div>
     </div>
 
     <div class="reviews-grid">
-      <!-- Review 1: MSP Consultant -->
+      <!-- Scenario 1: M365 Offboarding -->
       <div class="review-card">
         <div>
           <div class="review-top">
-            <span class="review-stars">★★★★★</span>
-            <span class="review-verified">✓ Verified Consultant</span>
+            <span style="font-weight:700; font-size:0.88rem; color:var(--primary);">Use Case 01</span>
+            <span class="review-verified">M365 Licensing</span>
           </div>
           <p class="review-quote">
-            "We audited an export from a 380-seat client and identified 12 disabled accounts with active E5 licenses within 30 seconds. That was £410/month in recurring savings. Because it runs strictly in browser RAM, I didn’t have to wait 3 weeks for client infosec approval to grant third-party OAuth app permissions."
+            <strong>Orphaned License Reclamation:</strong> Disabled Entra ID accounts frequently retain paid E3/E5 suites after employee departures. CloudTrim cross-references <code>AccountEnabled -eq $false</code> against assigned SKUs, instantly calculating run-rate waste and generating scoped PowerShell removal commands.
           </p>
         </div>
         <div class="review-author">
-          <div class="author-avatar" style="background:#1E3A8A;">LH</div>
+          <div class="author-avatar" style="background:#1E3A8A;">M3</div>
           <div>
-            <div class="author-meta-name">Liam Henderson</div>
-            <div class="author-meta-role">Lead M365 Architect &bull; UK Managed Services (30+ Tenants)</div>
+            <div class="author-meta-name">M365 Tenant Hygiene</div>
+            <div class="author-meta-role">Disabled accounts &bull; Inactive users &bull; Shared mailboxes</div>
           </div>
         </div>
       </div>
 
-      <!-- Review 2: Fractional CIO / FinOps -->
+      <!-- Scenario 2: Azure Infrastructure -->
       <div class="review-card">
         <div>
           <div class="review-top">
-            <span class="review-stars">★★★★★</span>
-            <span class="review-verified">✓ Verified FinOps Buyer</span>
+            <span style="font-weight:700; font-size:0.88rem; color:var(--primary);">Use Case 02</span>
+            <span class="review-verified">Azure Infrastructure</span>
           </div>
           <p class="review-quote">
-            "Most SaaS cost tools require persistent read/write Azure and Entra ID app credentials and charge a recurring monthly percentage. CloudTrim’s zero-server model is refreshingly transparent. The CFO executive summary gave our leadership team immediate clarity, paying for the license 25x over on day one."
+            <strong>Unattached Disk &amp; Idle Compute Recovery:</strong> Premium and Standard SSD managed disks detached during VM decommissions continue billing monthly capacity. CloudTrim detects unattached disks and empty App Service plans, formatting itemized savings with safe verification.
           </p>
         </div>
         <div class="review-author">
-          <div class="author-avatar" style="background:#047857;">RV</div>
+          <div class="author-avatar" style="background:#047857;">AZ</div>
           <div>
-            <div class="author-meta-name">Rachel Vance</div>
-            <div class="author-meta-role">Fractional CIO &bull; Enterprise FinOps Advisory</div>
+            <div class="author-meta-name">Azure FinOps Governance</div>
+            <div class="author-meta-role">Managed disks &bull; App Service plans &bull; Static public IPs</div>
           </div>
         </div>
       </div>
 
-      <!-- Review 3: Infrastructure Lead -->
+      <!-- Scenario 3: Safe PowerShell Remediation -->
       <div class="review-card">
         <div>
           <div class="review-top">
-            <span class="review-stars">★★★★★</span>
-            <span class="review-verified">✓ Verified SysAdmin</span>
+            <span style="font-weight:700; font-size:0.88rem; color:var(--primary);">Use Case 03</span>
+            <span class="review-verified">Production Safety</span>
           </div>
           <p class="review-quote">
-            "The mandatory review checklist is brilliant. Other tools generate destructive scripts that blindly delete unattached disks. CloudTrim verifies Azure Resource Locks and provides safe <code>-WhatIf</code> dry-runs by default with exact Microsoft SkuIds, so our engineering team had total peace of mind."
+            <strong>Deterministic Script Generation:</strong> Avoid destructive scripts. CloudTrim produces PowerShell that references exact Microsoft Graph SkuId GUIDs, includes dry-run <code>-WhatIf</code> flags by default, verifies resource lock status, and outputs audit transcripts.
           </p>
         </div>
         <div class="review-author">
-          <div class="author-avatar" style="background:#B45309;">MT</div>
+          <div class="author-avatar" style="background:#B45309;">PS</div>
           <div>
-            <div class="author-meta-name">Marcus Thorne</div>
-            <div class="author-meta-role">Senior Infrastructure Engineer &bull; CloudTech Operations</div>
+            <div class="author-meta-name">PowerShell Remediation</div>
+            <div class="author-meta-role">Exact SkuIds &bull; -WhatIf dry-runs &bull; Start-Transcript logging</div>
           </div>
         </div>
       </div>
@@ -746,86 +747,51 @@
     </div>
   </section>
 
-  <!-- Pricing -->
+  <!-- Access Models -->
   <section class="landing-section" id="pricing">
-    <div class="section-eyebrow">Commercial Tiers</div>
-    <div class="section-headline">Transparent, Predictable Pricing</div>
+    <div class="section-eyebrow">Access Models</div>
+    <div class="section-headline">Transparent Access &amp; Engagement Models</div>
     <div class="section-desc">
-      Pay once for an immediate cleanup, or subscribe for monthly drift tracking and automation.
+      Use our free, client-side community tool for instant self-service audits, or engage our engineering team for assisted enterprise remediation.
     </div>
 
-    <div class="pricing-grid">
-      <!-- Tier 0: Free Demo -->
-      <div class="pricing-card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; max-width:880px; margin:0 auto;">
+      <!-- Tier 1: Free Community Edition -->
+      <div class="pricing-card featured" style="border:2px solid #059669; padding:32px 28px;">
+        <span class="popular-tag" style="background:#059669;">100% Free Public Beta</span>
         <div>
-          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Free Preview</div>
-          <div class="price-num">$0</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Explore sample workspace</div>
+          <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">Community Edition</div>
+          <div class="price-num" style="color:#059669;">$0</div>
+          <div style="font-size:0.78rem; color:var(--text-muted);">Self-service &bull; No card or registration required</div>
           <ul class="pricing-features">
-            <li>✓ Full interactive demo console</li>
-            <li>✓ CSV format inspection</li>
-            <li>✓ Downloadable sample CSV files</li>
-            <li>✓ In-browser calculations</li>
+            <li>✓ <strong>100% Client-Side In-Memory Processing:</strong> Zero server transits.</li>
+            <li>✓ <strong>Full Unmasked Findings:</strong> M365 orphaned seats &amp; Azure idle assets.</li>
+            <li>✓ <strong>Production PowerShell Scripts:</strong> Exact Microsoft SkuId GUIDs.</li>
+            <li>✓ <strong>Preflight Safety:</strong> Safe <code>-WhatIf</code> dry-runs &amp; transcript logging.</li>
+            <li>✓ <strong>Audit Reports:</strong> Executive CFO PDF and Raw CSV export.</li>
           </ul>
         </div>
-        <a href="index.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
-          Launch Demo Console
+        <a href="index.html" class="btn btn-primary" style="width:100%; justify-content:center; font-size:0.9rem; padding:12px; background:#059669; border-color:#059669;">
+          Launch Free Audit Console →
         </a>
       </div>
 
-      <!-- Tier 1: Single Audit ($39) -->
-      <div class="pricing-card featured">
-        <span class="popular-tag">Most Popular</span>
+      <!-- Tier 2: Enterprise Advisory -->
+      <div class="pricing-card" style="padding:32px 28px;">
         <div>
-          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Single Tenant Package</div>
-          <div class="price-num">$39</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">One-time payment per tenant</div>
+          <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">Enterprise Advisory</div>
+          <div class="price-num">Custom</div>
+          <div style="font-size:0.78rem; color:var(--text-muted);">Assisted consulting &bull; Statement of Work</div>
           <ul class="pricing-features">
-            <li>✓ Full remediation script unlock</li>
-            <li>✓ Exact Microsoft SkuId resolution</li>
-            <li>✓ Audit-ready Executive CFO PDF report</li>
-            <li>✓ Preflight checks &amp; transcript logs</li>
-            <li>✓ 14-day execution email support</li>
+            <li>★ <strong>Assisted Tenant Remediation:</strong> Pre-execution dry-run validation.</li>
+            <li>★ <strong>Custom PowerShell Runbooks:</strong> Tailored for enterprise change windows.</li>
+            <li>★ <strong>Hold &amp; Retention Checks:</strong> Litigation Hold &amp; Purview validation.</li>
+            <li>★ <strong>Multi-Tenant MSP Architecture:</strong> Scaled scheduled governance.</li>
+            <li>★ <strong>Direct Engineering Guidance:</strong> Handled by Satya Pathak.</li>
           </ul>
         </div>
-        <a href="checkout.html" class="btn btn-primary" style="width:100%; justify-content:center; font-size:0.8rem;">
-          Activate License ($39)
-        </a>
-      </div>
-
-      <!-- Tier 2: Continuous Pro ($19/mo) -->
-      <div class="pricing-card">
-        <div>
-          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Continuous Pro</div>
-          <div class="price-num">$19<span style="font-size:0.9rem; font-weight:normal; color:var(--text-muted);">/mo</span></div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Monthly recurring drift tracking</div>
-          <ul class="pricing-features">
-            <li>✓ Month-over-month drift engine</li>
-            <li>✓ Automated Windows Task Scheduler scripts</li>
-            <li>✓ Continuously updated SKU definitions</li>
-            <li>✓ Monthly email summary digests</li>
-          </ul>
-        </div>
-        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
-          Subscribe Pro ($19/mo)
-        </a>
-      </div>
-
-      <!-- Tier 3: MSP Partner ($69/mo) -->
-      <div class="pricing-card">
-        <div>
-          <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">MSP Partner</div>
-          <div class="price-num">$69<span style="font-size:0.9rem; font-weight:normal; color:var(--text-muted);">/mo</span></div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Unlimited client tenants</div>
-          <ul class="pricing-features">
-            <li>✓ Unlimited client tenant audits</li>
-            <li>✓ White-label client PDF reports</li>
-            <li>✓ Multi-tenant automation scripts</li>
-            <li>✓ Priority engineering support channel</li>
-          </ul>
-        </div>
-        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.8rem;">
-          Join MSP Partner ($69/mo)
+        <a href="checkout.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:0.9rem; padding:12px;">
+          Request Enterprise Advisory →
         </a>
       </div>
     </div>
@@ -835,30 +801,42 @@
   <section class="landing-section" style="padding-top:20px; padding-bottom:40px;">
     <div style="background:white; border:1px solid var(--border); border-radius:var(--radius); padding:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
       <div>
-        <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">Enterprise Support &amp; Operator Details</h3>
-        <p style="font-size:0.85rem; color:var(--text-muted);">
-          Operated by <strong>Satya Pathak</strong> in partnership with <strong>skypeexchange4u.com</strong>.
-          Direct engineering support: <strong>support@skypeexchange4u.com</strong> &bull; 14-day money-back guarantee on all licenses.
+        <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:4px;">Enterprise Operator &amp; Compliance Details</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+          Operated by <strong>Satya Pathak</strong> (SkypeExchange4U), New Delhi, India.<br>
+          Direct engineering support: <strong>support@skypeexchange4u.com</strong> &bull; DPDP Grievance Contact: <strong>grievance@skypeexchange4u.com</strong> &bull; GST Exempt (Sec 22 CGST Act 2017).
         </p>
       </div>
-      <div style="display:flex; gap:12px;">
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
         <a href="security.html" class="btn btn-secondary" style="font-size:0.8rem;">Security Spec</a>
-        <a href="terms.html" class="btn btn-secondary" style="font-size:0.8rem;">Terms &amp; Policies</a>
+        <a href="privacy.html" class="btn btn-secondary" style="font-size:0.8rem;">DPDP Privacy</a>
+        <a href="terms.html" class="btn btn-secondary" style="font-size:0.8rem;">Terms of Service</a>
       </div>
     </div>
   </section>
 
   <!-- Corporate Footer -->
-  <footer class="enterprise-footer">
-    <div>
-      <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.
-    </div>
-    <div style="display:flex; gap:16px;">
-      <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Overview</a>
-      <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Audit Console</a>
-      <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
-      <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
-      <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Activate License ($39)</a>
+  <footer class="enterprise-footer" style="padding: 28px 24px 36px; background: white; border-top: 1px solid var(--border);">
+    <div style="max-width:1160px; margin:0 auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:16px;">
+        <div>
+          <strong>CloudTrim Enterprise</strong> &bull; Zero-Server In-Memory Data Minimization Architecture.<br>
+          <span style="font-size:0.78rem; color:var(--text-muted);">
+            Operated by Satya Pathak (SkypeExchange4U), New Delhi, India &bull; Grievance Contact: grievance@skypeexchange4u.com
+          </span>
+        </div>
+        <div style="display:flex; gap:16px; font-size:0.82rem; flex-wrap:wrap;">
+          <a href="landing.html" style="color:var(--text-muted); text-decoration:none;">Overview</a>
+          <a href="index.html" style="color:var(--text-muted); text-decoration:none;">Audit Console</a>
+          <a href="security.html" style="color:var(--text-muted); text-decoration:none;">Security &amp; Architecture</a>
+          <a href="privacy.html" style="color:var(--text-muted); text-decoration:none;">DPDP Privacy Policy</a>
+          <a href="terms.html" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
+          <a href="checkout.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Enterprise Advisory</a>
+        </div>
+      </div>
+      <div style="font-size:0.72rem; color:var(--text-subtle); line-height:1.55; border-top:1px solid var(--border-light); padding-top:14px;">
+        <strong>Trademark &amp; Non-Affiliation Disclaimer:</strong> Microsoft, Microsoft 365, Azure, Entra, and Contoso are trademarks or registered trademarks of Microsoft Corporation in the United States and other countries. CloudTrim and SkypeExchange4U are independent software solutions operated by Satya Pathak and are not affiliated with, endorsed by, sponsored by, or associated with Microsoft Corporation. Contoso is used solely as an illustrative sample dataset for demonstration purposes.
+      </div>
     </div>
   </footer>
 
