@@ -2139,6 +2139,34 @@ function completeLogin(email) {
     adminConsoleLink.style.display = isBackendAdmin ? 'flex' : 'none';
   }
 
+  // Persist registered user locally for admin console monitoring
+  try {
+    const rawUsers = localStorage.getItem('cloudtrim_registered_users');
+    const usersList = rawUsers ? JSON.parse(rawUsers) : [];
+    const existingIdx = usersList.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+    const tenantDomain = email.includes('@') ? email.split('@')[1] : 'contoso.onmicrosoft.com';
+    const nowIso = new Date().toISOString();
+
+    if (existingIdx >= 0) {
+      usersList[existingIdx].lastLogin = nowIso;
+      usersList[existingIdx].loginCount = (usersList[existingIdx].loginCount || 1) + 1;
+    } else {
+      usersList.push({
+        email: email,
+        tenant: tenantDomain,
+        role: isBackendAdmin ? 'Super Administrator' : 'Tenant Administrator',
+        mfaStatus: 'Active (TOTP/Email OTP)',
+        registeredAt: nowIso,
+        lastLogin: nowIso,
+        loginCount: 1
+      });
+    }
+    localStorage.setItem('cloudtrim_registered_users', JSON.stringify(usersList));
+  } catch (err) {
+    console.warn('[UserRegistry] Failed to save user', err);
+  }
+
+  Telemetry.track('user_authenticated', { role: isBackendAdmin ? 'admin' : 'tenant_admin' });
   showToast(`✓ Authenticated as ${email} &bull; 🔒 MFA Verified`);
 }
 

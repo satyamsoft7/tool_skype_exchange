@@ -213,7 +213,7 @@
         </div>
         <div class="admin-menu-item" id="tab-users" onclick="switchAdminTab('users')">
           <span>👥 User Accounts &amp; MFA</span>
-          <span class="nav-badge">142</span>
+          <span class="nav-badge" id="badgeUsersCount">4</span>
         </div>
         <div class="admin-menu-item" id="tab-queries" onclick="switchAdminTab('queries')">
           <span>📩 User Inquiries &amp; Tickets</span>
@@ -616,6 +616,52 @@
       }
     }
 
+    function loadAdminUsers() {
+      const defaultUsers = [
+        { email: 'satya@skypeexchange4u.com', tenant: 'skypeexchange4u.com', role: 'Super Administrator', mfaStatus: 'Active (TOTP/FIDO2)', lastLogin: 'Today, 15:40' },
+        { email: 'admin@contoso.com', tenant: 'contoso.onmicrosoft.com', role: 'Tenant Admin', mfaStatus: 'Active (TOTP)', lastLogin: 'Today, 14:22' },
+        { email: 'david.miller@fabrikam.com', tenant: 'fabrikam.onmicrosoft.com', role: 'MSP Lead', mfaStatus: 'Active (Email)', lastLogin: 'Yesterday' },
+        { email: 'finance@adatum.com', tenant: 'adatum.onmicrosoft.com', role: 'Auditor', mfaStatus: 'Pending Activation', lastLogin: '3 days ago' }
+      ];
+
+      let storedUsers = [];
+      try {
+        const raw = localStorage.getItem('cloudtrim_registered_users');
+        storedUsers = raw ? JSON.parse(raw) : [];
+      } catch (err) {}
+
+      // Combine stored registered users with default directories (no duplicates)
+      const combined = [...storedUsers, ...defaultUsers.filter(d => !storedUsers.some(s => s.email.toLowerCase() === d.email.toLowerCase()))];
+
+      const badgeUsers = document.getElementById('badgeUsersCount');
+      if (badgeUsers) badgeUsers.textContent = combined.length;
+
+      const tbody = document.getElementById('adminUsersTbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = combined.map(u => {
+        const lastLoginStr = u.lastLogin && u.lastLogin.includes('T') ? new Date(u.lastLogin).toLocaleString() : u.lastLogin;
+        const isMfaActive = u.mfaStatus && (u.mfaStatus.includes('Active') || u.mfaStatus.includes('TOTP'));
+        const mfaBadge = isMfaActive
+          ? `<span class="badge" style="background:#DCFCE7; color:#15803D;">MFA Active</span>`
+          : `<span class="badge" style="background:#FEE2E2; color:#B91C1C;">MFA Pending</span>`;
+
+        return `
+          <tr>
+            <td><strong>${u.email}</strong></td>
+            <td>${u.tenant || '—'}</td>
+            <td><span class="badge badge-neutral">${u.role || 'Tenant Admin'}</span></td>
+            <td>${mfaBadge}</td>
+            <td style="font-size:0.78rem; color:var(--text-muted);">${lastLoginStr}</td>
+            <td>
+              <button class="action-btn-sm" onclick="sendOtpTrigger('${u.email}')">Send OTP</button>
+              <button class="action-btn-sm" onclick="resetMfa('${u.email}')">Reset MFA</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     function filterAdminUsers(term) {
       const rows = document.querySelectorAll('#adminUsersTbody tr');
       rows.forEach(r => {
@@ -624,15 +670,32 @@
     }
 
     function showAddUserModal() {
-      const email = prompt("Enter administrative user work email to invite:");
+      const email = prompt("Enter administrative user work email to invite / register:");
       if (email && email.includes('@')) {
-        alert(`Invitation link and temporary OTP dispatched to: ${email}`);
+        const tenantDomain = email.split('@')[1];
+        try {
+          const raw = localStorage.getItem('cloudtrim_registered_users');
+          const list = raw ? JSON.parse(raw) : [];
+          list.unshift({
+            email: email,
+            tenant: tenantDomain,
+            role: 'Tenant Admin',
+            mfaStatus: 'Pending Activation',
+            registeredAt: new Date().toISOString(),
+            lastLogin: 'Never (Invited)',
+            loginCount: 0
+          });
+          localStorage.setItem('cloudtrim_registered_users', JSON.stringify(list));
+        } catch (err) {}
+        loadAdminUsers();
+        alert(`✓ User account created for ${email}. Invitation link & temporary OTP dispatched.`);
       }
     }
 
     // Auto-load on page initialization
     window.addEventListener('DOMContentLoaded', () => {
       loadTelemetryEvents();
+      loadAdminUsers();
     });
   </script>
 
