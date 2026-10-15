@@ -338,13 +338,13 @@
         </div>
 
         <div class="header-actions-group">
-          <button class="btn btn-outline" onclick="window.print()">
+          <button class="btn btn-outline" onclick="window.print()" title="Board-ready 2-page executive deliverable for C-suite &amp; FinOps leaders">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-            Executive PDF
+            Executive PDF (C-Suite)
           </button>
-            <button class="btn btn-outline" onclick="exportAuditCSV()" title="Download reconciled findings CSV">
+          <button class="btn btn-primary" onclick="exportAuditCSV()" title="Action-oriented granular inventory for IT engineering &amp; 1k-100k account scale (Excel / PowerBI / ITSM)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export Raw CSV
+            Action CSV (Engineers / 1k–100k)
           </button>
         </div>
       </div>
@@ -493,6 +493,118 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
       </div>
 
       <!-- ==================================================================== -->
+      <!-- SECTION 2: EXECUTIVE VISUAL INTELLIGENCE (CHARTS) -->
+      <!-- ==================================================================== -->
+      <div class="charts-grid-layout" id="executiveChartsLayout">
+        <!-- Horizontal Bar Chart -->
+        <div class="chart-panel-card">
+          <div class="chart-heading-group">
+            <div class="chart-title">Where Savings Come From</div>
+            <span style="font-size:0.78rem; color:var(--text-muted);">Potential Monthly Recovery ($/mo)</span>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="chartHorizontalSavings"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut Ratio Chart (Amber for Fair Governance Score) -->
+        <div class="chart-panel-card">
+          <div class="chart-heading-group">
+            <div class="chart-title">Efficiency Ratio</div>
+            <span style="font-size:0.75rem; color:#B45309; font-weight:700;">9.9% Potential Savings (Fair Score)</span>
+          </div>
+          <div class="chart-container-box">
+            <canvas id="chartEfficiencyRatio"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month-over-Month (MoM) Comparative Audit Performance Panel -->
+      <div class="mom-comparison-panel" id="momComparisonPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <strong style="font-size:0.92rem; color:var(--text-main);">Month-over-Month (MoM) Comparative Audit Performance</strong>
+          </div>
+          <div style="font-size:0.76rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+            <span>Prior Baseline: <strong>September 2026</strong></span>
+            <span>&rarr;</span>
+            <span>Current Assessment: <strong id="momCurrentPeriodLabel">October 2026</strong></span>
+          </div>
+        </div>
+
+        <div class="mom-grid">
+          <!-- MoM Metric 1: Recurring Monthly Waste -->
+          <div class="mom-kpi-card">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Recurring Monthly Waste</div>
+            <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+              <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorWasteUSD">$869.30</span>
+              <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentWasteUSD">$556.90</span>
+            </div>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+              <span class="mom-delta-badge positive" id="momWasteDeltaBadge">
+                ▼ -$312.40 (-35.9%)
+              </span>
+              <span style="font-size:0.7rem; color:var(--text-muted);">Spend reclaimed</span>
+            </div>
+          </div>
+
+          <!-- MoM Metric 2: Tenant Governance Score -->
+          <div class="mom-kpi-card">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Governance Health Score</div>
+            <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+              <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorScore">68</span>
+              <span style="font-size:1.25rem; font-weight:800; color:#B45309;" id="momCurrentScore">74 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/100</span></span>
+            </div>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+              <span class="mom-delta-badge positive" id="momScoreDeltaBadge">
+                ▲ +6 pts (+8.8%)
+              </span>
+              <span style="font-size:0.7rem; color:var(--text-muted);">Health uplift</span>
+            </div>
+          </div>
+
+          <!-- MoM Metric 3: M365 Inefficient Seats -->
+          <div class="mom-kpi-card">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">M365 License Leak</div>
+            <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+              <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorM365">$285.00</span>
+              <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentM365">$171.00</span>
+            </div>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+              <span class="mom-delta-badge positive" id="momM365DeltaBadge">
+                ▼ -$114.00 (-40.0%)
+              </span>
+              <span style="font-size:0.7rem; color:var(--text-muted);">2 seats revoked</span>
+            </div>
+          </div>
+
+          <!-- MoM Metric 4: Azure Idle Assets -->
+          <div class="mom-kpi-card">
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Azure Idle Capacity</div>
+            <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
+              <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorAzure">$584.30</span>
+              <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentAzure">$385.90</span>
+            </div>
+            <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
+              <span class="mom-delta-badge positive" id="momAzureDeltaBadge">
+                ▼ -$198.40 (-34.0%)
+              </span>
+              <span style="font-size:0.7rem; color:var(--text-muted);">2 disks detached</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MoM Audit Trail Narrative -->
+        <div style="margin-top:12px; background:#F8FAFC; border-left:3px solid var(--savings-green); padding:8px 12px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.75rem; color:#334155; line-height:1.5;" id="momAuditTrailNarrative">
+          <strong>MoM Governance Progress:</strong> Reclaimed <strong>$312.40/mo ($3,748.80/yr)</strong> since September 2026 close after de-licensing offboarded staff and detaching legacy disks. Current audit identifies <strong>12 residual optimization candidates</strong> totaling <strong>$556.90/mo ($6,682.80/yr)</strong> awaiting remediation approval.
+        </div>
+      </div>
+
+      <!-- Formal Print Page Break: Page 1 concludes here for Executive PDF -->
+      <div class="print-page-break"></div>
+
+      <!-- ==================================================================== -->
       <!-- SECTION 2: FINDINGS TO REVIEW (SORTED BY POTENTIAL SAVINGS) -->
       <!-- ==================================================================== -->
       <div class="section-card" id="findingsDecisionSection">
@@ -521,6 +633,44 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
               <!-- Rendered dynamically by app.js (Sorted by potential savings) -->
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Enterprise Scale (1k - 100k) CSV Companion Callout Notice -->
+      <div class="print-enterprise-csv-callout" id="enterpriseCsvCallout" style="background:#F8FAFC; border:1px solid #CBD5E1; border-left:4px solid #2563EB; border-radius:var(--radius-sm); padding:12px 16px; margin:16px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:4px;">
+          <div style="display:flex; align-items:center; gap:6px; font-weight:700; font-size:0.8rem; color:#1E3A8A; text-transform:uppercase; letter-spacing:0.04em;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#2563EB" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Enterprise Scale Architecture (1,000 – 100,000+ Identities &amp; Cloud Assets)
+          </div>
+          <button type="button" class="btn btn-outline" style="font-size:0.72rem; padding:3px 8px;" onclick="exportAuditCSV()">
+            Export Full Action CSV →
+          </button>
+        </div>
+        <p style="font-size:0.76rem; color:#334155; line-height:1.45; margin:0;">
+          <strong>Executive Synthesis vs. Granular Inventory:</strong> To maintain strict C-level clarity and avoid multi-hundred-page documents for large tenants, this Executive PDF report synthesizes macro financials, visual distribution, and critical priority decisions. The complete, low-level action-oriented inventory containing all itemized identities, exact Microsoft SkuId GUIDs, mailbox hold statuses, and Azure resource paths is exported via the companion <strong>Action-Oriented Audit CSV</strong> for IT engineering execution, PowerBI dashboards, and automated ITSM ticketing (ServiceNow / Jira).
+        </p>
+      </div>
+
+      <!-- Corporate Audit Verification & Sign-off Block (Positioned at conclusion of Executive Report) -->
+      <div class="executive-signoff-card" id="executiveSignoffCard">
+        <div class="signoff-title">Audit Governance &amp; Change Authorization</div>
+        <p class="signoff-note">
+          This assessment was generated locally via client-side metadata analysis. Before executing license de-allocations or resource deletions in Microsoft 365 or Azure, the administrative change owner must verify data retention and legal hold eligibility.
+        </p>
+        <div class="signoff-signatures-grid">
+          <div class="signoff-box">
+            <div class="signoff-role">FinOps / Cost Owner Sign-Off</div>
+            <div class="signoff-line">Name: ___________________________</div>
+            <div class="signoff-line">Signature: ______________________</div>
+            <div class="signoff-line">Date: ___________________________</div>
+          </div>
+          <div class="signoff-box">
+            <div class="signoff-role">M365 / Azure Global Admin Sign-Off</div>
+            <div class="signoff-line">Name: ___________________________</div>
+            <div class="signoff-line">Signature: ______________________</div>
+            <div class="signoff-line">Date: ___________________________</div>
+          </div>
         </div>
       </div>
 
@@ -667,138 +817,9 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
             <span style="font-size:0.74rem; color:#B45309;" id="pendingReviewCount">12 items awaiting admin confirmation</span>
           </div>
         </div>
-
-        <!-- Month-over-Month (MoM) Governance & Spend Comparison Panel -->
-        <div class="mom-comparison-panel" id="momComparisonPanel">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              <strong style="font-size:0.92rem; color:var(--text-main);">Month-over-Month (MoM) Comparative Audit Performance</strong>
-            </div>
-            <div style="font-size:0.76rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
-              <span>Prior Baseline: <strong>September 2026</strong></span>
-              <span>&rarr;</span>
-              <span>Current Assessment: <strong id="momCurrentPeriodLabel">October 2026</strong></span>
-            </div>
-          </div>
-
-          <div class="mom-grid">
-            <!-- MoM Metric 1: Recurring Monthly Waste -->
-            <div class="mom-kpi-card">
-              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Recurring Monthly Waste</div>
-              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
-                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorWasteUSD">$869.30</span>
-                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentWasteUSD">$556.90</span>
-              </div>
-              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-                <span class="mom-delta-badge positive" id="momWasteDeltaBadge">
-                  ▼ -$312.40 (-35.9%)
-                </span>
-                <span style="font-size:0.7rem; color:var(--text-muted);">Spend reclaimed</span>
-              </div>
-            </div>
-
-            <!-- MoM Metric 2: Tenant Governance Score -->
-            <div class="mom-kpi-card">
-              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Governance Health Score</div>
-              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
-                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorScore">68</span>
-                <span style="font-size:1.25rem; font-weight:800; color:#B45309;" id="momCurrentScore">74 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/100</span></span>
-              </div>
-              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-                <span class="mom-delta-badge positive" id="momScoreDeltaBadge">
-                  ▲ +6 pts (+8.8%)
-                </span>
-                <span style="font-size:0.7rem; color:var(--text-muted);">Health uplift</span>
-              </div>
-            </div>
-
-            <!-- MoM Metric 3: M365 Inefficient Seats -->
-            <div class="mom-kpi-card">
-              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">M365 License Leak</div>
-              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
-                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorM365">$285.00</span>
-                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentM365">$171.00</span>
-              </div>
-              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-                <span class="mom-delta-badge positive" id="momM365DeltaBadge">
-                  ▼ -$114.00 (-40.0%)
-                </span>
-                <span style="font-size:0.7rem; color:var(--text-muted);">2 seats revoked</span>
-              </div>
-            </div>
-
-            <!-- MoM Metric 4: Azure Idle Assets -->
-            <div class="mom-kpi-card">
-              <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Azure Idle Capacity</div>
-              <div style="display:flex; align-items:baseline; gap:8px; margin-top:4px;">
-                <span style="font-size:0.88rem; color:var(--text-muted); text-decoration:line-through;" id="momPriorAzure">$584.30</span>
-                <span style="font-size:1.25rem; font-weight:800; color:var(--text-main);" id="momCurrentAzure">$385.90</span>
-              </div>
-              <div style="margin-top:6px; display:flex; align-items:center; gap:6px;">
-                <span class="mom-delta-badge positive" id="momAzureDeltaBadge">
-                  ▼ -$198.40 (-34.0%)
-                </span>
-                <span style="font-size:0.7rem; color:var(--text-muted);">2 disks detached</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- MoM Audit Trail Narrative -->
-          <div style="margin-top:12px; background:#F8FAFC; border-left:3px solid var(--savings-green); padding:8px 12px; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.75rem; color:#334155; line-height:1.5;" id="momAuditTrailNarrative">
-            <strong>MoM Governance Progress:</strong> Reclaimed <strong>$312.40/mo ($3,748.80/yr)</strong> since September 2026 close after de-licensing offboarded staff and detaching legacy disks. Current audit identifies <strong>12 residual optimization candidates</strong> totaling <strong>$556.90/mo ($6,682.80/yr)</strong> awaiting remediation approval.
-          </div>
-        </div>
-
-        <!-- Corporate Audit Verification & Sign-off Block (Visible in executive print report) -->
-        <div class="executive-signoff-card" id="executiveSignoffCard">
-          <div class="signoff-title">Audit Governance &amp; Change Authorization</div>
-          <p class="signoff-note">
-            This assessment was generated locally via client-side metadata analysis. Before executing license de-allocations or resource deletions in Microsoft 365 or Azure, the administrative change owner must verify data retention and legal hold eligibility.
-          </p>
-          <div class="signoff-signatures-grid">
-            <div class="signoff-box">
-              <div class="signoff-role">FinOps / Cost Owner Sign-Off</div>
-              <div class="signoff-line">Name: ___________________________</div>
-              <div class="signoff-line">Signature: ______________________</div>
-              <div class="signoff-line">Date: ___________________________</div>
-            </div>
-            <div class="signoff-box">
-              <div class="signoff-role">M365 / Azure Global Admin Sign-Off</div>
-              <div class="signoff-line">Name: ___________________________</div>
-              <div class="signoff-line">Signature: ______________________</div>
-              <div class="signoff-line">Date: ___________________________</div>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <!-- ==================================================================== -->
-      <!-- SECTION 5: SUPPORTING CHARTS -->
-      <!-- ==================================================================== -->
-      <div class="charts-grid-layout">
-        <!-- Horizontal Bar Chart -->
-        <div class="chart-panel-card">
-          <div class="chart-heading-group">
-            <div class="chart-title">Where Savings Come From</div>
-            <span style="font-size:0.78rem; color:var(--text-muted);">Potential Monthly Recovery ($/mo)</span>
-          </div>
-          <div class="chart-container-box">
-            <canvas id="chartHorizontalSavings"></canvas>
-          </div>
-        </div>
-
-        <!-- Donut Ratio Chart (Amber for Fair Governance Score) -->
-        <div class="chart-panel-card">
-          <div class="chart-heading-group">
-            <div class="chart-title">Efficiency Ratio</div>
-            <span style="font-size:0.75rem; color:#B45309; font-weight:700;">9.9% Potential Savings (Fair Score)</span>
-          </div>
-          <div class="chart-container-box">
-            <canvas id="chartEfficiencyRatio"></canvas>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- Supporting Details & Production Remediation Section -->
       <div class="section-card" id="supportingDetailsCard">

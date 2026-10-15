@@ -2501,36 +2501,141 @@ function initLicenseState() {
 }
 
 function exportAuditCSV() {
+  const escapeCsv = (val) => {
+    if (val === undefined || val === null) return '""';
+    const str = String(val).replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  const headers = [
+    "Category",
+    "Candidate_Identifier",
+    "Resource_Classification",
+    "Current_Status",
+    "Safety_Preflight_Verification",
+    "SkuId_GUID_or_ARM_Resource_ID",
+    "Monthly_Cost_Impact_USD",
+    "Annualized_Savings_USD",
+    "Action_Required",
+    "Priority_Classification",
+    "Tenant_Domain",
+    "Assessment_Date"
+  ];
+
   const rows = [];
-  rows.push("Category,Identifier,Status_Condition,Classification,Monthly_Impact_USD");
+  rows.push(headers.join(","));
 
-  // M365 Records
-  AppState.m365Records.forEach(r => {
-    const ident = r.upn;
-    const cond = r.state;
-    const cls = r.sku || r.skuPartNumber;
-    rows.push(`M365,"${ident}","${cond}","${cls}",${r.costUSD}`);
+  const tenantDomain = AppState.currentTenant || "contoso.onmicrosoft.com";
+  const assessmentDate = AppState.assessmentDate || new Date().toISOString().slice(0, 10);
+
+  // 1. M365 User & Mailbox License Records
+  (AppState.m365Records || []).forEach(r => {
+    const cat = "M365 Licenses";
+    const identifier = r.upn || r.name || "Unknown Identity";
+    const classification = r.sku || r.skuPartNumber || "Unassigned Sku";
+    const status = r.state || "Active License Allocated";
+    const preflight = r.holdCheck || (r.needsVerification ? "Requires Purview / Litigation Hold Verification" : "Verified Safe for License Revocation");
+    const skuOrArm = r.skuId || "N/A";
+    const costMonthly = Number(r.costUSD || 0).toFixed(2);
+    const costAnnual = (Number(r.costUSD || 0) * 12).toFixed(2);
+
+    let actionRequired = "Review identity licensing allocation";
+    const statusLower = (status || "").toLowerCase();
+    if (statusLower.includes("disabled")) {
+      actionRequired = "Revoke assigned SkuId license; verified disabled identity in Entra ID";
+    } else if (statusLower.includes("shared")) {
+      actionRequired = "Verify absence of Litigation Hold; convert mailbox to zero-cost shared entitlement";
+    } else if (statusLower.includes("inactive")) {
+      actionRequired = "Conduct 90-day inactivity review; downgrade or revoke unutilized seat";
+    } else if (r.governanceFinding) {
+      actionRequired = r.governanceFinding;
+    }
+
+    let priority = "P3 - Low Cost Optimization";
+    if (r.severity === "critical" || Number(r.costUSD) >= 30) {
+      priority = "P1 - High Immediate Impact";
+    } else if (r.severity === "inactive" || Number(r.costUSD) >= 15) {
+      priority = "P2 - Inactivity & Governance Review";
+    }
+
+    rows.push([
+      escapeCsv(cat),
+      escapeCsv(identifier),
+      escapeCsv(classification),
+      escapeCsv(status),
+      escapeCsv(preflight),
+      escapeCsv(skuOrArm),
+      costMonthly,
+      costAnnual,
+      escapeCsv(actionRequired),
+      escapeCsv(priority),
+      escapeCsv(tenantDomain),
+      escapeCsv(assessmentDate)
+    ].join(","));
   });
 
-  // Azure Records
-  AppState.azureRecords.forEach(a => {
-    const ident = a.name;
-    const cond = a.condition;
-    const cls = a.type;
-    rows.push(`Azure,"${ident}","${cond}","${cls}",${a.costUSD}`);
+  // 2. Azure Infrastructure Records
+  (AppState.azureRecords || []).forEach(a => {
+    const cat = "Azure Infrastructure";
+    const identifier = a.name || "Unknown Resource";
+    const classification = a.type || "Azure Asset";
+    const status = a.condition || "Orphaned / Idle";
+    const preflight = a.verifNote || (a.needsVerification ? "Requires Application Owner Approval" : "Verified Orphaned (ManagedBy/Binding is NULL)");
+    const skuOrArm = a.id || a.resourceId || "N/A";
+    const costMonthly = Number(a.costUSD || 0).toFixed(2);
+    const costAnnual = (Number(a.costUSD || 0) * 12).toFixed(2);
+
+    let actionRequired = "Inspect resource usage metrics; decommission idle Azure asset";
+    const typeLower = (classification || "").toLowerCase();
+    const condLower = (status || "").toLowerCase();
+    if (typeLower.includes("disk") || condLower.includes("unattached")) {
+      actionRequired = "Verify snapshot backups; safely delete orphaned unattached managed disk";
+    } else if (typeLower.includes("service plan") || condLower.includes("0 app")) {
+      actionRequired = "Decommission 0-app App Service Plan or downscale SKU tier";
+    } else if (typeLower.includes("public ip") || condLower.includes("unassociated")) {
+      actionRequired = "Release unassociated static public IP address back to Azure network pool";
+    }
+
+    let priority = "P3 - Low Cost Optimization";
+    if (Number(a.costUSD) >= 70) {
+      priority = "P1 - High Immediate Impact";
+    } else if (Number(a.costUSD) >= 20) {
+      priority = "P2 - Medium Cost Optimization";
+    }
+
+    rows.push([
+      escapeCsv(cat),
+      escapeCsv(identifier),
+      escapeCsv(classification),
+      escapeCsv(status),
+      escapeCsv(preflight),
+      escapeCsv(skuOrArm),
+      costMonthly,
+      costAnnual,
+      escapeCsv(actionRequired),
+      escapeCsv(priority),
+      escapeCsv(tenantDomain),
+      escapeCsv(assessmentDate)
+    ].join(","));
   });
 
-  const csvContent = rows.join("\n") + "\n";
+  const totalCount = (AppState.m365Records || []).length + (AppState.azureRecords || []).length;
+  const tenantSlug = (tenantDomain || "tenant").replace(/[^a-zA-Z0-9_-]/g, "_");
+  const nowIso = new Date().toISOString().slice(0, 10);
+  const fileName = `CloudTrim_Action_Oriented_Audit_${tenantSlug}_${nowIso}.csv`;
+
+  const csvContent = "\uFEFF" + rows.join("\r\n") + "\r\n"; // Include UTF-8 BOM for Microsoft Excel auto-encoding
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", "exported-results.csv");
+  link.setAttribute("download", fileName);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-  showToast(`✓ Exported ${AppState.m365Records.length + AppState.azureRecords.length} findings to exported-results.csv`);
+
+  showToast(`✓ Exported ${totalCount} action-oriented records to <strong>${fileName}</strong> for 1k–100k scale.`);
 }
 
 function showToast(msg) {
@@ -2561,4 +2666,16 @@ window.addEventListener('DOMContentLoaded', () => {
   if (window.location && window.location.search && window.location.search.includes('action=signin')) {
     openAuthModal('signin');
   }
+});
+
+
+// Chart.js Print Resize Handlers to eliminate canvas clipping in PDF exports
+window.addEventListener('beforeprint', () => {
+  if (horizontalBarChart) horizontalBarChart.resize();
+  if (donutRatioChart) donutRatioChart.resize();
+});
+
+window.addEventListener('afterprint', () => {
+  if (horizontalBarChart) horizontalBarChart.resize();
+  if (donutRatioChart) donutRatioChart.resize();
 });

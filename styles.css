@@ -1486,22 +1486,23 @@ tr:hover td { background: #FAFCFE; }
 }
 
 /* ==========================================================================
-   EXECUTIVE CORPORATE PRINT DELIVERABLE (BOARD & CFO STANDARD - NO CONSUMER PRICE)
+   EXECUTIVE CORPORATE PRINT DELIVERABLE (BOARD & CFO STANDARD - CRISP 2 PAGES)
    ========================================================================== */
 @media print {
   @page {
-    margin: 1.2cm 1cm;
-    size: auto;
+    margin: 8mm 10mm;
+    size: A4 portrait;
   }
   body {
     background: #FFFFFF !important;
     color: #0F172A !important;
-    font-size: 10pt;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
-  /* Strictly remove all marketing, freemium, checkout, pricing badges, and interactive controls */
+  /* Strictly remove all marketing, freemium, checkout, interactive tabs, and navigation */
   .global-header,
   .app-sidebar,
   .mobile-nav-bar,
@@ -1510,33 +1511,30 @@ tr:hover td { background: #FAFCFE; }
   .evidence-security-bar,
   .upload-panel-card,
   .upload-collapsed,
+  .upload-expanded,
   .header-actions-group,
   .upgrade-preview-card,
   .tabs-navigation-strip,
+  #supportingDetailsCard,
+  #tab-pane-m365,
+  #tab-pane-azure,
   #tab-pane-remediation,
+  #tab-pane-azure-connect,
   #tab-pane-automation,
+  .selected-actions-summary-card,
   .enterprise-footer,
   .toast-box,
   .btn,
   .table-search-wrap,
   .filter-pills-group,
   .modal-overlay,
-  .floating-whatsapp-btn {
+  .floating-whatsapp-btn,
+  .csv-guide-box,
+  .auth-modal-overlay,
+  .remediation-paywall-overlay,
+  .print-enterprise-csv-callout .btn,
+  details {
     display: none !important;
-  }
-
-  /* Show executive deliverable components */
-  .executive-print-header {
-    display: block !important;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #0F172A;
-  }
-
-  .executive-signoff-card {
-    display: block !important;
-    margin-top: 24px;
-    page-break-inside: avoid;
   }
 
   .app-layout {
@@ -1548,62 +1546,225 @@ tr:hover td { background: #FAFCFE; }
     margin: 0 !important;
   }
 
-  /* Corporate Card Stacking */
+  /* Page 1: Executive Cover Header */
+  .executive-print-header {
+    display: block !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 2px solid #0F172A !important;
+  }
+
+  /* Page 1: KPI Cards */
   .savings-cards-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 12px !important;
-    page-break-inside: avoid;
-    margin-bottom: 16px !important;
+    gap: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 8px !important;
   }
 
   .metric-card {
     border: 1px solid #CBD5E1 !important;
     background: #F8FAFC !important;
     box-shadow: none !important;
-    padding: 12px !important;
+    padding: 8px 10px !important;
+  }
+  .metric-card .metric-label {
+    font-size: 7pt !important;
+  }
+  .metric-card .metric-main-value {
+    font-size: 1.15rem !important;
+  }
+  .metric-card .metric-sub-value {
+    font-size: 7pt !important;
   }
 
   .methodology-bar {
     border: 1px solid #CBD5E1 !important;
     background: #FFFFFF !important;
-    padding: 8px 12px !important;
-    margin-bottom: 16px !important;
-    page-break-inside: avoid;
+    padding: 5px 8px !important;
+    font-size: 7pt !important;
+    margin-bottom: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
-  .section-card {
-    border: 1px solid #CBD5E1 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-    margin-bottom: 18px !important;
-  }
-
-  .selected-actions-summary-card {
-    border: 1px solid #CBD5E1 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-    margin-bottom: 18px !important;
-  }
-
-  .mom-comparison-panel {
-    border: 1px solid #CBD5E1 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-    margin-bottom: 18px !important;
-  }
-
+  /* Page 1: Executive Charts (Non-Clipping, Proportionally Scaled) */
   .charts-grid-layout {
     display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    page-break-inside: avoid;
-    margin-bottom: 18px !important;
+    grid-template-columns: 1.45fr 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 8px !important;
   }
 
   .chart-panel-card {
     border: 1px solid #CBD5E1 !important;
+    background: #FFFFFF !important;
     box-shadow: none !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .chart-heading-group {
+    margin-bottom: 6px !important;
+  }
+  .chart-title {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+  }
+
+  .chart-container-box {
+    height: 155px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .chart-container-box canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Page 1: Month-over-Month Comparative Audit Performance */
+  .mom-comparison-panel {
+    display: block !important;
+    border: 1px solid #CBD5E1 !important;
+    background: #FFFFFF !important;
+    padding: 8px 10px !important;
+    box-shadow: none !important;
+    margin-bottom: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .mom-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .mom-kpi-card {
+    border: 1px solid #E2E8F0 !important;
+    background: #F8FAFC !important;
+    padding: 6px 8px !important;
+  }
+
+  /* Formal Page Break for Crisp 2-Page Executive PDF */
+  .print-page-break {
+    page-break-after: always !important;
+    break-after: page !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  /* Page 2: Findings to Review (Top Prioritized Critical Drivers) */
+  #findingsDecisionSection {
+    display: block !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #findingsDecisionSection .section-card-header {
+    padding: 8px 12px !important;
+  }
+  #findingsDecisionSection .section-card-title {
+    font-size: 9.5pt !important;
+    font-weight: 700 !important;
+  }
+  #findingsDecisionSection .section-card-subtitle {
+    font-size: 7.2pt !important;
+  }
+
+  .decision-table {
+    font-size: 7.5pt !important;
+    width: 100% !important;
+  }
+  .decision-table th {
+    padding: 5px 8px !important;
+    font-size: 7pt !important;
+  }
+  .decision-table td {
+    padding: 6px 8px !important;
+  }
+
+  /* Page 2: Enterprise Scale CSV Companion Callout */
+  .print-enterprise-csv-callout {
+    display: block !important;
+    border: 1px solid #CBD5E1 !important;
+    border-left: 4px solid #2563EB !important;
+    background: #F8FAFC !important;
+    padding: 8px 12px !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Page 2: Formal Audit Governance & Change Authorization Sign-Off */
+  .executive-signoff-card {
+    display: block !important;
+    border: 1px solid #CBD5E1 !important;
+    background: #FFFFFF !important;
+    padding: 8px 12px !important;
+    margin-top: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .signoff-title {
+    font-size: 9.5pt !important;
+    font-weight: 700 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .signoff-note {
+    font-size: 7pt !important;
+    color: #475569 !important;
+    line-height: 1.35 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .signoff-signatures-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  .signoff-box {
+    border: 1px solid #CBD5E1 !important;
+    background: #F8FAFC !important;
+    padding: 6px 10px !important;
+  }
+
+  .signoff-role {
+    font-weight: 700 !important;
+    font-size: 7.5pt !important;
+    margin-bottom: 4px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    padding-bottom: 2px !important;
+  }
+
+  .signoff-line {
+    font-size: 7.2pt !important;
+    color: #334155 !important;
+    margin-top: 4px !important;
   }
 }
 
