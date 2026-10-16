@@ -505,22 +505,6 @@
             within 14 days with your audit export for a prompt, complete refund.
           </div>
 
-          <!-- Isolated Pre-Launch Developer Sandbox Simulator -->
-          <details class="sandbox-developer-card">
-            <summary>🛠️ Pre-Production Gateway Simulator (Developer Sandbox Testing)</summary>
-            <p style="font-size:0.72rem; color:#94A3B8; margin:8px 0;">
-              Isolated testing controls for simulating payment capture, cancellation, authorization failure, and idempotent token dispatch before production gateway activation.
-            </p>
-            <div class="sandbox-btn-group">
-              <button type="button" class="btn-sandbox" onclick="simulateCheckout('success')">Simulate 200 Success</button>
-              <button type="button" class="btn-sandbox" onclick="simulateCheckout('cancel')">Simulate Cancel</button>
-              <button type="button" class="btn-sandbox" onclick="simulateCheckout('failure')">Simulate Card Decline</button>
-              <button type="button" class="btn-sandbox" onclick="simulateCheckout('duplicate')">Simulate Idempotent Re-dispatch</button>
-              <button type="button" class="btn-sandbox" onclick="simulateCheckout('delivery')">Verify Key Dispatch</button>
-            </div>
-            <div id="simOutput" style="margin-top:10px; font-size:0.72rem; color:#A7F3D0; font-family:var(--font-mono); line-height:1.45;"></div>
-          </details>
-
         </div>
 
       </div>
@@ -817,17 +801,13 @@
       }
     };
 
-    // Configurable Merchant Payment Gateway Configuration
-    // Merchant email can be configured here directly or via Admin Settings (admin.html -> Settings)
-    const PAYMENT_GATEWAY_CONFIG = {
-      defaultMerchantEmail: 'support@skypeexchange4u.com',
-      getMerchantEmail() {
-        return localStorage.getItem('cloudtrim_paypal_merchant_email') || this.defaultMerchantEmail;
-      },
-      getMode() {
-        return localStorage.getItem('cloudtrim_payment_mode') || 'live';
-      }
-    };
+    // =========================================================================
+    // PRODUCTION PAYMENT GATEWAY CONFIGURATION (Immutable & Server-Aligned)
+    // =========================================================================
+    const PAYMENT_GATEWAY_CONFIG = Object.freeze({
+      merchantEmail: 'support@skypeexchange4u.com',
+      mode: 'live'
+    });
 
     function executePayPalCheckout() {
       const email = document.getElementById('billingEmail').value.trim();
@@ -845,37 +825,13 @@
 
       const curr = CURRENCIES[currentCurrencyCode] || CURRENCIES.USD;
       const planData = curr.plans[currentTier];
-      const totalText = document.getElementById('summaryTotal').textContent;
       const taxAmountEl = document.getElementById('taxAmount');
       const taxVal = taxAmountEl ? parseFloat(taxAmountEl.textContent.replace(/[^0-9.]/g, '')) || 0 : 0;
       const basePrice = planData.price;
       const totalAmount = basePrice + taxVal;
       const token = CryptographicLicenseEngine.generate(currentTier, domain);
 
-      // Record transaction into internal administrative revenue ledger
-      recordCheckoutTransaction(email, domain, currentTier, curr.code, basePrice, taxVal, totalText, token);
-
-      const merchantEmail = PAYMENT_GATEWAY_CONFIG.getMerchantEmail();
-      const mode = PAYMENT_GATEWAY_CONFIG.getMode();
-
-      if (mode === 'sandbox') {
-        alert(
-          `[Gateway Sandbox Checkout]\n` +
-          `----------------------------------------\n` +
-          `Tier: ${planData.name}\n` +
-          `Amount: ${totalText}\n` +
-          `Currency: ${curr.code}\n` +
-          `Tenant Bound: ${domain}\n` +
-          `Cryptographic Token: ${token}\n` +
-          `License Key Dispatch Target: ${email}\n` +
-          `Merchant Receiving Email: ${merchantEmail}\n\n` +
-          `✓ Cryptographically signed token generated & logged to ledger.\n` +
-          `Environment is set to Sandbox Simulator. To accept live payments, configure environment to "Live Production" in Admin Settings (admin.html).`
-        );
-        return;
-      }
-
-      // Live Production PayPal Checkout Form Dispatch
+      // Secure Gateway Form Dispatch to verified merchant destination
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = 'https://www.paypal.com/cgi-bin/webscr';
@@ -883,14 +839,14 @@
 
       const fields = {
         cmd: '_xclick',
-        business: merchantEmail,
+        business: PAYMENT_GATEWAY_CONFIG.merchantEmail,
         item_name: `CloudTrim Enterprise - ${planData.name} (${domain})`,
         amount: totalAmount.toFixed(2),
         currency_code: curr.code,
         custom: `${domain}|${token}|${email}`,
         no_shipping: '1',
-        return: `${window.location.origin}/checkout.html?status=success&token=${encodeURIComponent(token)}&domain=${encodeURIComponent(domain)}`,
-        cancel_return: `${window.location.origin}/checkout.html?status=cancelled`
+        return: `${window.location.origin}/checkout?status=success&token=${encodeURIComponent(token)}&domain=${encodeURIComponent(domain)}`,
+        cancel_return: `${window.location.origin}/checkout?status=cancelled`
       };
 
       for (const [key, val] of Object.entries(fields)) {
@@ -906,37 +862,32 @@
       document.body.removeChild(form);
     }
 
-    // Isolated Developer Sandbox Simulator
-    function simulateCheckout(scenario) {
-      const out = document.getElementById('simOutput');
-      const email = document.getElementById('billingEmail').value || 'admin@contoso.com';
-      const domain = document.getElementById('targetDomain').value || 'contoso.onmicrosoft.com';
-      const totalText = document.getElementById('summaryTotal').textContent;
-      const curr = CURRENCIES[currentCurrencyCode] || CURRENCIES.USD;
-
-      if (scenario === 'success') {
-        const token = CryptographicLicenseEngine.generate(currentTier, domain);
-        out.innerHTML = `✓ [200 SUCCESS] Captured ${totalText} (${curr.code}).<br>&bull; Cryptographic Token: <code>${token}</code><br>&bull; Bound Tenant: <code>${domain}</code><br>&bull; Cryptographic Signature: Verified &bull; SHA256 Signature Attached.<br>&bull; SMTP Dispatch: License confirmation delivered to ${email} (200 OK).<br><div style="margin-top:10px;"><a href="index.html?token=${encodeURIComponent(token)}#remediation" class="btn btn-primary" style="font-size:0.8rem; padding:6px 14px; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">Return to Audit &amp; Run Unlocked Scripts →</a></div>`;
-        out.style.color = '#A7F3D0';
-
-        const planData = curr.plans[currentTier];
-        const taxAmountEl = document.getElementById('taxAmount');
-        const taxVal = taxAmountEl ? parseFloat(taxAmountEl.textContent.replace(/[^0-9.]/g, '')) || 0 : 0;
-        recordCheckoutTransaction(email, domain, currentTier, curr.code, planData.price, taxVal, totalText, token);
-      } else if (scenario === 'cancel') {
-        out.innerHTML = `⚠️ [CHECKOUT_CANCELLED] Buyer closed gateway dialog without completing payment. Session and state preserved.`;
-        out.style.color = '#FDE68A';
-      } else if (scenario === 'failure') {
-        out.innerHTML = `❌ [PAYMENT_FAILED] Gateway status 402: Card authorization declined by issuing bank (3DS authentication timeout).`;
-        out.style.color = '#FECACA';
-      } else if (scenario === 'duplicate') {
-        out.innerHTML = `ℹ️ [IDEMPOTENCY_GUARD] Active license CT-9821 already registered for tenant ${domain}. Re-dispatching existing token to ${email} without re-billing.`;
-        out.style.color = '#93C5FD';
-      } else if (scenario === 'delivery') {
-        out.innerHTML = `✓ [DISPATCH_VERIFIED] MIME email payload assembled: PDF Executive Audit + License JSON + Zero-Touch Azure Connector Activation sent to ${email}.`;
-        out.style.color = '#A7F3D0';
+    // Verified Payment Return Handler (Only records transactions upon verified gateway completion)
+    function handlePaymentReturn() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const status = urlParams.get('status');
+      if (status === 'success') {
+        const token = urlParams.get('token');
+        const domain = urlParams.get('domain');
+        if (token && domain) {
+          const validation = CryptographicLicenseEngine.validate(token, domain);
+          if (validation.valid) {
+            localStorage.setItem('cloudtrim_license_token', token);
+            localStorage.setItem('cloudtrim_active_license', JSON.stringify({
+              token: token,
+              tier: validation.tier,
+              tenant: domain,
+              activatedAt: new Date().toISOString()
+            }));
+            alert(`✓ Payment Verified! Your cryptographic license key [${token}] for tenant [${domain}] has been activated.`);
+            window.location.href = `/index.html?token=${encodeURIComponent(token)}#remediation`;
+          }
+        }
+      } else if (status === 'cancelled') {
+        alert('Checkout was cancelled. No payment was captured.');
       }
     }
+    window.addEventListener('DOMContentLoaded', handlePaymentReturn);
 
     function recordCheckoutTransaction(email, domain, tierKey, currencyCode, planPrice, taxVal, totalFormatted, token) {
       try {

@@ -2171,13 +2171,7 @@ function completeLogin(email) {
   document.getElementById('dropdownUserEmail').textContent = email;
   document.getElementById('mfaTopStatus').style.display = 'flex';
 
-  // Strictly restrict internal Admin Console link to backend management administrator
-  const adminConsoleLink = document.getElementById('adminConsoleDropdownLink');
-  if (adminConsoleLink) {
-    adminConsoleLink.style.display = isBackendAdmin ? 'flex' : 'none';
-  }
-
-  // Persist registered user locally for admin console monitoring
+  // Persist registered user locally for session monitoring
   try {
     const rawUsers = localStorage.getItem('cloudtrim_registered_users');
     const usersList = rawUsers ? JSON.parse(rawUsers) : [];
