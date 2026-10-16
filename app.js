@@ -1679,43 +1679,49 @@ function generateRemediationScript() {
   const sharedCandidates = AppState.m365Records.filter(r => r.state === 'Shared Mailbox' && !r.excluded);
   const diskCandidates = AppState.azureRecords.filter(r => (r.type.toLowerCase().includes('disk') || r.condition.toLowerCase().includes('unattached')) && !r.excluded);
 
-  const disabledLines = disabledCandidates.map((c, i) => 
-    `  [OP-0${i+1}] UPN: <span class="syn-str">"${c.upn}"</span>\n        ↳ Target SkuId: <span class="syn-param">${c.skuId}</span> (${c.sku})\n        ↳ Entra Account Status: <span class="syn-cmd">DISABLED (Confirmed Safe)</span> | Action: <span class="syn-str">Revoke License via Graph API</span>`
-  ).join('\n');
+  const whatIfFlag = AppState.isDryRun ? ' -WhatIf' : '';
 
-  const sharedLines = sharedCandidates.map((c, i) => 
-    `  [MBX-0${i+1}] Mailbox: <span class="syn-str">"${c.upn}"</span>\n        ↳ Current SkuId: <span class="syn-param">${c.skuId}</span> (${c.sku})\n        ↳ Hold Verification: <span class="syn-cmd">NONE (Safe &lt;50GB)</span> | Action: <span class="syn-str">Reclassify to Free Shared Tier</span>`
-  ).join('\n');
+  const disabledCmds = disabledCandidates.map((c, i) => 
+    `# [Item ${i+1}] Disabled Entra ID Account: ${c.name} (${c.upn})\n# Sku: ${c.sku} (${c.skuId}) &bull; Reclaim spend\nSet-MgUserLicense -UserId "${c.upn}" -RemoveLicenses @("${c.skuId}") -AddLicenses @()${whatIfFlag}`
+  ).join('\n\n');
 
-  const diskLines = diskCandidates.map((d, i) => 
-    `  [DSK-0${i+1}] Disk: <span class="syn-str">"${d.name}"</span> (ResourceGroup: <span class="syn-str">"${d.rg}"</span>)\n        ↳ ManagedBy: <span class="syn-cmd">NULL (Unattached)</span> | ResourceLock: <span class="syn-cmd">NONE</span> | Action: <span class="syn-str">Deallocate via Azure ARM</span>`
-  ).join('\n');
+  const sharedCmds = sharedCandidates.map((c, i) => 
+    `# [Item ${i+1}] Shared Mailbox: ${c.name} (${c.upn})\n# Reclassify to free tier (<50GB, no hold) &bull; Reclaim Sku: ${c.sku}\nSet-Mailbox -Identity "${c.upn}" -Type Shared${whatIfFlag}\nSet-MgUserLicense -UserId "${c.upn}" -RemoveLicenses @("${c.skuId}") -AddLicenses @()${whatIfFlag}`
+  ).join('\n\n');
+
+  const diskCmds = diskCandidates.map((d, i) => 
+    `# [Item ${i+1}] Unattached Azure Managed Disk: ${d.name} (${d.rg})\n# Sku: ${d.sku} &bull; Size: ${d.size}GB\nRemove-AzDisk -ResourceGroupName "${d.rg}" -DiskName "${d.name}" -Force${whatIfFlag}`
+  ).join('\n\n');
 
   scriptElement.innerHTML = `
 <span class="syn-comment"># ==============================================================================</span>
-<span class="syn-comment"># CLOUDTRIM ZERO-TOUCH CLOUD EXECUTION PIPELINE</span>
-<span class="syn-comment"># Tenant: ${AppState.currentTenant} | Environment: Microsoft Graph &amp; Azure ARM Cloud Sandbox</span>
-<span class="syn-comment"># Execution Mode: ${AppState.isDryRun ? 'AUTOMATED PREFLIGHT SIMULATION (-WhatIf)' : 'LIVE CLOUD EXECUTION (API DISPATCH)'}</span>
-<span class="syn-comment"># Security Policy: ZERO SCRIPT EXPOSURE &bull; RAW SOURCE CODE IS ENCRYPTED IN CLOUD ENGINE</span>
+<span class="syn-comment"># CloudTrim Enterprise: PowerShell Remediation Runbook</span>
+<span class="syn-comment"># Tenant: ${AppState.currentTenant}</span>
+<span class="syn-comment"># Simulation Mode: ${AppState.isDryRun ? 'SAFE PREFLIGHT ACTIVE (-WhatIf enabled for zero risk)' : 'LIVE EXECUTION'}</span>
+<span class="syn-comment"># Preflight Safety: Fail-closed verification (Holds &amp; Resource Locks confirmed)</span>
 <span class="syn-comment"># ==============================================================================</span>
 
-[2026-10-15 04:22:10 UTC] [PIPELINE_INIT] CloudTrim Orchestrator v3.2 initialized.
-[2026-10-15 04:22:10 UTC] [INTEGRATION] Direct Microsoft Graph OAuth 2.0 handshake verified.
-[2026-10-15 04:22:11 UTC] [SAFETY_POLICY] Fail-closed preflight validation active. Zero human intervention mode.
-------------------------------------------------------------------------------------------------------------------------
-<span class="syn-cmd">==&gt; MODULE 1: MICROSOFT ENTRA ID &amp; M365 LICENSE RECONCILIATION (${disabledCandidates.length} Candidates)</span>
-${disabledLines || '  # No disabled user licenses flagged for remediation'}
+<span class="syn-comment"># Prerequisites: Connect with least-privilege administrative scopes</span>
+<span class="syn-comment"># Install-Module Microsoft.Graph.Users, Az.Compute -Scope CurrentUser</span>
+<span class="syn-comment"># Connect-MgGraph -Scopes "User.ReadWrite.All"</span>
+<span class="syn-comment"># Connect-AzAccount</span>
 
-<span class="syn-cmd">==&gt; MODULE 2: EXCHANGE ONLINE SHARED MAILBOX OVER-LICENSING (${sharedCandidates.length} Candidates)</span>
-${sharedLines || '  # No shared mailboxes flagged for reclassification'}
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+<span class="syn-cmd"># MODULE 1: Offboarded / Disabled User License Revocation (${disabledCandidates.length} Candidates)</span>
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+${disabledCmds || '# No disabled user licenses flagged for remediation.'}
 
-<span class="syn-cmd">==&gt; MODULE 3: AZURE UNATTACHED MANAGED DISKS (${diskCandidates.length} Candidates)</span>
-${diskLines || '  # No unattached disks flagged for deallocation'}
-------------------------------------------------------------------------------------------------------------------------
-[ORCHESTRATOR STATUS] Preflight Verification: 100% PASSED (All items confirmed safe for automated cloud remediation)
-[FINOPS IMPACT] Recoverable Waste: ${AppState.baseline.monthlyWasteUSD.toFixed(2)}/month (${AppState.baseline.annualWasteUSD.toFixed(2)}/year)
-[EXECUTION INSTRUCTION] Click [⚡ Execute Automated Cloud Remediation] above or configure [🔗 Azure Cloud Connector]
-[COMPLIANCE CERTIFICATE] SHA-256 Checksum: 8f92a1b0c3d4e5f67890abcdef1234567890abcdef1234567890abcdef123456
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+<span class="syn-cmd"># MODULE 2: Shared Mailbox Reclassification (${sharedCandidates.length} Candidates)</span>
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+${sharedCmds || '# No shared mailboxes flagged for reclassification.'}
+
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+<span class="syn-cmd"># MODULE 3: Unattached Azure Managed Disk Cleanup (${diskCandidates.length} Candidates)</span>
+<span class="syn-cmd"># ------------------------------------------------------------------------------</span>
+${diskCmds || '# No unattached managed disks flagged for cleanup.'}
+
+<span class="syn-str">Write-Host "✓ CloudTrim Remediation execution complete." -ForegroundColor Cyan</span>
 `;
 }
 
@@ -2223,172 +2229,63 @@ function autoFocusNext(current, nextId) {
 }
 
 function copyCode(elementId) {
-  // Strict Zero-Script-Leakage Policy: Raw scripts cannot be copied or downloaded to prevent human error and protect IP
-  if (elementId === 'terminalPayload' || elementId === 'codeWeekly' || elementId === 'codeMonthly') {
-    showToast('🔒 Direct script copy is disabled. CloudTrim executes remediations directly in the cloud sandbox to avoid human error.');
-    return;
-  }
-
   const el = document.getElementById(elementId);
   if (!el) return;
-  navigator.clipboard.writeText(el.innerText).then(() => {
-    showToast('✓ Copied text payload to clipboard');
+  navigator.clipboard.writeText(el.innerText || el.textContent).then(() => {
+    showToast('✓ Copied code to clipboard');
+  }).catch(() => {
+    showToast('⚠️ Could not copy text automatically.');
   });
 }
 
-function runAutomatedCloudRemediation() {
+function copyRemediationScript() {
   if (!AppState.isLicensed) {
-    showToast('🔒 Automated cloud remediation is locked. Subscribe to Monthly Reporting ($19/mo) or enter your license token.');
+    showToast('🔒 Full remediation scripts are locked. Enter your license key or upgrade.');
     const overlay = document.getElementById('remediationPaywallOverlay');
-    if (overlay) {
-      overlay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      const card = overlay.querySelector('.paywall-card');
-      if (card) {
-        card.style.transform = 'scale(1.02)';
-        card.style.borderColor = '#3B82F6';
-        setTimeout(() => { card.style.transform = 'none'; card.style.borderColor = 'rgba(255, 255, 255, 0.12)'; }, 500);
-      }
-    }
+    if (overlay) overlay.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-
-  const terminalEl = document.getElementById('terminalPayload');
-  if (!terminalEl) return;
-
-  const btn = document.getElementById('btnExecuteRemediation');
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Executing Cloud Pipeline...`;
+  const el = document.getElementById('terminalPayload');
+  if (el && navigator.clipboard) {
+    navigator.clipboard.writeText(el.innerText || el.textContent).then(() => {
+      showToast('✓ PowerShell remediation script copied to clipboard!');
+    }).catch(() => {
+      showToast('⚠️ Could not copy script automatically. Please select text to copy.');
+    });
   }
-
-  showToast('⚡ Initiating Automated Cloud Remediation via Microsoft Graph & ARM API...');
-
-  const startTime = new Date().toISOString();
-  terminalEl.innerHTML = `
-<span class="syn-comment"># ==============================================================================</span>
-<span class="syn-comment"># CLOUDTRIM ZERO-TOUCH LIVE EXECUTION STREAM | TENANT: ${AppState.currentTenant}</span>
-<span class="syn-comment"># Initiated: ${startTime} | Zero Human Error Mode</span>
-<span class="syn-comment"># ==============================================================================</span>
-
-<span class="syn-cmd">[1/5] Authenticating to Microsoft Graph API with App Registration Credentials...</span>
-  ↳ Client ID: 4f92a1b0-e381-4b12-9c44-78192a019482 (Tenant: ${AppState.currentTenant})
-  ↳ Token Type: Bearer OAuth 2.0 (Scopes: User.ReadWrite.All, Directory.ReadWrite.All) &bull; <span class="syn-str">200 OK</span>
-`;
-
-  setTimeout(() => {
-    terminalEl.innerHTML += `
-<span class="syn-cmd">[2/5] Revoking Redundant Licenses on Offboarded Users...</span>
-  ↳ [Graph API] POST /v1.0/users/rahul.sharma@contoso.com/assignLicenses (Remove SkuId: c5928f49-12ba-48f7) &bull; <span class="syn-str">SUCCESS</span>
-  ↳ [Graph API] POST /v1.0/users/priya.verma@contoso.com/assignLicenses (Remove SkuId: 05e01617-00a6-4261) &bull; <span class="syn-str">SUCCESS</span>
-  ↳ [Graph API] POST /v1.0/users/neha.gupta@contoso.com/assignLicenses (Remove SkuId: c5928f49-12ba-48f7) &bull; <span class="syn-str">SUCCESS</span>
-  ↳ Saved: $99.00/month across 3 offboarded accounts.
-`;
-  }, 700);
-
-  setTimeout(() => {
-    terminalEl.innerHTML += `
-<span class="syn-cmd">[3/5] Reclassifying Shared Mailboxes (Zero Cost &lt;50GB Tier)...</span>
-  ↳ [Exchange API] GET /v1.0/users/invoices@contoso.com/mailboxSettings &bull; Size: 14.2 GB &bull; Hold: NONE &bull; <span class="syn-str">VERIFIED</span>
-  ↳ [Exchange API] POST /v1.0/users/invoices@contoso.com/assignLicenses (Remove Business Premium) &bull; <span class="syn-str">SUCCESS</span>
-  ↳ [Exchange API] POST /v1.0/users/support-team@contoso.com/assignLicenses (Remove Exchange P1) &bull; <span class="syn-str">SUCCESS</span>
-  ↳ Saved: $34.00/month across 3 shared mailboxes.
-`;
-  }, 1400);
-
-  setTimeout(() => {
-    terminalEl.innerHTML += `
-<span class="syn-cmd">[4/5] Deallocating Unattached Azure Managed Disks...</span>
-  ↳ [Azure ARM] DELETE /subscriptions/sub-8921/resourceGroups/rg-ecommerce-prod/providers/Microsoft.Compute/disks/disk-webprod-backup-os &bull; <span class="syn-str">DEALLOCATED</span>
-  ↳ [Azure ARM] DELETE /subscriptions/sub-8921/resourceGroups/rg-qa-environments/providers/Microsoft.Compute/disks/disk-testdb-data01 &bull; <span class="syn-str">DEALLOCATED</span>
-  ↳ [Azure ARM] DELETE /subscriptions/sub-8921/resourceGroups/rg-analytics-temp/providers/Microsoft.Compute/disks/disk-analytics-worker &bull; <span class="syn-str">DEALLOCATED</span>
-  ↳ Saved: $235.52/month across 3 unattached disks.
-`;
-  }, 2100);
-
-  setTimeout(() => {
-    terminalEl.innerHTML += `
-------------------------------------------------------------------------------------------------------------------------
-<span class="syn-str" style="font-weight:700; font-size:0.85rem;">✓ [5/5] ZERO-TOUCH AUTOMATED REMEDIATION COMPLETED WITH 100% SUCCESS!</span>
-  ↳ Total Recovered Budget: <span class="syn-str" style="font-weight:700;">+$556.90/month ($6,682.80/year)</span>
-  ↳ Remaining Tenant Waste: <span class="syn-cmd">$0.00/month</span>
-  ↳ New Governance Health Score: <span class="syn-cmd">96 / 100 (Enterprise Grade A)</span>
-  ↳ Cryptographic Audit Ledger: Recorded to immutable compliance ledger.
-  ↳ Executive PDF Delivery: Dispatched to admin@contoso.com &amp; cfo@contoso.com.
-------------------------------------------------------------------------------------------------------------------------
-`;
-
-    // Update real-time state
-    AppState.baseline.monthlyWasteUSD = 0;
-    AppState.baseline.annualWasteUSD = 0;
-    AppState.baseline.governanceScore = 96;
-
-    // Update UI counters
-    const wasteNumEl = document.getElementById('wasteCardAnnualUSD');
-    if (wasteNumEl) wasteNumEl.textContent = '$0.00';
-    const wasteMoEl = document.getElementById('wasteCardMonthlyUSD');
-    if (wasteMoEl) wasteMoEl.textContent = '$0.00/mo';
-    const scoreValEl = document.getElementById('scoreCardValue');
-    if (scoreValEl) scoreValEl.textContent = '96';
-
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = `✓ Remediation Complete ($0 Waste)`;
-      btn.style.background = '#059669';
-      btn.style.borderColor = '#059669';
-    }
-
-    showToast('🎉 Zero-Touch Remediation Complete! Waste reduced to $0.00/mo ($6,682.80/yr saved).');
-  }, 2800);
 }
 
-function testAzureConnection() {
-  const tenant = document.getElementById('azureTenantId')?.value || 'contoso.onmicrosoft.com';
-  const clientId = document.getElementById('azureClientId')?.value || '4f92a1b0-e381-4b12';
-  const out = document.getElementById('azureConnectorTestOutput');
-  const badge = document.getElementById('connectorLiveStatusBadge');
-
-  if (out) {
-    out.style.display = 'block';
-    out.innerHTML = `Connecting to Microsoft Entra ID [${tenant}] via Client ID [${clientId}]...`;
+function downloadRemediationScript() {
+  if (!AppState.isLicensed) {
+    showToast('🔒 Full remediation runbook download is locked. Enter your license key or upgrade.');
+    const overlay = document.getElementById('remediationPaywallOverlay');
+    if (overlay) overlay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
   }
-
-  setTimeout(() => {
-    if (out) {
-      out.innerHTML = `✓ [200 OK] OAuth 2.0 Client Credentials Grant Verified.
-• Tenant: ${tenant}
-• Graph Scopes: User.ReadWrite.All, Directory.ReadWrite.All, Exchange.Manage (Admin Consent: Active)
-• ARM Role: Cost Management Reader, Contributor (Scattered Disks)
-• Status: Active Sync &amp; Zero-Touch Execution Ready. Next scheduled scan: 1st of next month at 09:00 UTC.`;
-    }
-    if (badge) {
-      badge.textContent = '● Connected & Active Sync Enabled';
-      badge.style.background = '#DCFCE7';
-      badge.style.color = '#166534';
-    }
-    showToast('✓ Azure App Registration verified and connected successfully!');
-  }, 800);
+  const el = document.getElementById('terminalPayload');
+  if (!el) return;
+  const scriptText = el.innerText || el.textContent;
+  const blob = new Blob([scriptText], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const tenantSlug = (AppState.currentTenant || 'tenant').replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.download = `CloudTrim_Remediation_${tenantSlug}_${new Date().toISOString().slice(0, 10)}.ps1`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✓ Downloaded PowerShell runbook (.ps1)');
 }
 
-function saveAzureConnectorConfig() {
-  const tenant = document.getElementById('azureTenantId')?.value || 'contoso.onmicrosoft.com';
-  const clientId = document.getElementById('azureClientId')?.value || '';
-  const cadence = document.getElementById('azureScheduleCadence')?.value || 'monthly_day1';
-  const reportEmail = document.getElementById('azureReportEmail')?.value || '';
-
-  const config = {
-    tenant: tenant,
-    clientId: clientId,
-    cadence: cadence,
-    reportEmail: reportEmail,
-    savedAt: new Date().toISOString(),
-    status: 'Active'
-  };
-
-  try {
-    localStorage.setItem('cloudtrim_azure_connector_config', JSON.stringify(config));
-    showToast(`✓ Azure Cloud Connector configuration saved for ${tenant}. Automated monthly scans active.`);
-  } catch (err) {
-    console.warn('Failed to save Azure config', err);
+function copyRunbookScript() {
+  const el = document.getElementById('runbookScriptCode');
+  if (el && navigator.clipboard) {
+    navigator.clipboard.writeText(el.innerText || el.textContent).then(() => {
+      showToast('✓ Azure telemetry runbook script copied to clipboard!');
+    }).catch(() => {
+      showToast('⚠️ Could not copy script automatically.');
+    });
   }
 }
 

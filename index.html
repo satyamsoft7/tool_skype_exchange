@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CloudTrim Enterprise | Overview</title>
+  <meta name="description" content="CloudTrim Enterprise: Zero-server in-browser Microsoft 365 license reclamation, Azure unattached disk cleanup, and parameter-safe PowerShell remediation scripts.">
   <!-- Chart.js via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -861,7 +862,7 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
               Automated Cloud Remediation
             </button>
             <button class="sub-tab-btn" id="subtab-azure-connect" onclick="switchSupportingTab('azure-connect')">
-              Azure Cloud Connector (Zero-Touch)
+              Azure Automation Runbook
             </button>
             <button class="sub-tab-btn" id="subtab-automation" onclick="switchSupportingTab('automation')">
               Monthly Subscription &amp; Diff
@@ -967,15 +968,15 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                 <button type="button" class="btn btn-outline" style="font-size:0.72rem; padding:4px 8px;" onclick="lockLicense()">Lock / Switch Token</button>
               </div>
 
-              <!-- Security Notice: Zero Script Exposure Policy -->
+              <!-- Security Notice: Safety Guardrails Policy -->
               <div style="background:#0F172A; border:1px solid rgba(59,130,246,0.3); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                 <div style="display:flex; align-items:center; gap:8px;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#38BDF8" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   <span style="font-size:0.78rem; color:#E2E8F0;">
-                    <strong>Zero-Touch Cloud Execution:</strong> Remediation runs directly via automated API in the cloud sandbox. Raw script export is strictly disabled to eliminate human error and prevent configuration drift.
+                    <strong>PowerShell Remediation Engine:</strong> Generates scoped, parameter-ready commands with mandatory preflights. Execute with <code>-WhatIf</code> simulation first.
                   </span>
                 </div>
-                <span style="font-size:0.72rem; color:#94A3B8; font-family:var(--font-mono);">Encrypted Pipeline &bull; Zero Human Intervention</span>
+                <span style="font-size:0.72rem; color:#94A3B8; font-family:var(--font-mono);">Safe Simulation Flag Enforced</span>
               </div>
 
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -985,32 +986,36 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                       <input type="checkbox" id="dryRunToggle" checked onchange="toggleDryRun(this)">
                       <span class="slider"></span>
                     </label>
-                    <span>Safe Dry-Run Mode (Simulation)</span>
+                    <span>Safe Dry-Run Mode (Simulation -WhatIf)</span>
                   </div>
                   <span class="preflight-badge">✓ Fail-Closed Safety Enforced</span>
-                  <span class="preflight-badge">✓ Audit Ledger Logging Active</span>
+                  <span class="preflight-badge">✓ Audit Ledger Active</span>
                 </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                  <button class="btn btn-primary" id="btnExecuteRemediation" style="font-size:0.8rem; gap:6px;" onclick="runAutomatedCloudRemediation()">
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    ⚡ Execute Automated Cloud Remediation
+                  <button class="btn btn-primary" id="btnCopyRemediation" style="font-size:0.8rem; gap:6px;" onclick="copyRemediationScript()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    Copy Remediation Script
+                  </button>
+                  <button class="btn btn-outline" style="font-size:0.75rem; gap:6px;" onclick="downloadRemediationScript()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Download .ps1 Runbook
                   </button>
                   <button class="btn btn-outline" style="font-size:0.75rem;" onclick="switchSupportingTab('azure-connect')">
-                    🔗 Direct Azure Connector (Zero-Touch)
+                    🔗 Azure Automation Runbook
                   </button>
                   <button class="btn btn-outline" style="font-size:0.75rem;" onclick="switchSupportingTab('automation')">
-                    📅 Monthly Reporting Subscription
+                    📅 Monthly Diff Tracking
                   </button>
                 </div>
               </div>
 
               <div class="remediation-terminal-wrapper">
-                <div class="terminal-box" id="terminalBoxContainer" style="user-select:none; -webkit-user-select:none;" oncopy="return false;" oncut="return false;" oncontextmenu="return false;">
+                <div class="terminal-box" id="terminalBoxContainer">
                   <div class="terminal-header-bar">
-                    <span>CloudTrim Automated Governance Engine v3.2 &bull; Direct Microsoft Graph &amp; ARM API</span>
+                    <span>CloudTrim Remediation Runbook &bull; Microsoft Graph &amp; Azure ARM PowerShell</span>
                     <span id="terminalTenantStatus">Tenant: contoso.onmicrosoft.com &bull; Fail-Closed Sandboxed</span>
                   </div>
-                  <pre class="terminal-code-body terminal-secure-pipeline" id="terminalPayload" style="user-select:none; -webkit-user-select:none; pointer-events:none; font-size:0.78rem;"></pre>
+                  <pre class="terminal-code-body" id="terminalPayload" style="font-size:0.78rem;"></pre>
                 </div>
 
                 <!-- Strict Paywall Overlay for Free Users -->
@@ -1018,25 +1023,25 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                   <div class="paywall-card">
                     <div class="paywall-badge">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      Automated Cloud Remediation Locked
+                      PowerShell Remediation Runbook Locked
                     </div>
-                    <h3 class="paywall-title">Zero-Touch Execution &amp; Monthly Reports Reserved for Paid Members</h3>
+                    <h3 class="paywall-title">Full Remediation Scripts &amp; Action Exports Reserved for Paid Members</h3>
                     <p class="paywall-subtitle">
-                      Your assessment identified <strong style="color:#F87171;">$556.90/month ($6,682.80/year)</strong> in unoptimized licensing &amp; idle cloud assets. To execute zero-touch remediations automatically with zero manual work and zero human error, subscribe to Pro Monthly ($19/mo) or unlock Single Audit ($39).
+                      Your assessment identified <strong style="color:#F87171;">$556.90/month ($6,682.80/year)</strong> in recoverable waste across your tenant. Unlock complete parameter-safe PowerShell remediation commands, month-over-month diff tracking, and audit-ready CFO report exports.
                     </p>
 
                     <div class="paywall-highlight-box">
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Zero Manual Script Work:</strong> Automated cloud API execution with zero terminal copy-pasting.</span>
+                        <span><strong>Parameter-Safe Remediation Runbooks:</strong> Scoped PowerShell commands with <code>-WhatIf</code> preflight protection.</span>
                       </div>
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Direct Azure / Microsoft 365 Connector:</strong> Connect via App Registration for automated monthly runs.</span>
+                        <span><strong>Month-over-Month Delta Diff:</strong> Compare monthly directory snapshots to track confirmed spend recovery.</span>
                       </div>
                       <div class="paywall-feature-row">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        <span><strong>Automated Monthly Reporting:</strong> Compares monthly snapshots (Diff comparison) and emails CFO reports.</span>
+                        <span><strong>Instant Deliverables:</strong> Download Executive CFO PDF reports and actionable CSV finding tables directly.</span>
                       </div>
                     </div>
 
@@ -1063,103 +1068,67 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
             </div>
           </div>
 
-          <!-- Tab Pane 4: Azure Cloud Connector (Zero-Touch Integration) -->
+          <!-- Tab Pane 4: Azure Automation Runbook Guide -->
           <div id="tab-pane-azure-connect" style="display:none;">
-            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-sm); padding:14px 18px; margin-bottom:18px;">
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-sm); padding:16px 20px; margin-bottom:18px;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div>
-                  <strong style="color:#166534; font-size:0.9rem;">Direct Azure &amp; Microsoft 365 Cloud Connector</strong>
-                  <p style="font-size:0.8rem; color:#15803D; margin-top:3px; line-height:1.45;">
-                    Eliminate manual script execution and human error. Connect your Microsoft Entra ID / Azure tenant once via App Registration to automate all licensing audits, continuous diff tracking, and board-ready reporting without manual user intervention.
+                  <strong style="color:#166534; font-size:0.95rem;">Azure Automation &amp; Scheduled Assessment Runbook</strong>
+                  <p style="font-size:0.82rem; color:#15803D; margin-top:4px; line-height:1.5;">
+                    Automate recurring directory exports securely within your own tenant boundary. In accordance with our <strong>Zero-Server Data Minimization standard</strong>, CloudTrim never asks for, receives, or stores your Entra ID client secrets or certificates. Run this pre-configured PowerShell runbook in your own Azure Cloud Shell or Azure Automation Account to export fresh telemetry anytime.
                   </p>
-                </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="badge" style="background:#DCFCE7; color:#166534; font-size:0.75rem; padding:4px 10px; font-weight:700;" id="connectorLiveStatusBadge">
-                    ● Disconnected (Configure Below)
-                  </span>
                 </div>
               </div>
             </div>
 
             <div class="azure-connector-grid">
-              <!-- Connector Column 1: App Registration Credentials -->
-              <div class="connector-form-card">
-                <div style="font-weight:700; font-size:0.9rem; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                  Azure App Registration (Service Principal)
-                </div>
-
-                <div class="connector-form-group">
-                  <label for="azureTenantId">Directory (Tenant) ID or Primary Domain</label>
-                  <input type="text" id="azureTenantId" value="contoso.onmicrosoft.com" placeholder="e.g. contoso.onmicrosoft.com or GUID" />
-                  <div class="form-hint">Found in Microsoft Entra Admin Center &gt; Overview</div>
-                </div>
-
-                <div class="connector-form-group">
-                  <label for="azureClientId">Application (Client) ID</label>
-                  <input type="text" id="azureClientId" value="4f92a1b0-e381-4b12-9c44-78192a019482" placeholder="e.g. 00000000-0000-0000-0000-000000000000" />
-                  <div class="form-hint">App Registration client GUID</div>
-                </div>
-
-                <div class="connector-form-group">
-                  <label for="azureAuthType">Authentication Method</label>
-                  <select id="azureAuthType">
-                    <option value="secret">Client Secret (Key Credential)</option>
-                    <option value="cert">Certificate (Thumbprint / PKCS#12)</option>
-                    <option value="managed">Azure Managed Identity (Jumpbox / Agent)</option>
-                  </select>
-                </div>
-
-                <div class="connector-form-group">
-                  <label for="azureSecretKey">Client Secret Value or Certificate Thumbprint</label>
-                  <input type="password" id="azureSecretKey" value="CT-Secret-Live-Sandbox-Token-Key9981" placeholder="Paste Client Secret or Certificate Thumbprint" />
-                  <div class="form-hint">Encrypted locally in browser RAM &bull; Zero external transit</div>
-                </div>
-
-                <div style="margin-top:16px; display:flex; gap:10px;">
-                  <button type="button" class="btn btn-primary" style="font-size:0.8rem; padding:8px 14px;" onclick="testAzureConnection()">
-                    Test Connection &amp; Authenticate
-                  </button>
-                  <button type="button" class="btn btn-outline" style="font-size:0.8rem; padding:8px 14px;" onclick="saveAzureConnectorConfig()">
-                    Save Configuration
-                  </button>
-                </div>
-              </div>
-
-              <!-- Connector Column 2: Automation Governance Policies -->
-              <div class="connector-form-card">
-                <div style="font-weight:700; font-size:0.9rem; color:var(--text-main); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  Zero-Touch Governance &amp; Executive Dispatch
-                </div>
-
-                <div class="connector-form-group">
-                  <label>Automated Scan &amp; Diff Cadence</label>
-                  <select id="azureScheduleCadence">
-                    <option value="monthly_day1">Day 1 of Each Month at 09:00 UTC (Recommended)</option>
-                    <option value="biweekly">Every 1st &amp; 15th of the Month</option>
-                    <option value="weekly_monday">Weekly on Monday at 09:00 UTC</option>
-                  </select>
-                  <div class="form-hint">Scans live Entra &amp; ARM telemetry automatically without manual login</div>
-                </div>
-
-                <div class="connector-form-group">
-                  <label for="azureReportEmail">Executive Report Dispatch Email(s)</label>
-                  <input type="text" id="azureReportEmail" value="admin@contoso.com, cfo@contoso.com" placeholder="admin@contoso.com, cio@contoso.com" />
-                  <div class="form-hint">Delivers Board-Ready PDF Audit &amp; Month-over-Month Delta automatically</div>
-                </div>
-
-                <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-top:12px;">
-                  <div style="font-size:0.78rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">Enforced Safety Guardrails (Zero Human Error):</div>
-                  <div style="font-size:0.75rem; color:#475569; line-height:1.5;">
-                    ✓ <strong>Fail-Closed Hold Protection:</strong> Mailboxes with Litigation Hold or &gt;50GB are automatically skipped.<br>
-                    ✓ <strong>Entra Account Validation:</strong> Only verified disabled identities are eligible for license revocation.<br>
-                    ✓ <strong>Disk Lock Check:</strong> Unattached disks with ReadOnly / CanNotDelete locks are never modified.<br>
-                    ✓ <strong>Cryptographic Audit Ledger:</strong> Every action is sealed with SHA-256 for compliance verification.
+              <div class="connector-form-card" style="grid-column: span 2;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                  <div style="font-weight:700; font-size:0.92rem; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Azure Cloud Shell / Automation PowerShell Runbook (Least-Privilege Read-Only)
                   </div>
+                  <button type="button" class="btn btn-outline" style="font-size:0.75rem; padding:5px 12px;" onclick="copyRunbookScript()">
+                    📋 Copy PowerShell Script
+                  </button>
                 </div>
 
-                <div id="azureConnectorTestOutput" style="display:none; margin-top:14px; background:#0F172A; color:#A7F3D0; font-family:var(--font-mono); font-size:0.74rem; padding:10px 12px; border-radius:4px; line-height:1.4;">
+                <pre id="runbookScriptCode" style="background:#0F172A; color:#E2E8F0; padding:16px; border-radius:6px; font-family:var(--font-mono); font-size:0.78rem; overflow-x:auto; line-height:1.5; margin:0;"># ==============================================================================
+# CloudTrim Enterprise: Least-Privilege Tenant Telemetry Export Runbook
+# Requirements: Microsoft.Graph.Users, Microsoft.Graph.Reports, Az.Compute
+# Zero-Access Guarantee: Executed 100% inside your tenant's secure boundary
+# ==============================================================================
+
+# 1. Connect to Microsoft Graph with Read-Only Audit Scopes
+Connect-MgGraph -Scopes "User.Read.All", "Reports.Read.All" -NoWelcome
+
+# 2. Export Active &amp; Disabled User Directory Status
+$Users = Get-MgUser -All -Property Id, DisplayName, UserPrincipalName, AccountEnabled, AssignedLicenses
+$Export = foreach ($u in $Users) {
+    [PSCustomObject]@{
+        DisplayName        = $u.DisplayName
+        UserPrincipalName  = $u.UserPrincipalName
+        AccountEnabled     = $u.AccountEnabled
+        AssignedSkus       = ($u.AssignedLicenses.SkuId -join '; ')
+    }
+}
+$Export | Export-Csv -Path "./ActiveUsers.csv" -NoTypeInformation -Encoding utf8
+
+# 3. Export Unattached Azure Managed Disks
+Connect-AzAccount
+$Disks = Get-AzDisk | Where-Object { $null -eq $_.ManagedBy }
+$Disks | Select-Object Name, ResourceGroupName, DiskSizeGB, Sku, Location |
+    Export-Csv -Path "./UnattachedDisks.csv" -NoTypeInformation -Encoding utf8
+
+Write-Host "✓ Telemetry export completed successfully. Drop ActiveUsers.csv into CloudTrim to assess." -ForegroundColor Green</pre>
+
+                <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-top:16px;">
+                  <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); margin-bottom:6px;">How It Works:</div>
+                  <div style="font-size:0.76rem; color:#475569; line-height:1.6;">
+                    1. <strong>Run within your Tenant:</strong> Execute this script in your Azure Cloud Shell or configure it as a monthly Azure Automation Runbook.<br>
+                    2. <strong>Zero External Credentials:</strong> No client secrets or application certificates ever leave your environment.<br>
+                    3. <strong>Instant In-Memory Analysis:</strong> Drag &amp; drop the exported <code>ActiveUsers.csv</code> into CloudTrim for instant RAM-only waste calculation and diff reporting.
+                  </div>
                 </div>
               </div>
             </div>
