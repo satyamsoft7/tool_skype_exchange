@@ -1049,14 +1049,14 @@ Get-AzDisk | Where-Object { $null -eq $_.ManagedBy } |
                         Subscribe to Monthly Governance ($19/mo Pro) / Single Audit ($39) →
                       </a>
                       <button type="button" class="paywall-secondary-btn" onclick="toggleTokenUnlockInput()">
-                        Already Subscribed? Enter License Token (CT-XXXX-XXXX)
+                        Already Subscribed? Enter Cryptographic License Key
                       </button>
                     </div>
 
                     <!-- Token Input Form -->
                     <div id="tokenUnlockForm" style="display:none; margin-top:14px; text-align:center;">
                       <div class="paywall-token-form">
-                        <input type="text" id="licenseTokenInput" class="paywall-token-input" placeholder="e.g. CT-8F92A1B0-4921" />
+                        <input type="text" id="licenseTokenInput" class="paywall-token-input" placeholder="e.g. CT-SINGLE-84156195-6AD2197A-9B293F5B" />
                         <button type="button" class="btn btn-primary" style="padding:7px 14px; font-size:0.8rem;" onclick="verifyAndUnlockLicense()">Unlock</button>
                       </div>
                       <div id="tokenUnlockMsg" style="font-size:0.75rem; margin-top:6px; min-height:18px;"></div>

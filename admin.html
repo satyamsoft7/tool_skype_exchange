@@ -1318,10 +1318,10 @@
           currency: 'INR',
           symbol: '₹',
           rateUSD: 69,
-          totalBilled: 34464,
-          taxUSD: 74.52,
-          totalBilledUSD: 414.00,
-          totalBilledFormatted: '₹34,464',
+          totalBilled: 28720,
+          taxUSD: 0,
+          totalBilledUSD: 345.00,
+          totalBilledFormatted: '₹28,720',
           paymentStatus: 'Active Subscription',
           txId: 'UPI-RAZOR-90821-INR',
           billingDate: '2026-10-08',
@@ -1576,7 +1576,7 @@
       const record = currentRevenueLedger.find(r => r.id === revId);
       if (!record) return;
       alert(
-        `[OFFICIAL TAX INVOICE & RECEIPT]\n` +
+        `[COMMERCIAL INVOICE & RECEIPT]\n` +
         `----------------------------------------\n` +
         `Invoice Ref: ${record.txId}\n` +
         `Customer Email: ${record.email}\n` +
@@ -1585,6 +1585,7 @@
         `Commercial Plan: ${record.tier}\n` +
         `Billing Cadence: ${record.frequency}\n` +
         `Gross Total Billed: ${record.totalBilledFormatted || '$' + (record.totalBilledUSD || 0).toFixed(2)}\n` +
+        `GST Status: Exempt under Section 22 CGST Act 2017 (Turnover threshold exemption; zero GST collected)\n` +
         `Payment Status: ${record.paymentStatus}\n` +
         `Next Scheduled Renewal: ${record.nextRenewal}\n\n` +
         `Operator: Satya Pathak (SkypeExchange4U), New Delhi, India.\n` +
@@ -1625,7 +1626,7 @@
         filtered = [
           { id: 'hist-09-01', reportingPeriod: '2026-09', email: 'admin@contoso.com', orgName: 'Contoso Corporation', tenant: 'contoso.onmicrosoft.com', registeredAt: '2026-09-14', tier: 'Pro Continuous Monitoring ($19/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 19, totalBilledUSD: 95.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-01', nextRenewal: '2026-10-14', seats: 9, assets: 11, potentialWasteUSD: 1485.50, confirmedRecoveryUSD: 556.90, mfaStatus: 'Active (TOTP)' },
           { id: 'hist-09-02', reportingPeriod: '2026-09', email: 'david.miller@fabrikam.com', orgName: 'Fabrikam Managed IT', tenant: 'fabrikam.onmicrosoft.com', registeredAt: '2026-09-01', tier: 'MSP Partner License ($69/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 69, totalBilledUSD: 345.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-02', nextRenewal: '2026-10-01', seats: 45, assets: 38, potentialWasteUSD: 3840.00, confirmedRecoveryUSD: 1920.00, mfaStatus: 'Active (Email)' },
-          { id: 'hist-09-03', reportingPeriod: '2026-09', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-09-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 345.00, taxUSD: 62.10, paymentStatus: 'Paid', txId: 'PAYID-HIST09-03', nextRenewal: '2026-10-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-09-03', reportingPeriod: '2026-09', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-09-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 345.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-03', nextRenewal: '2026-10-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
           { id: 'hist-09-04', reportingPeriod: '2026-09', email: 'elena.rostova@nordiccloud.eu', orgName: 'Nordic Cloud Oy', tenant: 'nordiccloud.eu', registeredAt: '2026-09-05', tier: 'Pro Continuous Monitoring (€18/mo)', frequency: 'Monthly Recurring', currency: 'EUR', rateUSD: 19, totalBilledUSD: 95.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-04', nextRenewal: '2026-10-05', seats: 15, assets: 18, potentialWasteUSD: 1650.00, confirmedRecoveryUSD: 780.00, mfaStatus: 'Active (TOTP)' },
           { id: 'hist-09-05', reportingPeriod: '2026-09', email: 'audit@finopsgroup.co.uk', orgName: 'FinOps Group UK', tenant: 'finopsgroup.co.uk', registeredAt: '2026-09-20', tier: 'Single Tenant Audit ($39)', frequency: 'One-Time Audit', currency: 'GBP', rateUSD: 39, totalBilledUSD: 39.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST09-05', nextRenewal: 'N/A', seats: 30, assets: 25, potentialWasteUSD: 1800.00, confirmedRecoveryUSD: 900.00, mfaStatus: 'Active (TOTP)' }
         ];
@@ -1633,7 +1634,7 @@
         filtered = [
           { id: 'hist-08-01', reportingPeriod: '2026-08', email: 'admin@contoso.com', orgName: 'Contoso Corporation', tenant: 'contoso.onmicrosoft.com', registeredAt: '2026-08-14', tier: 'Pro Continuous Monitoring ($19/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 19, totalBilledUSD: 76.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-01', nextRenewal: '2026-09-14', seats: 9, assets: 11, potentialWasteUSD: 1485.50, confirmedRecoveryUSD: 556.90, mfaStatus: 'Active (TOTP)' },
           { id: 'hist-08-02', reportingPeriod: '2026-08', email: 'david.miller@fabrikam.com', orgName: 'Fabrikam Managed IT', tenant: 'fabrikam.onmicrosoft.com', registeredAt: '2026-08-01', tier: 'MSP Partner License ($69/mo)', frequency: 'Monthly Recurring', currency: 'USD', rateUSD: 69, totalBilledUSD: 276.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-02', nextRenewal: '2026-09-01', seats: 45, assets: 38, potentialWasteUSD: 3840.00, confirmedRecoveryUSD: 1920.00, mfaStatus: 'Active (Email)' },
-          { id: 'hist-08-03', reportingPeriod: '2026-08', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-08-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 276.00, taxUSD: 49.68, paymentStatus: 'Paid', txId: 'PAYID-HIST08-03', nextRenewal: '2026-09-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
+          { id: 'hist-08-03', reportingPeriod: '2026-08', email: 'rajesh.patel@tcs-partner.in', orgName: 'TCS Cloud Advisory', tenant: 'tcs-partner.in', registeredAt: '2026-08-08', tier: 'MSP Partner License (₹5,744/mo)', frequency: 'Monthly Recurring', currency: 'INR', rateUSD: 69, totalBilledUSD: 276.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-03', nextRenewal: '2026-09-08', seats: 60, assets: 50, potentialWasteUSD: 4500.00, confirmedRecoveryUSD: 2100.00, mfaStatus: 'Active (TOTP)' },
           { id: 'hist-08-04', reportingPeriod: '2026-08', email: 'elena.rostova@nordiccloud.eu', orgName: 'Nordic Cloud Oy', tenant: 'nordiccloud.eu', registeredAt: '2026-08-05', tier: 'Pro Continuous Monitoring (€18/mo)', frequency: 'Monthly Recurring', currency: 'EUR', rateUSD: 19, totalBilledUSD: 76.00, taxUSD: 0, paymentStatus: 'Paid', txId: 'PAYID-HIST08-04', nextRenewal: '2026-09-05', seats: 15, assets: 18, potentialWasteUSD: 1650.00, confirmedRecoveryUSD: 780.00, mfaStatus: 'Active (TOTP)' }
         ];
       }

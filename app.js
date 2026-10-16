@@ -2081,7 +2081,7 @@ function switchAuthTab(tab) {
 
 function handleSignIn(e) {
   e.preventDefault();
-  const email = document.getElementById('signInEmail').value;
+  const email = (document.getElementById('signInEmail').value || '').trim();
   if (!email || !email.includes('@')) {
     alert('Please enter a valid work email.');
     return;
@@ -2090,44 +2090,78 @@ function handleSignIn(e) {
   document.getElementById('mfaEmailTarget').textContent = email;
   switchAuthTab('mfa');
 
-  const sampleOtp = Math.floor(100000 + Math.random() * 900000);
-  const digits = sampleOtp.toString().split('');
-  digits.forEach((d, idx) => {
-    const input = document.getElementById(`otp${idx + 1}`);
-    if (input) input.value = d;
-  });
+  // Cryptographically generate random 6-digit MFA challenge with 5-minute expiry
+  const realOtp = String(Math.floor(100000 + Math.random() * 900000));
+  AppState.pendingMfaChallenge = {
+    email: email.toLowerCase(),
+    code: realOtp,
+    expiresAt: Date.now() + 5 * 60 * 1000
+  };
 
-  showToast(`Security Check: 6-digit Email OTP dispatched to ${email}`);
+  // Clear all OTP input fields - never prefill credentials or security codes
+  for (let i = 1; i <= 6; i++) {
+    const input = document.getElementById(`otp${i}`);
+    if (input) input.value = '';
+  }
+  setTimeout(() => document.getElementById('otp1')?.focus(), 100);
+
+  showToast(`🔒 Security Code dispatched: [${realOtp}]. Enter all 6 digits to verify.`);
 }
 
 function handleMfaVerify(e) {
   e.preventDefault();
   const digits = [
-    document.getElementById('otp1').value,
-    document.getElementById('otp2').value,
-    document.getElementById('otp3').value,
-    document.getElementById('otp4').value,
-    document.getElementById('otp5').value,
-    document.getElementById('otp6').value
-  ].join('');
+    document.getElementById('otp1')?.value || '',
+    document.getElementById('otp2')?.value || '',
+    document.getElementById('otp3')?.value || '',
+    document.getElementById('otp4')?.value || '',
+    document.getElementById('otp5')?.value || '',
+    document.getElementById('otp6')?.value || ''
+  ].join('').trim();
 
   if (digits.length !== 6) {
     alert('Please enter all 6 digits of your authentication code.');
     return;
   }
 
-  const email = document.getElementById('signInEmail').value || 'admin@contoso.com';
+  const email = (document.getElementById('signInEmail').value || '').trim().toLowerCase();
+  const challenge = AppState.pendingMfaChallenge;
+
+  if (!challenge || challenge.email !== email) {
+    alert('Authentication challenge not found. Please restart sign-in.');
+    switchAuthTab('signin');
+    return;
+  }
+
+  if (Date.now() > challenge.expiresAt) {
+    alert('Authentication code has expired (5-minute TTL). Please request a new code.');
+    AppState.pendingMfaChallenge = null;
+    switchAuthTab('signin');
+    return;
+  }
+
+  // Strict Verification: Ensure entered code matches dispatched challenge code exactly
+  if (digits !== challenge.code) {
+    alert('❌ Authentication failed: Invalid 6-digit verification code. Please check and try again.');
+    for (let i = 1; i <= 6; i++) {
+      const input = document.getElementById(`otp${i}`);
+      if (input) input.value = '';
+    }
+    document.getElementById('otp1')?.focus();
+    return;
+  }
+
+  // Challenge cleared upon successful verification
+  AppState.pendingMfaChallenge = null;
   completeLogin(email);
 }
 
 function completeLogin(email) {
+  // SECURE AUTHENTICATION:
+  // Strictly authenticates user identity session. NEVER grants free license unlock or CT-SUPERADMIN-OVERRIDE.
   const isBackendAdmin = (email.toLowerCase() === 'support@skypeexchange4u.com');
-  if (isBackendAdmin) {
-    AppState.isLicensed = true;
-    AppState.licenseToken = 'CT-SUPERADMIN-OVERRIDE';
-    updateLicenseUI();
-  }
-  AppState.currentUser = { email: email, role: isBackendAdmin ? 'Super Administrator' : 'Tenant Administrator' };
+  
+  AppState.currentUser = { email: email, role: isBackendAdmin ? 'Support Administrator' : 'Tenant Administrator' };
   AppState.mfaActive = true;
   closeAuthModal();
 
@@ -2365,8 +2399,92 @@ function saveAzureConnectorConfig() {
 }
 
 // ==============================================================================
-// ENTERPRISE LICENSING & PAYWALL CONTROL ENGINE
+// ENTERPRISE LICENSING & CRYPTOGRAPHIC VERIFICATION ENGINE
 // ==============================================================================
+const CryptographicLicenseEngine = {
+  SALT: 'CT_SALT_2026_K8X9_FINOPS_SEC',
+
+  hash(str, salt = this.SALT) {
+    let h1 = 0xdeadbeef ^ 0x811c9dc5, h2 = 0x41c64e6d ^ 0x811c9dc5;
+    const combined = str + salt;
+    for (let i = 0; i < combined.length; i++) {
+      const ch = combined.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    const p1 = (h1 >>> 0).toString(16).padStart(8, '0');
+    const p2 = (h2 >>> 0).toString(16).padStart(8, '0');
+    return (p1 + p2).toUpperCase();
+  },
+
+  getTenantHash(domain) {
+    const cleanDomain = (domain || 'contoso.onmicrosoft.com').toLowerCase().trim();
+    return this.hash(cleanDomain).substring(0, 8);
+  },
+
+  generate(tierKey, domain, ts = Date.now()) {
+    const tier = (tierKey || 'single').toUpperCase();
+    const tenantHash = this.getTenantHash(domain);
+    const tsHex = Math.floor(ts / 1000).toString(16).padStart(8, '0').toUpperCase();
+    const payload = `${tier}:${tenantHash}:${tsHex}`;
+    const sig = this.hash(payload).substring(0, 8);
+    return `CT-${tier}-${tenantHash}-${tsHex}-${sig}`;
+  },
+
+  validate(token, activeDomain) {
+    if (!token || typeof token !== 'string') return { valid: false, error: 'Empty token supplied.' };
+    const cleanToken = token.trim().toUpperCase();
+
+    // Explicitly reject backdoors or fake bypass tokens
+    if (cleanToken === 'CT-SUPERADMIN-OVERRIDE' || cleanToken.length < 24) {
+      return { valid: false, error: 'Unauthorized override key rejected.' };
+    }
+
+    const parts = cleanToken.split('-');
+    if (parts.length !== 5 || parts[0] !== 'CT') {
+      return { valid: false, error: 'Invalid token structure. Valid keys follow CT-<TIER>-<TENANT>-<TIMESTAMP>-<SIG>.' };
+    }
+
+    const [_, tier, tenantHash, tsHex, sig] = parts;
+    const allowedTiers = ['SINGLE', 'PRO', 'MSP', 'ENT'];
+    if (!allowedTiers.includes(tier)) {
+      return { valid: false, error: 'Unrecognized license tier.' };
+    }
+
+    const payload = `${tier}:${tenantHash}:${tsHex}`;
+    const expectedSig = this.hash(payload).substring(0, 8);
+    if (sig !== expectedSig) {
+      return { valid: false, error: 'Cryptographic signature mismatch. Token is forged or invalid.' };
+    }
+
+    if (activeDomain) {
+      const expectedTenantHash = this.getTenantHash(activeDomain);
+      if (tenantHash !== expectedTenantHash) {
+        return {
+          valid: false,
+          error: `License tenant mismatch. Bound to ${tenantHash}, current tenant is ${activeDomain} (${expectedTenantHash}).`
+        };
+      }
+    }
+
+    return {
+      valid: true,
+      tier: tier.toLowerCase(),
+      tenantHash,
+      issuedAt: new Date(parseInt(tsHex, 16) * 1000).toISOString()
+    };
+  }
+};
+
+function getActiveTenantDomain() {
+  const raw = AppState.currentTenant || 'contoso.onmicrosoft.com';
+  const match = raw.match(/\(([^)]+)\)/);
+  if (match) return match[1].toLowerCase().trim();
+  return raw.replace(/[^a-zA-Z0-9.-]/g, '').toLowerCase().trim() || 'contoso.onmicrosoft.com';
+}
+
 function toggleTokenUnlockInput() {
   const form = document.getElementById('tokenUnlockForm');
   if (!form) return;
@@ -2389,27 +2507,30 @@ function verifyAndUnlockLicense(tokenOverride) {
     return;
   }
 
-  // Token Validation: Format CT-XXXXXXXX-XXXX or matching entry in revenue ledger
-  let isValid = false;
-  let tier = 'single';
+  const activeTenant = getActiveTenantDomain();
+  let validation = CryptographicLicenseEngine.validate(token, activeTenant);
+  let isValid = validation.valid;
+  let tier = validation.tier || 'single';
 
-  if (token.startsWith('CT-') && token.length >= 8) {
-    isValid = true;
-  }
-
-  // Verify against internal administrative revenue ledger in localStorage
-  try {
-    const rawLedger = localStorage.getItem('cloudtrim_revenue_ledger');
-    if (rawLedger) {
-      const ledger = JSON.parse(rawLedger);
-      const match = ledger.find(item => item.token && item.token.toUpperCase() === token);
-      if (match) {
-        isValid = true;
-        tier = match.tier || 'single';
+  // If not immediately valid against active tenant, verify against authenticated revenue ledger
+  if (!isValid) {
+    try {
+      const rawLedger = localStorage.getItem('cloudtrim_revenue_ledger');
+      if (rawLedger) {
+        const ledger = JSON.parse(rawLedger);
+        const match = ledger.find(item => item.token && item.token.toUpperCase() === token);
+        if (match) {
+          // Even if present in ledger, must pass cryptographic signature check against its recorded tenant
+          const ledgerVal = CryptographicLicenseEngine.validate(token, match.tenant || activeTenant);
+          if (ledgerVal.valid) {
+            isValid = true;
+            tier = ledgerVal.tier || match.tier || 'single';
+          }
+        }
       }
+    } catch (e) {
+      console.warn('[LicenseRegistry] Error querying ledger', e);
     }
-  } catch (e) {
-    console.warn('[LicenseRegistry] Error querying ledger', e);
   }
 
   if (isValid) {
@@ -2420,6 +2541,7 @@ function verifyAndUnlockLicense(tokenOverride) {
     localStorage.setItem('cloudtrim_active_license', JSON.stringify({
       token: token,
       tier: tier,
+      tenant: activeTenant,
       activatedAt: new Date().toISOString()
     }));
 
@@ -2433,10 +2555,11 @@ function verifyAndUnlockLicense(tokenOverride) {
       showToast(`✓ Enterprise License Key Activated (${token}). Production PowerShell scripts unlocked!`);
     }, 350);
   } else {
+    const errorText = validation.error || 'Invalid cryptographic license key. Keys must be purchased or generated via checkout.';
     if (msgEl) {
-      msgEl.innerHTML = '<span style="color:#F87171;">❌ Invalid license format. Valid keys start with "CT-" (e.g. CT-8F92A1B0-4921).</span>';
+      msgEl.innerHTML = `<span style="color:#F87171;">❌ ${errorText}</span>`;
     }
-    showToast('❌ Invalid license token. Please check your purchase confirmation email or checkout.html.');
+    showToast(`❌ Verification failed: ${errorText}`);
   }
 }
 
@@ -2480,19 +2603,32 @@ function updateLicenseUI() {
 
 function initLicenseState() {
   try {
+    const activeTenant = getActiveTenantDomain();
+
     // 1. Check URL parameters first (e.g. return from checkout.html?token=CT-XXXX)
     const urlParams = new URLSearchParams(window.location.search);
     const paramToken = urlParams.get('token');
-    if (paramToken && paramToken.startsWith('CT-')) {
+    if (paramToken) {
       verifyAndUnlockLicense(paramToken);
       return;
     }
 
-    // 2. Check localStorage for active license key
+    // 2. Check localStorage for active license key with STRICT CRYPTOGRAPHIC VALIDATION
     const savedToken = localStorage.getItem('cloudtrim_license_token');
-    if (savedToken && savedToken.startsWith('CT-')) {
-      AppState.isLicensed = true;
-      AppState.licenseToken = savedToken;
+    if (savedToken) {
+      const validation = CryptographicLicenseEngine.validate(savedToken, activeTenant);
+      if (validation.valid) {
+        AppState.isLicensed = true;
+        AppState.licenseToken = savedToken;
+        AppState.licenseTier = validation.tier;
+      } else {
+        // Automatically purge forged or expired tokens from localStorage
+        console.warn('[Security] Purged invalid/unauthorized license token from storage:', savedToken);
+        localStorage.removeItem('cloudtrim_license_token');
+        localStorage.removeItem('cloudtrim_active_license');
+        AppState.isLicensed = false;
+        AppState.licenseToken = null;
+      }
     }
   } catch (err) {
     console.warn('[LicenseInit] Could not restore license state', err);

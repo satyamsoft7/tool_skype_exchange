@@ -123,11 +123,11 @@ The checkout page (`checkout.html`) eliminates purchase friction and billing amb
 3. **Fulfillment SLA Expectations:**
    - Delivery: Instant 60-second automated token dispatch via email.
    - Recovery: Self-service license retrieval by entering work email.
-   - Support: 24-hour response SLA from senior infrastructure engineers (`support@cloudtrim.io`).
+   - Support: 24-hour response SLA from senior infrastructure engineers (`support@skypeexchange4u.com`).
 4. **Plain 14-Day Refund Policy (Replacing "100% Zero-Risk"):**
    - *"If CloudTrim identifies zero verified waste opportunities on a supported tenant CSV, or if identified potential savings are less than the $39 audit fee, contact us within 14 days for a full refund."*
 5. **Verified Tax Treatments:**
-   - **India (Domestic):** 18% Integrated GST (IGST) calculated dynamically in INR (₹83.25 / USD rate). GSTIN field provided for input tax credit.
+   - **India (Domestic):** Exempt from GST pursuant to Section 22 of the Central Goods and Services Tax (CGST) Act, 2017 (turnover exemption threshold). Zero GST charged; total price inclusive.
    - **United States:** State sales tax calculated transparently at the PayPal checkout gateway.
    - **EU / UK:** B2B Reverse Charge applied; VAT ID capture for cross-border zero-rating.
 6. **Pre-Launch Gateway Simulator:**
